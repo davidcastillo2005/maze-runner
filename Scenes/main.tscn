@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://2q322tyxvreq"]
+[gd_scene load_steps=5 format=3 uid="uid://2q322tyxvreq"]
 
 [ext_resource type="Texture2D" uid="uid://chrssh0jflyr1" path="res://icon.svg" id="1_ld6dd"]
+[ext_resource type="Script" path="res://Scripts/Board.cs" id="2_nkw2e"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv1p2"]
 texture = ExtResource("1_ld6dd")
@@ -12,5 +13,7 @@ sources/0 = SubResource("TileSetAtlasSource_bv1p2")
 
 [node name="Main" type="Node2D"]
 
-[node name="Board" type="TileMapLayer" parent="."]
+[node name="Board" type="TileMapLayer" parent="." node_paths=PackedStringArray("boardTileMapLayerNode")]
 tile_set = SubResource("TileSet_4wqoe")
+script = ExtResource("2_nkw2e")
+boardTileMapLayerNode = NodePath(".")
