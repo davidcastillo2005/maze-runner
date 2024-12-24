@@ -5,37 +5,62 @@ using System;
 
 public partial class Board : TileMapLayer
 {
-	[Export] int width = 20;
-	[Export] int height = 20;
-	[Export] TileMapLayer boardTileMapLayerNode;
-
-	Tile[,] board;
+	TileMapLayer boardTileMapLayer;
+	Tile[,] Map { get; set; }
+	Global global;
+	[Export] bool useChessBoardPattern = true;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		board = MapGenerator.GenerateMap(width, height);
-		PaintBoard(board);
+		boardTileMapLayer = GetNode<Board>("/root/Main/Board");
+		global = GetNode<Global>("/root/Global");
+		Map = global.map;
+		PaintBoardTileMapLayer(Map);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		Map = global.map;
+		PaintBoardTileMapLayer(Map);
 	}
 
-	public void PaintBoard(Tile[,] board)
+	public void PaintBoardTileMapLayer(Tile[,] map)
 	{
-		for (int x = 0; x < board.GetLength(0); x++)
+		boardTileMapLayer.Clear();
+		for (int x = 0; x < map.GetLength(0); x++)
 		{
-			for (int y = 0; y < board.GetLength(1); y++)
+			for (int y = 0; y < map.GetLength(1); y++)
 			{
-				Type tileType = board[x, y].GetType();
-				if (tileType == typeof(Empty))
+				Type tileType = map[x, y].GetType();
+				if (useChessBoardPattern)
 				{
-					boardTileMapLayerNode.SetCell(new Vector2I(x, y), -1, new Vector2I(1, 1), 0);
+					if (tileType == typeof(Empty))
+					{
+						boardTileMapLayer.SetCell(new Vector2I(x, y), -1, new Vector2I(1, 1), 0);
+					}
+					else if (tileType == typeof(Wall))
+					{
+						if (Math.Pow(-1, x + y) == 1)
+						{
+							boardTileMapLayer.SetCell(new Vector2I(x, y), 0, new Vector2I(1, 1), 0);
+						}
+						else if (Math.Pow(-1, x + y) == -1)
+						{
+							boardTileMapLayer.SetCell(new Vector2I(x, y), 0, new Vector2I(3, 2), 0);
+						}
+					}
 				}
-				else if (tileType == typeof(Wall))
+				else
 				{
-					boardTileMapLayerNode.SetCell(new Vector2I(x, y), 0, new Vector2I(1, 1), 0);
+					if (tileType == typeof(Empty))
+					{
+						boardTileMapLayer.SetCell(new Vector2I(x, y), 0, new Vector2I(1, 1), 0);
+					}
+					else if (tileType == typeof(Wall))
+					{
+						boardTileMapLayer.SetCell(new Vector2I(x, y), 0, new Vector2I(3, 2), 0);
+					}
 				}
 			}
 		}
