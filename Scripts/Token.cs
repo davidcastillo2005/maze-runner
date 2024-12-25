@@ -63,6 +63,11 @@ public partial class Token : Node2D
 					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
 				}
 			}
+			else if (map[0, playerPos.y].GetType() == typeof(Empty))
+			{
+				playerPos = (0, playerPos.y);
+				tokenNode2D.Position = new Vector2I(GetConvertedPos(0), GetConvertedPos(playerPos.y));
+			}
 		}
 		else if (Input.IsActionJustPressed("ui_left"))
 		{
@@ -76,6 +81,11 @@ public partial class Token : Node2D
 					playerPos = newPlayerPos;
 					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
 				}
+			}
+			else if (map[map.GetLength(0) - 1, playerPos.y].GetType() == typeof(Empty))
+			{
+				playerPos = (map.GetLength(0) - 1, playerPos.y);
+				tokenNode2D.Position = new Vector2I(GetConvertedPos(map.GetLength(0) - 1), GetConvertedPos(playerPos.y));
 			}
 		}
 		else if (Input.IsActionJustPressed("ui_up"))
@@ -91,6 +101,11 @@ public partial class Token : Node2D
 					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
 				}
 			}
+			else if (map[playerPos.x, map.GetLength(1) - 1].GetType() == typeof(Empty))
+			{
+				playerPos = (playerPos.x, map.GetLength(1) - 1);
+				tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(map.GetLength(1) - 1));
+			}
 		}
 		else if (Input.IsActionJustPressed("ui_down"))
 		{
@@ -104,6 +119,11 @@ public partial class Token : Node2D
 					playerPos = newPlayerPos;
 					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
 				}
+			}
+			else if (map[playerPos.x, 0].GetType() == typeof(Empty))
+			{
+				playerPos = (playerPos.x, 0);
+				tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(0));
 			}
 		}
 	}

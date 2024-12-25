@@ -18,7 +18,6 @@ namespace MazeRunner.Scripts.Logic
                 }
             }
             RandomizeTiles(map, seed, isRandomSeed, fillPercentage);
-            CreateBoundaries(map);
             CreatePlayerSpawn(map);
             return map;
         }

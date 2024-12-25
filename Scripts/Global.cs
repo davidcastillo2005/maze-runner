@@ -5,11 +5,11 @@ using System;
 
 public partial class Global : Node
 {
-	[Export] int width = 40;
-	[Export] int height = 40;
-	[Export] int seed;
-	[Export] bool isRandomSeed = true;
-	[Export] int fillPercentage = 25;
+	int width = 40;
+	int height = 40;
+	int seed;
+	bool isRandomSeed = true;
+	int fillPercentage = 20;
 	public Tile[,] map;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
