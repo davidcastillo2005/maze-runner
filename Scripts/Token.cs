@@ -1,16 +1,16 @@
 using Godot;
 using System;
 using MazeRunner.Scripts.Data;
-using System.Collections.Generic;
 
-public partial class Token : Node2D
+public partial class Token : CharacterBody2D
 {
 	Token tokenNode2D;
 	Global global;
 	Tile[,] map;
-	(int x, int y) playerPos;
+	(int x, int y) tokenTile;
+	enum State { Idle, Moving }
+	State currentState = State.Idle;
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		tokenNode2D = GetNode<Token>("/root/Main/Token");
@@ -20,16 +20,84 @@ public partial class Token : Node2D
 		Spawn();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		ManageMovement();
+		HandleState();
 	}
 
-	int GetConvertedPos(int x)
+	int GetConvertedPos(int i)
 	{
-		int result = (2 * x + 1) * 8;
+		int result = (2 * i + 1) * 8;
 		return result;
+	}
+
+	void HandleState()
+	{
+		if (currentState == State.Idle) Idle();
+		else if (currentState == State.Moving) HandleMovement();
+	}
+
+	void Idle()
+	{
+		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down") || Input.IsActionPressed("ui_left") || Input.IsActionPressed("ui_right")) currentState = State.Moving;
+	}
+
+	void HandleMovement()
+	{
+		(int x, int y) newTokenTile = tokenTile;
+		if (Input.IsActionPressed("ui_right"))
+		{
+			newTokenTile.x += 1;
+			Move(newTokenTile, (1, 0));
+		}
+		else if (Input.IsActionPressed("ui_left"))
+		{
+			newTokenTile.x -= 1;
+			Move(newTokenTile, (-1, 0));
+		}
+		else if (Input.IsActionPressed("ui_down"))
+		{
+			newTokenTile.y += 1;
+			Move(newTokenTile, (0, 1));
+		}
+		else if (Input.IsActionPressed("ui_up"))
+		{
+			newTokenTile.y -= 1;
+			Move(newTokenTile, (0, -1));
+		}
+	}
+
+	bool IsInsideLimits((int x, int y) newTokenTile) => newTokenTile.x >= 0 && newTokenTile.y >= 0 && newTokenTile.x < map.GetLength(0) && newTokenTile.y < map.GetLength(1);
+
+	void Move((int x, int y) newTokenTile, (int x, int y) direction)
+	{
+		if (IsInsideLimits(newTokenTile))
+		{
+			if (map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Empty))
+			{
+				tokenTile = newTokenTile;
+				Position = new Vector2(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
+				currentState = State.Idle;
+			}
+		}
+		else if (map[GetOppositePos(tokenTile, direction).x, GetOppositePos(tokenTile, direction).y].GetType() == typeof(Empty))
+		{
+			tokenTile = (GetOppositePos(tokenTile, direction).x, GetOppositePos(tokenTile, direction).y);
+			Position = new Vector2I(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
+		}
+	}
+
+	(int x, int y) GetOppositePos((int x, int y) tokenTile, (int x, int y) direction)
+	{
+		if (tokenTile.x == 0 || tokenTile.y == 0 || tokenTile.x == map.GetLength(0) - 1 || tokenTile.y == map.GetLength(1) - 1)
+		{
+			if (direction == (0, 1)) return (tokenTile.x, 0);
+			else if (direction == (0, -1)) return (tokenTile.x, map.GetLength(1) - 1);
+			else if (direction == (1, 0)) return (0, tokenTile.y);
+			else if (direction == (-1, 0)) return (map.GetLength(0) - 1, tokenTile.y);
+			else throw new Exception("!direction");
+		}
+		else throw new Exception("!(tokenTile.x == 0 || tokenTile.y == 0 || tokenTile.x == map.GetLength(0) - 1 || tokenTile.y == map.GetLength(1) - 1)");
 	}
 
 	void Spawn()
@@ -40,90 +108,10 @@ public partial class Token : Node2D
 			{
 				if (map[x, y].GetType() == typeof(Empty))
 				{
-					playerPos = (x, y);
-					tokenNode2D.Position = new Vector2I(GetConvertedPos(x), GetConvertedPos(y));
+					tokenTile = (x, y);
+					Position = new Vector2I(GetConvertedPos(x), GetConvertedPos(y));
 					return;
 				}
-			}
-		}
-	}
-
-	void ManageMovement()
-	{
-		if (Input.IsActionJustPressed("ui_right"))
-		{
-			(int x, int y) newPlayerPos;
-			newPlayerPos.x = playerPos.x + 1;
-			newPlayerPos.y = playerPos.y;
-			if (newPlayerPos.x >= 0 && newPlayerPos.y >= 0 && newPlayerPos.x < map.GetLength(0) && newPlayerPos.y < map.GetLength(1))
-			{
-				if (map[newPlayerPos.x, newPlayerPos.y].GetType() == typeof(Empty))
-				{
-					playerPos = newPlayerPos;
-					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
-				}
-			}
-			else if (map[0, playerPos.y].GetType() == typeof(Empty))
-			{
-				playerPos = (0, playerPos.y);
-				tokenNode2D.Position = new Vector2I(GetConvertedPos(0), GetConvertedPos(playerPos.y));
-			}
-		}
-		else if (Input.IsActionJustPressed("ui_left"))
-		{
-			(int x, int y) newPlayerPos;
-			newPlayerPos.x = playerPos.x - 1;
-			newPlayerPos.y = playerPos.y;
-			if (newPlayerPos.x >= 0 && newPlayerPos.y >= 0 && newPlayerPos.x < map.GetLength(0) && newPlayerPos.y < map.GetLength(1))
-			{
-				if (map[newPlayerPos.x, newPlayerPos.y].GetType() == typeof(Empty))
-				{
-					playerPos = newPlayerPos;
-					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
-				}
-			}
-			else if (map[map.GetLength(0) - 1, playerPos.y].GetType() == typeof(Empty))
-			{
-				playerPos = (map.GetLength(0) - 1, playerPos.y);
-				tokenNode2D.Position = new Vector2I(GetConvertedPos(map.GetLength(0) - 1), GetConvertedPos(playerPos.y));
-			}
-		}
-		else if (Input.IsActionJustPressed("ui_up"))
-		{
-			(int x, int y) newPlayerPos;
-			newPlayerPos.x = playerPos.x;
-			newPlayerPos.y = playerPos.y - 1;
-			if (newPlayerPos.x >= 0 && newPlayerPos.y >= 0 && newPlayerPos.x < map.GetLength(0) && newPlayerPos.y < map.GetLength(1))
-			{
-				if (map[newPlayerPos.x, newPlayerPos.y].GetType() == typeof(Empty))
-				{
-					playerPos = newPlayerPos;
-					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
-				}
-			}
-			else if (map[playerPos.x, map.GetLength(1) - 1].GetType() == typeof(Empty))
-			{
-				playerPos = (playerPos.x, map.GetLength(1) - 1);
-				tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(map.GetLength(1) - 1));
-			}
-		}
-		else if (Input.IsActionJustPressed("ui_down"))
-		{
-			(int x, int y) newPlayerPos;
-			newPlayerPos.x = playerPos.x;
-			newPlayerPos.y = playerPos.y + 1;
-			if (newPlayerPos.x >= 0 && newPlayerPos.y >= 0 && newPlayerPos.x < map.GetLength(0) && newPlayerPos.y < map.GetLength(1))
-			{
-				if (map[newPlayerPos.x, newPlayerPos.y].GetType() == typeof(Empty))
-				{
-					playerPos = newPlayerPos;
-					tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(playerPos.y));
-				}
-			}
-			else if (map[playerPos.x, 0].GetType() == typeof(Empty))
-			{
-				playerPos = (playerPos.x, 0);
-				tokenNode2D.Position = new Vector2I(GetConvertedPos(playerPos.x), GetConvertedPos(0));
 			}
 		}
 	}
