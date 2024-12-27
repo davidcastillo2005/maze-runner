@@ -37,7 +37,7 @@ public partial class Token : CharacterBody2D
 	// Handles the idle state of the token.
 	void Idle()
 	{
-		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down") || Input.IsActionPressed("ui_left") || Input.IsActionPressed("ui_right")) _currentState = State.Moving;
+		if (Input.IsActionJustPressed("ui_up") || Input.IsActionJustPressed("ui_down") || Input.IsActionJustPressed("ui_left") || Input.IsActionJustPressed("ui_right")) _currentState = State.Moving;
 		else _currentState = State.Idle;
 	}
 
@@ -45,8 +45,8 @@ public partial class Token : CharacterBody2D
 	void Move()
 	{
 		_currentState = State.Idle;
-		_input.x = (Input.IsActionPressed("ui_right") ? 1 : 0) - (Input.IsActionPressed("ui_left") ? 1 : 0);
-		_input.y = (Input.IsActionPressed("ui_down") ? 1 : 0) - (Input.IsActionPressed("ui_up") ? 1 : 0);
+		_input.x = (Input.IsActionJustPressed("ui_right") ? 1 : 0) - (Input.IsActionJustPressed("ui_left") ? 1 : 0);
+		_input.y = (Input.IsActionJustPressed("ui_down") ? 1 : 0) - (Input.IsActionJustPressed("ui_up") ? 1 : 0);
 
 		if (Mathf.Abs(_input.x) == Mathf.Abs(_input.y)) return;
 		if (_input.x == 0 && _input.y == 0)
