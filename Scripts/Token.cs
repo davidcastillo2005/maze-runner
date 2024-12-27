@@ -4,112 +4,119 @@ using MazeRunner.Scripts.Data;
 
 public partial class Token : CharacterBody2D
 {
-	Token tokenNode2D;
-	Global global;
-	Tile[,] map;
-	(int x, int y) tokenTile;
+	private Global _globalInstance;
+	private Tile[,] _map;
+	public (int x, int y) tokenTile;
 	enum State { Idle, Moving }
-	State currentState = State.Idle;
+	private State _currentState = State.Idle;
+	(int x, int y) _input;
 
+	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		tokenNode2D = GetNode<Token>("/root/Main/Token");
-		global = GetNode<Global>("/root/Global");
-		map = global.map;
+		_globalInstance = GetNode<Global>("/root/Global");
+		_map = _globalInstance.Map;
 
 		Spawn();
 	}
 
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		HandleState();
+		GD.Print(_currentState);
+		if (_currentState == State.Idle) Idle();
+		if (_currentState == State.Moving) Move();
 	}
 
-	int GetConvertedPos(int i)
+	// Converts a tile index to a position in pixels.
+	static int GetConvertedPos(int i)
 	{
-		int result = (2 * i + 1) * 8;
-		return result;
+		return (2 * i + 1) * 8;
 	}
 
-	void HandleState()
-	{
-		if (currentState == State.Idle) Idle();
-		else if (currentState == State.Moving) HandleMovement();
-	}
-
+	// Handles the idle state of the token.
 	void Idle()
 	{
-		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down") || Input.IsActionPressed("ui_left") || Input.IsActionPressed("ui_right")) currentState = State.Moving;
+		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down") || Input.IsActionPressed("ui_left") || Input.IsActionPressed("ui_right")) _currentState = State.Moving;
+		else _currentState = State.Idle;
 	}
 
-	void HandleMovement()
+	// Handles the moving state of the token.
+	void Move()
 	{
-		(int x, int y) newTokenTile = tokenTile;
-		if (Input.IsActionPressed("ui_right"))
-		{
-			newTokenTile.x += 1;
-			Move(newTokenTile, (1, 0));
-		}
-		else if (Input.IsActionPressed("ui_left"))
-		{
-			newTokenTile.x -= 1;
-			Move(newTokenTile, (-1, 0));
-		}
-		else if (Input.IsActionPressed("ui_down"))
-		{
-			newTokenTile.y += 1;
-			Move(newTokenTile, (0, 1));
-		}
-		else if (Input.IsActionPressed("ui_up"))
-		{
-			newTokenTile.y -= 1;
-			Move(newTokenTile, (0, -1));
-		}
-	}
+		_currentState = State.Idle;
+		_input.x = (Input.IsActionPressed("ui_right") ? 1 : 0) - (Input.IsActionPressed("ui_left") ? 1 : 0);
+		_input.y = (Input.IsActionPressed("ui_down") ? 1 : 0) - (Input.IsActionPressed("ui_up") ? 1 : 0);
 
-	bool IsInsideLimits((int x, int y) newTokenTile) => newTokenTile.x >= 0 && newTokenTile.y >= 0 && newTokenTile.x < map.GetLength(0) && newTokenTile.y < map.GetLength(1);
+		if (Mathf.Abs(_input.x) == Mathf.Abs(_input.y)) return;
+		if (_input.x == 0 && _input.y == 0)
+		{
+			_currentState = State.Idle;
+			return;
+		}
 
-	void Move((int x, int y) newTokenTile, (int x, int y) direction)
-	{
+		(int x, int y) newTokenTile = (tokenTile.x + _input.x, tokenTile.y + _input.y);
 		if (IsInsideLimits(newTokenTile))
 		{
-			if (map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Empty))
+			if (_map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Empty))
 			{
 				tokenTile = newTokenTile;
 				Position = new Vector2(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
-				currentState = State.Idle;
+			}
+			else
+			{
+				_currentState = State.Idle;
+				return;
 			}
 		}
-		else if (map[GetOppositePos(tokenTile, direction).x, GetOppositePos(tokenTile, direction).y].GetType() == typeof(Empty))
+		else
 		{
-			tokenTile = (GetOppositePos(tokenTile, direction).x, GetOppositePos(tokenTile, direction).y);
-			Position = new Vector2I(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
+			(int x, int y) oppositePos = GetOppositePos(tokenTile, _input);
+			if (_map[oppositePos.x, oppositePos.y].GetType() == typeof(Empty))
+			{
+				tokenTile = oppositePos;
+				Position = new Vector2(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
+			}
+			else
+			{
+				_currentState = State.Idle;
+				return;
+			}
 		}
+		_currentState = State.Moving;
 	}
 
-	(int x, int y) GetOppositePos((int x, int y) tokenTile, (int x, int y) direction)
+	// Checks if the given tile coordinates are within the boundaries of the map.
+	bool IsInsideLimits((int x, int y) newTokenTile) => newTokenTile.x >= 0 && newTokenTile.y >= 0 && newTokenTile.x < _map.GetLength(0) && newTokenTile.y < _map.GetLength(1);
+
+	// Checks if the input direction is valid (down, up, right or left).
+	bool IsValidInput((int x, int y) input) => input == (0, 1) || input == (0, -1) || input == (1, 0) || input == (-1, 0);
+
+	// Gets the opposite position on the map when the token moves out of bounds.
+	(int x, int y) GetOppositePos((int x, int y) tokenTile, (int x, int y) input)
 	{
-		if (tokenTile.x == 0 || tokenTile.y == 0 || tokenTile.x == map.GetLength(0) - 1 || tokenTile.y == map.GetLength(1) - 1)
+		if (!IsValidInput(input)) throw new ArgumentException($"Invalid input direction {input}");
+		if (tokenTile.x == 0 || tokenTile.y == 0 || tokenTile.x == _map.GetLength(0) - 1 || tokenTile.y == _map.GetLength(1) - 1)
 		{
-			if (direction == (0, 1)) return (tokenTile.x, 0);
-			else if (direction == (0, -1)) return (tokenTile.x, map.GetLength(1) - 1);
-			else if (direction == (1, 0)) return (0, tokenTile.y);
-			else if (direction == (-1, 0)) return (map.GetLength(0) - 1, tokenTile.y);
-			else throw new Exception("!direction");
+			if (input == (0, 1)) return (tokenTile.x, 0);
+			else if (input == (0, -1)) return (tokenTile.x, _map.GetLength(1) - 1);
+			else if (input == (1, 0)) return (0, tokenTile.y);
+			else if (input == (-1, 0)) return (_map.GetLength(0) - 1, tokenTile.y);
 		}
-		else throw new Exception("!(tokenTile.x == 0 || tokenTile.y == 0 || tokenTile.x == map.GetLength(0) - 1 || tokenTile.y == map.GetLength(1) - 1)");
+		throw new InvalidOperationException("Token is not at the edge of the _map.");
 	}
 
+	// Spawns the token at the first available empty tile on the map.
 	void Spawn()
 	{
-		for (int x = 0; x < map.GetLength(0); x++)
+		for (int x = 0; x < _map.GetLength(0); x++)
 		{
-			for (int y = 0; y < map.GetLength(1); y++)
+			for (int y = 0; y < _map.GetLength(1); y++)
 			{
-				if (map[x, y].GetType() == typeof(Empty))
+				if (_map[x, y].GetType() == typeof(Empty))
 				{
 					tokenTile = (x, y);
-					Position = new Vector2I(GetConvertedPos(x), GetConvertedPos(y));
+					Position = new Vector2(GetConvertedPos(x), GetConvertedPos(y));
 					return;
 				}
 			}

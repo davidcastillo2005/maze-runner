@@ -9,6 +9,7 @@ namespace MazeRunner.Scripts.Data
     {
         public int X { get; set; }
         public int Y { get; set; }
+
         public Tile(int x, int y)
         {
             X = x;
@@ -18,30 +19,19 @@ namespace MazeRunner.Scripts.Data
 
     public class Empty : Tile
     {
-        public Empty(int x, int y) : base(x, y)
-        {
-        }
+        public Empty(int x, int y) : base(x, y) { }
     }
 
     public class Wall : Tile
     {
-        public Wall(int x, int y) : base(x, y)
-        {
-        }
+        public Wall(int x, int y) : base(x, y) { }
     }
 
     public class Ability
     {
-        public string Name
-        {
-            get;
-            set;
-        }
-        public string Description
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
         public Ability(string name, string description)
         {
             Name = name;
@@ -51,16 +41,9 @@ namespace MazeRunner.Scripts.Data
 
     public class Token : Tile
     {
-        int Speed
-        {
-            get;
-            set;
-        }
-        public Token(int x, int y) : base(x, y)
-        {
-        }
+        int Speed { get; set; }
 
-
+        public Token(int x, int y) : base(x, y) { }
         public static bool IsValidMove(Tile[,] map, (int x, int y) direction, (int x, int y) initialPos)
         {
             (int x, int y) newPos = (initialPos.x + direction.x, initialPos.y + direction.y);

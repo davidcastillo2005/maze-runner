@@ -10,12 +10,12 @@ public partial class Global : Node
 	int seed;
 	bool isRandomSeed = true;
 	int fillPercentage = 20;
-	public Tile[,] map;
+	public Tile[,] Map { get; set; }
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		
-		map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
+		Map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -23,7 +23,7 @@ public partial class Global : Node
 	{
 		if (Input.IsActionJustPressed("ui_accept"))
 		{
-			map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
+			Map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
 		}
 	}
 }

@@ -7,7 +7,7 @@
 size = Vector2(16, 16)
 
 [node name="Token" type="CharacterBody2D"]
-position = Vector2(1, 0)
+position = Vector2(2, 0)
 script = ExtResource("1_sacbm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
