@@ -1,8 +1,4 @@
 using Godot;
-using MazeRunner.Scripts.Data;
-using MazeRunner.Scripts.Logic;
-using System;
-using System.Runtime.CompilerServices;
 
 public partial class Main : Node2D
 {

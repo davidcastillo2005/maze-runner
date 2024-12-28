@@ -1,60 +1,83 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO.Compression;
-
 namespace MazeRunner.Scripts.Data
 {
+    /// <summary>
+    /// Tile.
+    /// </summary>
     public class Tile
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        /// <summary>
+        /// X component.
+        /// </summary>
+        public int X { get => _x; set => _x = value; }
+        private int _x;
+        /// <summary>
+        /// Y component
+        /// </summary>
+        public int Y { get => _y; set => _y = value; }
+        private int _y;
 
+        /// <summary>
+        /// Tile constructor.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public Tile(int x, int y)
         {
-            X = x;
-            Y = y;
+            //Assign values.
+            _x = x;
+            _y = y;
         }
     }
 
+    /// <summary>
+    /// Empty tile.
+    /// </summary>
     public class Empty : Tile
     {
+        /// <summary>
+        /// Constructor of the Empty class.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public Empty(int x, int y) : base(x, y) { }
     }
 
+    /// <summary>
+    /// Wall tile (obstacule).
+    /// </summary>
     public class Wall : Tile
     {
+        /// <summary>
+        /// Wall constructor.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public Wall(int x, int y) : base(x, y) { }
     }
 
-    public class Ability
+    /// <summary>
+    /// Exit tile.
+    /// </summary>
+    public class Exit : Empty
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public Ability(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        /// <summary>
+        /// Exit constructor.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Exit(int x, int y) : base(x, y) { }
     }
 
-    public class Token : Tile
+    /// <summary>
+    /// Player spawner tile.
+    /// </summary>
+    public class Spawner : Empty
     {
-        int Speed { get; set; }
-
-        public Token(int x, int y) : base(x, y) { }
-        public static bool IsValidMove(Tile[,] map, (int x, int y) direction, (int x, int y) initialPos)
-        {
-            (int x, int y) newPos = (initialPos.x + direction.x, initialPos.y + direction.y);
-            if (newPos.x >= 0 && newPos.y >= 0 && newPos.y < map.GetLength(1) && newPos.x < map.GetLength(0) && map[newPos.x, newPos.y].GetType() == typeof(Empty))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        /// <summary>
+        /// Spawner constructor.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public Spawner(int x, int y) : base(x, y) { }
     }
 }

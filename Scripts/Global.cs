@@ -1,29 +1,27 @@
 using Godot;
-using MazeRunner.Scripts.Data;
 using MazeRunner.Scripts.Logic;
-using System;
 
 public partial class Global : Node
 {
-	int width = 40;
-	int height = 40;
-	int seed;
-	bool isRandomSeed = true;
-	int fillPercentage = 20;
-	public Tile[,] Map { get; set; }
+	//Level difficulty.
+	private int _levelDifficulty = 5;
+	//Seed for random generation.
+	private int _seed = 1;
+	//Random seed.
+	private bool _isRandomSeed = true;
+	//Instance of the setting class.
+	public Setting Setting { get => _setting; set => _setting = value; }
+	private Setting _setting;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		
-		Map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
+		//Create a new instance of the setting class.
+		_setting = new(_levelDifficulty, _seed, _isRandomSeed);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		if (Input.IsActionJustPressed("ui_accept"))
-		{
-			Map = MapGenerator.GenerateMap(width, height, seed, isRandomSeed, fillPercentage);
-		}
 	}
 }

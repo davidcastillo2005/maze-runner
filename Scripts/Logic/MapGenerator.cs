@@ -1,82 +1,100 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Security.Cryptography.X509Certificates;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts.Logic
 {
     public class MapGenerator
     {
-        public static Tile[,] GenerateMap(int width, int height, int seed, bool isRandomSeed, int fillPercentage)
+
+        private int _size;
+        private int _seed;
+        private bool _isRandomSeed;
+        private int _fillPercentage;
+
+        public Tile[,] Map { get => _map; set => _map = value; }
+        private Tile[,] _map;
+
+        public MapGenerator(int size, int seed, bool isRandomSeed, int fillPercentage)
         {
-            Tile[,] map = new Tile[width, height];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    map[x, y] = new Empty(x, y);
-                }
-            }
-            RandomizeTiles(map, seed, isRandomSeed, fillPercentage);
-            CreatePlayerSpawn(map);
-            return map;
+            _size = size;
+            _seed = seed;
+            _isRandomSeed = isRandomSeed;
+            _fillPercentage = fillPercentage;
+            GenerateMap();
         }
 
-        static void CreateBoundaries(Tile[,] map)
+        void GenerateMap()
         {
-            for (int x = 0; x < map.GetLength(0); x++)
+            _map = new Tile[_size, _size];
+            for (int x = 0; x < _size; x++)
             {
-                for (int y = 0; y < map.GetLength(1); y++)
+                for (int y = 0; y < _size; y++)
                 {
-                    if (x == 0 || y == 0 || x == map.GetLength(0) - 1 || y == map.GetLength(1) - 1)
+                    _map[x, y] = new Empty(x, y);
+                }
+            }
+            CreatePlayerSpawn();
+            CreateBoundaries();
+        }
+
+        void CreateBoundaries()
+        {
+            for (int x = 0; x < _size; x++)
+            {
+                for (int y = 0; y < _size; y++)
+                {
+                    if (x == 0 || y == 0 || x == _size - 1 || y == _size - 1)
                     {
-                        map[x, y] = new Wall(x, y);
+                        if (!(_map[x, y].GetType() == typeof(Spawner))) _map[x, y] = new Wall(x, y);
                     }
                 }
             }
         }
 
-        static void RandomizeTiles(Tile[,] map, int seed, bool isRandomSeed, int fillPercentage)
+        void RandomizeTiles()
         {
-            if (isRandomSeed)
+            if (_isRandomSeed)
             {
-                seed = DateTime.Now.Millisecond;
+                _seed = DateTime.Now.Millisecond;
             }
-            Random random = new(seed);
+            Random random = new(_seed);
 
-            for (int i = 0; i < map.GetLength(0); i++)
+            for (int i = 0; i < _size; i++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int j = 0; j < _size; j++)
                 {
-                    if (random.Next(0, 100) < fillPercentage)
+                    if (random.Next(0, 100) < _fillPercentage)
                     {
-                        map[i, j] = new Wall(i, j);
+                        _map[i, j] = new Wall(i, j);
                     }
                     else
                     {
-                        map[i, j] = new Empty(i, j);
+                        _map[i, j] = new Empty(i, j);
                     }
                 }
             }
         }
 
-        static void CreatePlayerSpawn(Tile[,] map)
+        void CreatePlayerSpawn()
         {
-            List<(int x, int y)> listNotEmptyTiles = new();
-            for (int i = 0; i < map.GetLength(0); i++)
+            List<(int x, int y)> listTilesOnBounds = new();
+
+            for (int x = 0; x < _size; x++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int y = 0; y < _size; y++)
                 {
-                    if (map[i, j].GetType() != typeof(Empty))
+                    if (x == 0 || y == 0 || x == _size - 1 || y == _size - 1)
                     {
-                        listNotEmptyTiles.Add((i, j));
+                        if (!((x == 0 && y == 0) || (x == _size - 1 && y == _size - 1) || (x == 0 && y == _size - 1) || (x == _size - 1 && y == 0))) listTilesOnBounds.Add((x, y));
                     }
                 }
             }
-            if (listNotEmptyTiles.Count == map.Length)
-            {
-                map[1, 1] = new Empty(1, 1);
-            }
+
+            int listIndex = new Random().Next(0, listTilesOnBounds.Count - 1);
+            (int x, int y) spawnerTile = (listTilesOnBounds[listIndex].x, listTilesOnBounds[listIndex].y);
+            _map[spawnerTile.x, spawnerTile.y] = new Spawner(spawnerTile.x, spawnerTile.y);
         }
     }
 }
