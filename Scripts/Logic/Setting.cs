@@ -29,7 +29,7 @@ namespace MazeRunner.Scripts.Logic
         /// <summary>
         /// Instance of the Map Generator class.
         /// </summary>
-        private MapGenerator _mapGenerator;
+        private MazeGenerator _mazeGenerator;
 
         /// <summary>
         /// Setting constructor.
@@ -42,9 +42,9 @@ namespace MazeRunner.Scripts.Logic
             //Size is supported by the Level Difficulty.
             _size = 2 * levelDifficulty + 1;
             //Create a new instance of the Map Generator class.
-            _mapGenerator = new(_size, seed, isRandomSeed, _fillPercentage);
+            _mazeGenerator = new(_size, seed, isRandomSeed, _fillPercentage);
             //Get map generated from Map Generator.
-            _map = _mapGenerator.Map;
+            _map = _mazeGenerator.Maze;
         }
     }
 }

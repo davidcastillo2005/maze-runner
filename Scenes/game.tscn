@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3 uid="uid://2q322tyxvreq"]
+
+[ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/token.tscn" id="1_8oosl"]
+[ext_resource type="Texture2D" uid="uid://chrssh0jflyr1" path="res://icon.svg" id="2_0jn2t"]
+[ext_resource type="Script" path="res://Scripts/Board.cs" id="3_7j6rw"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv1p2"]
+texture = ExtResource("2_0jn2t")
+1:1/0 = 0
+3:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_4wqoe"]
+sources/0 = SubResource("TileSetAtlasSource_bv1p2")
+
+[node name="Game" type="Node2D"]
+
+[node name="Token" parent="." instance=ExtResource("1_8oosl")]
+z_index = 1
+
+[node name="Board" type="TileMapLayer" parent="."]
+position = Vector2(1, 0)
+tile_set = SubResource("TileSet_4wqoe")
+script = ExtResource("3_7j6rw")

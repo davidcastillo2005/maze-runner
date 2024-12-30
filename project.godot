@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Maze Runner"
-run/main_scene="res://Scenes/main.tscn"
+run/main_scene="res://Scenes/main_menu.tscn"
 config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -26,3 +26,7 @@ window/stretch/mode="canvas_items"
 [dotnet]
 
 project/assembly_name="Maze Runner"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

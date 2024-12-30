@@ -2,6 +2,7 @@ using Godot;
 using System;
 using MazeRunner.Scripts.Data;
 using System.Threading.Tasks;
+using System.Data;
 
 public partial class Token : CharacterBody2D
 {
@@ -12,9 +13,9 @@ public partial class Token : CharacterBody2D
 	// Position of the token in the map.
 	public (int x, int y) tokenTile;
 	// Enum for the state of the token (Idle or Moving, not both).
-	enum State { Idle, Moving }
+	enum State { Spawning, Idle, Moving, Winning }
 	// Current state of the token.
-	private State _currentState = State.Idle;
+	private State _currentState = State.Spawning;
 	// Direction based on inputs.
 	(int x, int y) _input;
 
@@ -25,19 +26,22 @@ public partial class Token : CharacterBody2D
 		_global = GetNode<Global>("/root/Global");
 		//Get the map from the global script.
 		_map = _global.Setting.Map;
-
-		//Spawn the token.
-		Spawn();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		//Check if the current state is idle or moving state.
+		if (_map[tokenTile.x, tokenTile.y].GetType() == typeof(Exit))
+		{
+			Win();
+		}
 		if (_currentState == State.Idle)
 			Idle();
 		if (_currentState == State.Moving)
 			Move();
+		if (_currentState == State.Spawning)
+			Spawn();
+			_currentState = State.Idle;
 	}
 
 	/// <summary>
@@ -96,11 +100,12 @@ public partial class Token : CharacterBody2D
 		if (IsInsideBounds(newTokenTile))
 		{
 			//Check if the new position is empty.
-			if (_map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Empty) || _map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Spawner))
+			if (_map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Empty) || _map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Exit) || _map[newTokenTile.x, newTokenTile.y].GetType() == typeof(Spawner))
 			{
 				//Update the position and the token tile.
 				tokenTile = newTokenTile;
 				Position = new Vector2(GetConvertedPos(tokenTile.x), GetConvertedPos(tokenTile.y));
+				return;
 			}
 			else
 			{
@@ -189,6 +194,14 @@ public partial class Token : CharacterBody2D
 					return;
 				}
 			}
+		}
+	}
+	void Win()
+	{
+		if (_map[tokenTile.x, tokenTile.y].GetType() == typeof(Exit))
+		{
+			GD.Print("You Win!");
+			_global.QuitGame();
 		}
 	}
 }

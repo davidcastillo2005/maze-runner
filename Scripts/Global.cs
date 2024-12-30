@@ -1,3 +1,4 @@
+using System.IO;
 using Godot;
 using MazeRunner.Scripts.Logic;
 
@@ -23,5 +24,15 @@ public partial class Global : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+	}
+
+	public void GoToScene(string path)
+	{
+		GetTree().ChangeSceneToFile(path);
+	}
+
+	public void QuitGame()
+	{
+		GetTree().Quit();
 	}
 }
