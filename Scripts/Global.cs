@@ -7,7 +7,7 @@ public partial class Global : Node
 	//Level difficulty.
 	private int _levelDifficulty = 5;
 	//Seed for random generation.
-	private int _seed = 1;
+	private int _seed = 5;
 	//Random seed.
 	private bool _isRandomSeed = true;
 	//Instance of the setting class.

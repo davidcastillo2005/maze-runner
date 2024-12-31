@@ -21,6 +21,9 @@ Global="*res://Scripts/Global.cs"
 
 [display]
 
+window/size/viewport_width=720
+window/size/viewport_height=720
+window/size/mode=2
 window/stretch/mode="canvas_items"
 
 [dotnet]
