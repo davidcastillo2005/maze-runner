@@ -23,13 +23,14 @@ z_index = 1
 z_as_relative = false
 tile_set = SubResource("TileSet_4wqoe")
 script = ExtResource("3_7j6rw")
+isChessBoardPattern = false
 
 [node name="Token" parent="Node2D" instance=ExtResource("1_8oosl")]
 z_index = 2
 z_as_relative = false
 
 [node name="Camera2D" type="Camera2D" parent="Node2D/Token"]
-zoom = Vector2(6.429, 6.429)
+zoom = Vector2(5, 5)
 
 [node name="ColorRect" type="MeshInstance2D" parent="Node2D/Token"]
 z_as_relative = false
@@ -39,3 +40,4 @@ mesh = SubResource("QuadMesh_yvrlb")
 
 [node name="Camera2D" type="Camera2D" parent="Node2D"]
 enabled = false
+zoom = Vector2(0.4, 0.4)

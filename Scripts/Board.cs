@@ -1,5 +1,6 @@
 using Godot;
 using MazeRunner.Scripts.Data;
+using MazeRunner.Scripts.Logic;
 using System;
 
 public partial class Board : TileMapLayer
@@ -14,10 +15,13 @@ public partial class Board : TileMapLayer
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		// _global
 		//Get global script.
 		_global = GetNode<Global>("/root/Global");
 		//Get map from the global script.
-		_map = _global.Setting.Map;
+		_map = _global.Setting.MazeGenerator.Maze;
+		//Print the seed used to generate map.
+		GD.Print(_global.Setting.MazeGenerator.Seed);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

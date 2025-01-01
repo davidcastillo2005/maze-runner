@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using Godot;
 using MazeRunner.Scripts.Data;
 namespace MazeRunner.Scripts.Logic
 {
@@ -13,59 +11,68 @@ namespace MazeRunner.Scripts.Logic
         public Tile[,] Maze { get => _maze; set => _maze = value; }
         private Tile[,] _maze;
 
+        public int Size => _size;
         private int _size;
+
+        public int Seed => _seed;
         private int _seed;
-        private int _fillPercentage;
-        private List<(int x, int y)> _visitedCoords = new();
-        private (int x, int y) _initialCoord = (1, 1);
+
         private Random _random;
 
-        public MazeGenerator(int size, int seed, bool isRandomSeed, int fillPercentage)
+        public MazeGenerator(int size, int seed, bool isRandomSeed)
         {
-            _size = 11;
-            _seed = seed;
-            _fillPercentage = fillPercentage;
+            _size = size % 2 == 0 ? size + 1 : size;
             if (isRandomSeed)
             {
-                _seed = DateTime.Now.Millisecond;
+                _seed = (int)DateTime.Now.Ticks;
+            }
+            else
+            {
+                _seed = seed;
             }
             _random = new(_seed);
-            GenerateMaze();
         }
 
         public bool IsInsideBounds((int x, int y) coord) => coord.x >= 0 && coord.y >= 0 && coord.x < _maze.GetLength(0) && coord.y < _maze.GetLength(1);
 
-        void GenerateMazeRandomizedDFS((int x, int y) currentCoord)
+        void GenerateMazeRandomizedDFS((int x, int y) currentCoord, bool[,] maskVisitedCoords)
         {
-            _visitedCoords.Add(currentCoord);
+            maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
             _maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
-            ShuffleA(_directions);
+            Shuffle(_directions);
             foreach ((int x, int y) in _directions)
             {
                 (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
-                if (!_visitedCoords.Contains(neighbourCoord) && IsInsideBounds(neighbourCoord))
+                if (IsInsideBounds(neighbourCoord) && !maskVisitedCoords[neighbourCoord.x, neighbourCoord.y])
                 {
                     _maze[neighbourCoord.x, neighbourCoord.y] = new Empty(neighbourCoord.x, neighbourCoord.y);
 
                     (int x, int y) inBetweenCoord = ((neighbourCoord.x + currentCoord.x) / 2, (neighbourCoord.y + currentCoord.y) / 2);
                     _maze[inBetweenCoord.x, inBetweenCoord.y] = new Empty(inBetweenCoord.x, inBetweenCoord.y);
 
-                    GenerateMazeRandomizedDFS(neighbourCoord);
+                    GenerateMazeRandomizedDFS(neighbourCoord, maskVisitedCoords);
                 }
             }
         }
 
-        void ShuffleA((int x, int y)[] coordsArray)
+        void Shuffle((int x, int y)[] coordsArray)
         {
             for (int i = coordsArray.Length - 1; i > 0; i--)
             {
                 int j = _random.Next(0, i + 1);
-                (int x, int y) temp = coordsArray[i];
-                coordsArray[i] = coordsArray[j];
-                coordsArray[j] = temp;
+                (coordsArray[j], coordsArray[i]) = (coordsArray[i], coordsArray[j]);
             }
         }
-        void GenerateMaze()
+        public void GenerateMaze()
+        {
+            InitializeMaze();
+            bool[,] maskVisitedCoords = InitializeVisitedCoords();
+            GenerateMazeRandomizedDFS(GetInitialCoord(), maskVisitedCoords);
+            CreateSpawner();
+            CreateExit();
+        }
+
+        private void InitializeMaze()
         {
             _maze = new Tile[_size, _size];
             for (int x = 0; x < _size; x++)
@@ -75,65 +82,84 @@ namespace MazeRunner.Scripts.Logic
                     _maze[x, y] = new Wall(x, y);
                 }
             }
-            GenerateMazeRandomizedDFS(_initialCoord);
-            CreateSpawner(0, 1);
-            CreateExit(0, _size - 2);
         }
 
-        (int x, int y) GetSpawnerCoord()
-        {
-            List<(int x, int y)> spawnerCoord = new();
-            for (int x = 0; x < _size; x++)
-            {
-                for (int y = 0; y < _size; y++)
-                {
-                    if (_maze[x, y].GetType() == typeof(Spawner))
-                    {
-                        spawnerCoord.Add((x, y));
-                    }
-                }
-            }
-            if (spawnerCoord.Count > 0)
-            {
-                return spawnerCoord[0];
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
-
-        void CreateBoundaries()
+        private bool[,] InitializeVisitedCoords()
         {
             for (int x = 0; x < _size; x++)
             {
                 for (int y = 0; y < _size; y++)
                 {
-                    if (x == 0 || y == 0 || x == _size - 1 || y == _size - 1)
-                    {
-                        if (_maze[x, y].GetType() != typeof(Spawner) && _maze[x, y].GetType() != typeof(Exit)) _maze[x, y] = new Wall(x, y);
-                    }
+                    (new bool[_size, _size])[x, y] = false;
                 }
             }
+            return new bool[_size, _size];
         }
 
-        void RandomizeTiles()
+        (int x, int y) GetInitialCoord()
         {
+            int x;
+            int y;
+            do
+            {
+                x = _random.Next(_size);
+                y = _random.Next(_size);
+            } while (x % 2 == 0 || y % 2 == 0);
+            return (x, y);
+        }
 
+        void CreateExit()
+        {
+            List<(int x, int y)> coords = new();
             for (int i = 0; i < _size; i++)
             {
-                for (int j = 0; j < _size; j++)
+                if (_maze[i, 0 + 1] is Empty && _maze[i, 0] is not Spawner)
                 {
-                    if (_random.Next(0, 100) < _fillPercentage)
-                    {
-                        _maze[i, j] = new Wall(i, j);
-                    }
-                    else
-                    {
-                        _maze[i, j] = new Empty(i, j);
-                    }
+                    coords.Add((i, 0));
+                }
+                if (_maze[0 + 1, i] is Empty && _maze[0, i] is not Spawner)
+                {
+                    coords.Add((0, i));
+                }
+                if (_maze[i, _size - 1 - 1] is Empty && _maze[i, _size - 1] is not Spawner)
+                {
+                    coords.Add((i, _size - 1));
+                }
+                if (_maze[_size - 1 - 1, i] is Empty && _maze[_size - 1, i] is not Spawner)
+                {
+                    coords.Add((i, _size - 1));
                 }
             }
+
+            int index = _random.Next(coords.Count);
+            CreateExit(coords[index].x, coords[index].y);
+        }
+
+        void CreateSpawner()
+        {
+            List<(int x, int y)> coords = new();
+            for (int i = 0; i < _size; i++)
+            {
+                if (_maze[i, 0 + 1] is Empty)
+                {
+                    coords.Add((i, 0));
+                }
+                if (_maze[0 + 1, i] is Empty)
+                {
+                    coords.Add((0, i));
+                }
+                if (_maze[i, _size - 1 - 1] is Empty)
+                {
+                    coords.Add((i, _size - 1));
+                }
+                if (_maze[_size - 1 - 1, i] is Empty)
+                {
+                    coords.Add((i, _size - 1));
+                }
+            }
+
+            int index = _random.Next(coords.Count);
+            CreateSpawner(coords[index].x, coords[index].y);
         }
 
         void CreateSpawner(int x, int y)
@@ -144,62 +170,6 @@ namespace MazeRunner.Scripts.Logic
         void CreateExit(int x, int y)
         {
             _maze[x, y] = new Exit(x, y);
-        }
-
-        void CreateSpawner()
-        {
-            List<(int x, int y)> listCoordsOnBounds = new();
-
-            for (int x = 0; x < _size; x++)
-            {
-                for (int y = 0; y < _size; y++)
-                {
-                    if ((x == 0 || y == 0 || x == _size - 1 || y == _size - 1) && _maze[x, y].GetType() != typeof(Exit))
-                    {
-                        foreach (var item in _directions)
-                        {
-                            (int x, int y) neighbourCoord = (item.x + x, item.y + y);
-                            if (_maze[neighbourCoord.x, neighbourCoord.y].GetType() == typeof(Empty))
-                            {
-                                listCoordsOnBounds.Add((x, y));
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            int listIndex = _random.Next(0, listCoordsOnBounds.Count - 1);
-            (int x, int y) spawnerCoord = (listCoordsOnBounds[listIndex].x, listCoordsOnBounds[listIndex].y);
-            CreateSpawner(spawnerCoord.x, spawnerCoord.y);
-        }
-
-        void CreateExit()
-        {
-            List<(int x, int y)> listCoordsOnBounds = new();
-
-            for (int x = 0; x < _size; x++)
-            {
-                for (int y = 0; y < _size; y++)
-                {
-                    if ((x == 0 || y == 0 || x == _size - 1 || y == _size - 1) && _maze[x, y].GetType() != typeof(Spawner))
-                    {
-                        foreach (var item in _directions)
-                        {
-                            (int x, int y) neighbourCoord = (item.x + x, item.y + y);
-                            if (_maze[neighbourCoord.x, neighbourCoord.y].GetType() == typeof(Empty))
-                            {
-                                listCoordsOnBounds.Add((x, y));
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            int listIndex = _random.Next(0, listCoordsOnBounds.Count - 1);
-            (int x, int y) exitTile = (listCoordsOnBounds[listIndex].x, listCoordsOnBounds[listIndex].y);
-            _maze[exitTile.x, exitTile.y] = new Exit(exitTile.x, exitTile.y);
         }
     }
 }

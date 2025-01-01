@@ -25,7 +25,7 @@ public partial class Token : CharacterBody2D
 		//Get the global script.
 		_global = GetNode<Global>("/root/Global");
 		//Get the map from the global script.
-		_map = _global.Setting.Map;
+		_map = _global.Setting.MazeGenerator.Maze;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

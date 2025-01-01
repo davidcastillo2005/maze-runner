@@ -13,23 +13,9 @@ namespace MazeRunner.Scripts.Logic
         public int Size { get => _size; set => _size = value; }
         private int _size;
         /// <summary>
-        /// Seed for random generation.
-        /// </summary>
-        public int Seed { get => _seed; set => _seed = value; }
-        private int _seed;
-        /// <summary>
-        /// Map generated.
-        /// </summary>
-        public Tile[,] Map { get => _map; set => _map = value; }
-        private Tile[,] _map;
-        /// <summary>
-        /// Fill percentage of the map.
-        /// </summary>
-        private int _fillPercentage = 20;
-        /// <summary>
         /// Instance of the Map Generator class.
         /// </summary>
-        private MazeGenerator _mazeGenerator;
+        public MazeGenerator MazeGenerator { get; private set; }
 
         /// <summary>
         /// Setting constructor.
@@ -40,11 +26,11 @@ namespace MazeRunner.Scripts.Logic
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
             //Size is supported by the Level Difficulty.
-            _size = 2 * levelDifficulty + 1;
+            _size = 4 * levelDifficulty + 1;
             //Create a new instance of the Map Generator class.
-            _mazeGenerator = new(_size, seed, isRandomSeed, _fillPercentage);
+            MazeGenerator = new(_size, seed, isRandomSeed);
             //Get map generated from Map Generator.
-            _map = _mazeGenerator.Maze;
+            // _map = _mazeGenerator.Maze;
         }
     }
 }
