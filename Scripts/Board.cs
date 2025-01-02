@@ -20,8 +20,6 @@ public partial class Board : TileMapLayer
 		_global = GetNode<Global>("/root/Global");
 		//Get map from the global script.
 		_map = _global.Setting.MazeGenerator.Maze;
-		//Print the seed used to generate map.
-		GD.Print(_global.Setting.MazeGenerator.Seed);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

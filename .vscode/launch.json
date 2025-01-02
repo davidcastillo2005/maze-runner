@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🕹 Debug Game",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "C:\\Users\\Audiovisual1\\Downloads\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "🎭 Debug Current Scene",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "C:\\Users\\Audiovisual1\\Downloads\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64.exe",
+            "args": [
+                "${fileDirname}/${fileBasenameNoExtension}.tscn"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+    ]
+}

@@ -4,23 +4,21 @@ using MazeRunner.Scripts.Logic;
 
 public partial class Global : Node
 {
-	//Level difficulty.
-	private int _levelDifficulty = 10;
-	//Seed for random generation.
+	private int _levelDifficulty = 6;
+	
 	private int _seed = 202;
-	//Random seed.
-	private bool _isRandomSeed = false;
-	//Instance of the setting class.
+	
+	private bool _isRandomSeed = true;
+	
 	public Setting Setting { get; set; }
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		//Create a new instance of the setting class.
 		Setting = new(_levelDifficulty, _seed, _isRandomSeed);
+		GD.Print("Maze size: " + Setting.MazeGenerator.Size);
+		GD.Print("Seed: " + Setting.MazeGenerator.Seed);
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 	}

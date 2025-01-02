@@ -1,3 +1,5 @@
+//TODO: Error con el generador de laberintos (prueba con semilla: 757191438, -379204873, -1124538791).
+
 using System;
 using System.Collections.Generic;
 using MazeRunner.Scripts.Data;
@@ -17,7 +19,13 @@ namespace MazeRunner.Scripts.Logic
         public int Seed => _seed;
         private int _seed;
 
-        private Random _random;
+        public (int x, int y) SpawnerCoord => _spawnerCoord;
+        private (int x, int y) _spawnerCoord;
+
+        public (int x, int y) ExitCoord => _exitCoord;
+        private (int x, int y) _exitCoord;
+
+        private readonly Random _random;
 
         public MazeGenerator(int size, int seed, bool isRandomSeed)
         {
@@ -98,8 +106,7 @@ namespace MazeRunner.Scripts.Logic
 
         (int x, int y) GetInitialCoord()
         {
-            int x;
-            int y;
+            int x; int y;
             do
             {
                 x = _random.Next(_size);
@@ -132,7 +139,8 @@ namespace MazeRunner.Scripts.Logic
             }
 
             int index = _random.Next(coords.Count);
-            CreateExit(coords[index].x, coords[index].y);
+            _exitCoord = (coords[index].x, coords[index].y);
+            CreateExit(ExitCoord.x, ExitCoord.y);
         }
 
         void CreateSpawner()
@@ -159,6 +167,7 @@ namespace MazeRunner.Scripts.Logic
             }
 
             int index = _random.Next(coords.Count);
+            _spawnerCoord = (coords[index].x, coords[index].y);
             CreateSpawner(coords[index].x, coords[index].y);
         }
 

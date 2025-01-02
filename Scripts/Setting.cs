@@ -30,7 +30,6 @@ namespace MazeRunner.Scripts.Logic
             //Create a new instance of the Map Generator class.
             MazeGenerator = new(_size, seed, isRandomSeed);
             //Get map generated from Map Generator.
-            // _map = _mazeGenerator.Maze;
         }
     }
 }

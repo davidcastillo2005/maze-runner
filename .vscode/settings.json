@@ -1,0 +1,7 @@
+{
+    "dotnet.defaultSolution": "Data.sln",
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
+    }
+}

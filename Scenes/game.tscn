@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://2q322tyxvreq"]
+[gd_scene load_steps=8 format=3 uid="uid://2q322tyxvreq"]
 
 [ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/token.tscn" id="1_8oosl"]
 [ext_resource type="Texture2D" uid="uid://chrssh0jflyr1" path="res://icon.svg" id="2_0jn2t"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="3_7j6rw"]
+[ext_resource type="Script" path="res://Scripts/PlayerCamera.cs" id="4_ii6ff"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv1p2"]
 texture = ExtResource("2_0jn2t")
@@ -29,15 +30,16 @@ isChessBoardPattern = false
 z_index = 2
 z_as_relative = false
 
-[node name="Camera2D" type="Camera2D" parent="Node2D/Token"]
-zoom = Vector2(5, 5)
-
 [node name="ColorRect" type="MeshInstance2D" parent="Node2D/Token"]
 z_as_relative = false
-position = Vector2(0, -4.29153e-06)
-scale = Vector2(112, 112)
+scale = Vector2(144, 144)
 mesh = SubResource("QuadMesh_yvrlb")
 
 [node name="Camera2D" type="Camera2D" parent="Node2D"]
+position = Vector2(0, 1)
 enabled = false
 zoom = Vector2(0.4, 0.4)
+
+[node name="PlayerCamera" type="Camera2D" parent="Node2D"]
+zoom = Vector2(5, 5)
+script = ExtResource("4_ii6ff")
