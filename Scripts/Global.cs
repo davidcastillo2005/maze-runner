@@ -1,10 +1,10 @@
-using System.IO;
 using Godot;
 using MazeRunner.Scripts.Logic;
 
 public partial class Global : Node
 {
-	private int _levelDifficulty = 6;
+	public int LevelDifficulty => _levelDifficulty;
+	private int _levelDifficulty = 4;
 	
 	private int _seed = 202;
 	
@@ -17,20 +17,10 @@ public partial class Global : Node
 		Setting = new(_levelDifficulty, _seed, _isRandomSeed);
 		GD.Print("Maze size: " + Setting.MazeGenerator.Size);
 		GD.Print("Seed: " + Setting.MazeGenerator.Seed);
+		Setting.MazeGenerator.GenerateMaze();
 	}
 
 	public override void _Process(double delta)
 	{
-	}
-
-	public void GoToScene(string path)
-	{
-		Setting.MazeGenerator.GenerateMaze();
-		GetTree().ChangeSceneToFile(path);
-	}
-
-	public void QuitGame()
-	{
-		GetTree().Quit();
 	}
 }

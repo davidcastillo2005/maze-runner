@@ -5,26 +5,31 @@ using MazeRunner.Scripts.Logic;
 
 public partial class Token : CharacterBody2D
 {
-	enum State { Spawning, Idle, Moving, Winning }
+	private Global _global;
+	private Tile[,] maze;
+	private int size;
+	private (int x, int y) _input;
+	private PlayerCamera _playerCamera;
+	private Board _board;
 
+	private MazeGenerator _mazeGenerator;
+
+	enum State { Spawning, Idle, Moving, Winning }
 	private State _currentState = State.Spawning;
 
 	public (int x, int y) TokenCoord => _tokenCoord;
 	private (int x, int y) _tokenCoord;
 
-	private Global _global;
-	private Tile[,] maze;
-	private int size;
-	private (int x, int y) _input;
-	private MazeGenerator _mazeGenerator;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		_playerCamera = GetNode<PlayerCamera>("/root/Game/Node2D/PlayerCamera");
 		_global = GetNode<Global>("/root/Global");
 		maze = _global.Setting.MazeGenerator.Maze;
 		size = _global.Setting.MazeGenerator.Size;
 		_mazeGenerator = _global.Setting.MazeGenerator;
+		_board = GetNode<Board>("/root/Game/Node2D/Board");
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -52,14 +57,14 @@ public partial class Token : CharacterBody2D
 		}
 	}
 
-	int GetConvertedPos(int i)
+	float GetConvertedPos(int i)
 	{
-		return (2 * i + 1) * 8;
+		return (i + 0.5f) * _board.PixelSize;
 	}
 
 	void Idle()
 	{
-		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down") || Input.IsActionPressed("ui_left") || Input.IsActionPressed("ui_right"))
+		if ((Input.IsActionPressed("UIUp") || Input.IsActionPressed("UIDown") || Input.IsActionPressed("UILeft") || Input.IsActionPressed("UIRight")) && _playerCamera._currentState is not PlayerCamera.State.Free)
 		{
 			_currentState = State.Moving;
 		}
@@ -71,25 +76,25 @@ public partial class Token : CharacterBody2D
 
 	void Move()
 	{
-		if (!Input.IsActionPressed("ui_up") && !Input.IsActionPressed("ui_down") && !Input.IsActionPressed("ui_left") && !Input.IsActionPressed("ui_right"))
+		if (!Input.IsActionPressed("UIUp") && !Input.IsActionPressed("UIDown") && !Input.IsActionPressed("UILeft") && !Input.IsActionPressed("UIRight"))
 		{
 			_currentState = State.Idle;
 		}
 		else
 		{
-			if (Input.IsActionPressed("ui_up"))
+			if (Input.IsActionPressed("UIUp"))
 			{
 				_input.y += -1;
 			}
-			if (Input.IsActionPressed("ui_down"))
+			if (Input.IsActionPressed("UIDown"))
 			{
 				_input.y += 1;
 			}
-			if (Input.IsActionPressed("ui_left"))
+			if (Input.IsActionPressed("UILeft"))
 			{
 				_input.x += -1;
 			}
-			if (Input.IsActionPressed("ui_right"))
+			if (Input.IsActionPressed("UIRight"))
 			{
 				_input.x += 1;
 			}
@@ -129,6 +134,6 @@ public partial class Token : CharacterBody2D
 
 	void Win()
 	{
-		_global.QuitGame();
+		GetTree().Quit();
 	}
 }

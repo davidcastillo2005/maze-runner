@@ -54,3 +54,4 @@ size_flags_horizontal = 4
 text = "Quit"
 
 [connection signal="button_down" from="VBoxContainer/PlayButton" to="." method="OnPlayButtonDown"]
+[connection signal="button_down" from="VBoxContainer/QuitButton" to="." method="OnQuitButtonDown"]
