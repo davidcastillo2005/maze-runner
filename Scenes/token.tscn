@@ -1,21 +1,29 @@
-[gd_scene load_steps=5 format=3 uid="uid://bjoeblbdmvsm1"]
+[gd_scene load_steps=6 format=3 uid="uid://bjoeblbdmvsm1"]
 
 [ext_resource type="Script" path="res://Scripts/Token.cs" id="1_sacbm"]
-[ext_resource type="Texture2D" uid="uid://blhc51yjc1a6r" path="res://Resources/BoardAtlas.png" id="2_yf52n"]
+[ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="2_fcpdt"]
+[ext_resource type="Script" path="res://Scripts/SpikeTrappedTimer.cs" id="3_y5vmm"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4dnag"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(0.5, 0.5)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_j8ggb"]
-atlas = ExtResource("2_yf52n")
-region = Rect2(4, 0, 1, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_uggnw"]
+atlas = ExtResource("2_fcpdt")
+region = Rect2(79, 62, 2, 2)
 
 [node name="Token" type="CharacterBody2D"]
 script = ExtResource("1_sacbm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_4dnag")
+scale = Vector2(64, 64)
+shape = SubResource("RectangleShape2D_wmeri")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
-texture = SubResource("AtlasTexture_j8ggb")
+scale = Vector2(16, 16)
+texture = SubResource("AtlasTexture_uggnw")
+
+[node name="SpikeTrappedTimer" type="Timer" parent="."]
+wait_time = 10.0
+script = ExtResource("3_y5vmm")
+
+[connection signal="timeout" from="SpikeTrappedTimer" to="." method="OnSpikeTrappedTimerTimeout"]

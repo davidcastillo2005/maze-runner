@@ -1,107 +1,98 @@
 using Godot;
-using MazeRunner.Scripts.Logic;
 using System;
+using MazeRunner.Scripts.Logic;
+
+namespace MazeRunner.Scripts;
 
 public partial class PlayerCamera : Camera2D
 {
-	private Token _tokenNode;
-	private Global _global;
-	private Board _board;
-	private MazeGenerator _mazeGenerator;
+    private Token _tokenNode;
+    private Global _global;
+    private Board _board;
+    private MazeGenerator _mazeGenerator;
 
-	private int _pixelSize;
+    public enum State
+    {
+        Player,
+        Free,
+        Extensive
+    }
 
-	(int x, int y) _cameraOffset = (0, 0);
+    public State CurrentState { get; private set; }
 
-	public enum State
-	{
-		Player,
-		Free,
-		Extensive
-	}
+    private int _tileSize;
+    private Vector2 _cameraOffset;
+    private Vector2 _input;
 
-	public State CurrentState => _currentState;
-	public State _currentState = State.Player;
+    public override void _Ready()
+    {
+        _board = GetNode<Board>("/root/Game/MainGame/Board");
+        _tileSize = _board.TileSize;
+        _tokenNode = GetNode<Token>("/root/Game/MainGame/Token");
+        _global = GetNode<Global>("/root/Global");
+        _mazeGenerator = _global.Setting.MazeGenerator;
 
-	public override void _Ready()
-	{
-		_board = GetNode<Board>("/root/Game/Node2D/Board");
-		_pixelSize = _board.PixelSize;
-		_tokenNode = GetNode<Token>("/root/Game/Node2D/Token");
-		_global = GetNode<Global>("/root/Global");
-		_mazeGenerator = _global.Setting.MazeGenerator;
+        CurrentState = State.Player;
+        _input = Vector2.Zero;
+        _cameraOffset = Vector2.Zero;
 
-		Zoom = new Vector2((float)(Math.Pow(_pixelSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720), (float)(Math.Pow(_pixelSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
+        Zoom = new Vector2((float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720),
+            (float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
 
-		if (_global.LevelDifficulty < 5)
-		{
-			_currentState = State.Extensive;
-		}
-	}
+        if (_global.LevelDifficulty < 5)
+        {
+            CurrentState = State.Extensive;
+        }
+    }
 
-	public override void _Process(double delta)
-	{
-		switch (_currentState)
-		{
-			case State.Player:
-				if (Input.IsActionJustPressed("UIShiftCamera"))
-				{
-					_currentState = State.Free;
-				}
-				else
-				{
+    public override void _Input(InputEvent @event)
+    {
+        _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
+        _cameraOffset += _tileSize * _input;
+    }
 
-					OnPlayer();
-				}
-				break;
-			case State.Free:
-				if (Input.IsActionJustPressed("UIShiftCamera"))
-				{
-					_cameraOffset = (0, 0);
-					_currentState = State.Player;
-				}
-				else
-				{
-					OnFree();
-				}
-				break;
-			case State.Extensive: OnExtensive(); break;
-		}
-	}
+    public override void _Process(double delta)
+    {
+        switch (CurrentState)
+        {
+            case State.Player:
+                if (Input.IsActionJustPressed("UIShiftCamera"))
+                {
+                    CurrentState = State.Free;
+                }
+                else
+                {
+                    OnPlayer();
+                }
 
-	void OnPlayer()
-	{
-		Position = _tokenNode.Position;
-	}
+                break;
+            case State.Free:
+                if (Input.IsActionJustPressed("UIShiftCamera"))
+                {
+                    CurrentState = State.Player;
+                }
+                else
+                {
+                    OnFree();
+                }
 
-	void OnFree()
-	{
-		HandleOnFreeMovement();
-	}
+                break;
+            case State.Extensive: OnExtensive(); break;
+        }
+    }
 
-	void OnExtensive()
-	{
-		Position = new Vector2(_mazeGenerator.Size * _pixelSize * 0.5f, _mazeGenerator.Size * _pixelSize * 0.5f);
-	}
+    private void OnPlayer()
+    {
+        Position = _tokenNode.Position;
+    }
 
-	void HandleOnFreeMovement()
-	{
-		if (Input.IsActionPressed("UIRight"))
-		{
-			_cameraOffset.x += 1 * _pixelSize;
-		}
-		if (Input.IsActionPressed("UILeft"))
-		{
-			_cameraOffset.x -= 1 * _pixelSize;
-		}
-		if (Input.IsActionPressed("UIUp"))
-		{
-			_cameraOffset.y -= 1 * _pixelSize;
-		}
-		if (Input.IsActionPressed("UIDown"))
-		{
-			_cameraOffset.y += 1 * _pixelSize;
-		}
-		Position = new Vector2(_tokenNode.Position.X + _cameraOffset.x, _tokenNode.Position.Y + _cameraOffset.y);
-	}
+    private void OnFree()
+    {
+        Position = _tokenNode.Position + _cameraOffset;
+    }
+
+    private void OnExtensive()
+    {
+        Position = new Vector2(_mazeGenerator.Size * _tileSize * 0.5f, _mazeGenerator.Size * _tileSize * 0.5f);
+    }
 }

@@ -1,37 +1,42 @@
-[gd_scene load_steps=7 format=3 uid="uid://2q322tyxvreq"]
+[gd_scene load_steps=8 format=4 uid="uid://2q322tyxvreq"]
 
 [ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/token.tscn" id="1_8oosl"]
-[ext_resource type="Texture2D" uid="uid://blhc51yjc1a6r" path="res://Resources/BoardAtlas.png" id="1_p5co4"]
+[ext_resource type="Script" path="res://Scripts/MainGame.cs" id="1_a0sd4"]
+[ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="1_vkpc8"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="3_7j6rw"]
 [ext_resource type="Script" path="res://Scripts/PlayerCamera.cs" id="4_ii6ff"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wwem2"]
-texture = ExtResource("1_p5co4")
-texture_region_size = Vector2i(1, 1)
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l6rc5"]
+texture = ExtResource("1_vkpc8")
+texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
 [sub_resource type="TileSet" id="TileSet_4wqoe"]
-tile_size = Vector2i(1, 1)
-sources/2 = SubResource("TileSetAtlasSource_wwem2")
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 3
+sources/2 = SubResource("TileSetAtlasSource_l6rc5")
 
 [node name="Game" type="Node2D"]
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="MainGame" type="Node2D" parent="."]
+script = ExtResource("1_a0sd4")
 
-[node name="Board" type="TileMapLayer" parent="Node2D"]
+[node name="Board" type="TileMapLayer" parent="MainGame"]
 z_index = 1
 z_as_relative = false
+tile_map_data = PackedByteArray("AAAAAAAAAgADAAAAAAABAAAAAgADAAAAAAACAAAAAgADAAAAAAACAAEAAgAAAAAAAAADAAEAAgAAAAAAAAACAAIAAgADAAAAAAABAAIAAgAAAAAAAAABAAEAAgAAAAAAAAAAAAEAAgAAAAAAAAAAAAIAAgADAAAAAAACAAMAAgADAAAAAAADAAMAAgAAAAAAAAADAAIAAgADAAAAAAAEAAIAAgADAAAAAAAEAAEAAgAAAAAAAAAEAAAAAgADAAAAAAAFAAMAAgAAAAAAAAAEAAMAAgAAAAAAAAAEAAQAAgADAAAAAAADAAQAAgAAAAAAAAACAAQAAgADAAAAAAADAAAAAgADAAAAAAAFAAAAAgADAAAAAAAGAAAAAgADAAAAAAAHAAAAAgADAAAAAAAIAAAAAgADAAAAAAAJAAAAAgADAAAAAAAKAAAAAgADAAAAAAAKAAEAAgADAAAAAAAKAAIAAgADAAAAAAAKAAMAAgADAAAAAAAKAAQAAgADAAAAAAAKAAUAAgADAAAAAAAKAAYAAgADAAAAAAAKAAcAAgADAAAAAAAKAAgAAAAAAAAAAAAKAAkAAgAAAAAAAAAKAAoAAgADAAAAAAAJAAoAAgADAAAAAAAIAAoAAgADAAAAAAAHAAoAAgADAAAAAAAGAAoAAgADAAAAAAAFAAoAAgADAAAAAAAEAAoAAgADAAAAAAADAAoAAgADAAAAAAACAAoAAgADAAAAAAABAAoAAgADAAAAAAAAAAoAAgADAAAAAAAAAAkAAgADAAAAAAAAAAgAAgADAAAAAAAAAAcAAgADAAAAAAAAAAYAAgADAAAAAAAAAAUAAgADAAAAAAAAAAQAAgADAAAAAAAAAAMAAgADAAAAAAAFAAIAAgADAAAAAAAFAAYAAgADAAAAAAAFAAUAAgAAAAAAAAAFAAQAAgADAAAAAAAGAAQAAgADAAAAAAAGAAMAAgAAAAAAAAAGAAIAAgADAAAAAAAGAAEAAgAAAAAAAAAFAAEAAgAAAAAAAAAHAAEAAgAAAAAAAAAHAAIAAgADAAAAAAAHAAMAAgAAAAAAAAAHAAQAAgAAAAAAAAAHAAUAAgAAAAAAAAAGAAUAAgAAAAAAAAAGAAYAAgADAAAAAAAGAAcAAgAAAAAAAAAFAAcAAgAAAAAAAAAEAAcAAgAAAAAAAAAEAAYAAgADAAAAAAAEAAUAAgADAAAAAAADAAUAAgAAAAAAAAACAAUAAgADAAAAAAABAAUAAgAAAAAAAAABAAQAAgAAAAAAAAABAAMAAgAAAAAAAAABAAYAAgAAAAAAAAABAAcAAgAAAAAAAAABAAgAAgAAAAAAAAABAAkAAgAAAAAAAAACAAkAAgAAAAAAAAACAAgAAgADAAAAAAACAAcAAgADAAAAAAACAAYAAgADAAAAAAADAAYAAgAAAAAAAAADAAcAAgAAAAAAAAADAAgAAgADAAAAAAADAAkAAgAAAAAAAAAEAAkAAgAAAAAAAAAEAAgAAgADAAAAAAAFAAgAAgADAAAAAAAFAAkAAgAAAAAAAAAGAAkAAgAAAAAAAAAGAAgAAgADAAAAAAAHAAgAAgADAAAAAAAHAAcAAgAAAAAAAAAHAAYAAgADAAAAAAAIAAYAAgADAAAAAAAIAAUAAgADAAAAAAAIAAQAAgADAAAAAAAIAAMAAgADAAAAAAAIAAIAAgADAAAAAAAIAAEAAgAAAAAAAAAJAAEAAgAAAAAAAAAJAAIAAgAAAAAAAAAJAAMAAgAAAAAAAAAJAAQAAgAAAAAAAAAJAAUAAgAAAAAAAAAJAAYAAgAAAAAAAAAJAAcAAgAAAAAAAAAIAAcAAgAAAAAAAAAIAAgAAgADAAAAAAAIAAkAAgAAAAAAAAAHAAkAAgAAAAAAAAAJAAkAAgAAAAAAAAAJAAgAAgADAAAAAAA=")
 tile_set = SubResource("TileSet_4wqoe")
 script = ExtResource("3_7j6rw")
 
-[node name="Token" parent="Node2D" instance=ExtResource("1_8oosl")]
+[node name="Token" parent="MainGame" instance=ExtResource("1_8oosl")]
 z_index = 2
 z_as_relative = false
+position = Vector2(96, 96)
 
-[node name="PlayerCamera" type="Camera2D" parent="Node2D"]
+[node name="PlayerCamera" type="Camera2D" parent="MainGame"]
 zoom = Vector2(34.286, 34.286)
 script = ExtResource("4_ii6ff")
