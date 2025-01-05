@@ -8,13 +8,11 @@ namespace MazeRunner.Scripts.Data
         /// <summary>
         /// X component.
         /// </summary>
-        public int X { get => _x; set => _x = value; }
-        private int _x;
+        public int X { get; set; }
         /// <summary>
         /// Y component
         /// </summary>
-        public int Y { get => _y; set => _y = value; }
-        private int _y;
+        public int Y { get; set; }
 
         /// <summary>
         /// Tile constructor.
@@ -24,8 +22,8 @@ namespace MazeRunner.Scripts.Data
         public Tile(int x, int y)
         {
             //Assign values.
-            _x = x;
-            _y = y;
+            X = x;
+            Y = y;
         }
     }
 
@@ -79,5 +77,33 @@ namespace MazeRunner.Scripts.Data
         /// <param name="x"></param>
         /// <param name="y"></param>
         public Spawner(int x, int y) : base(x, y) { }
+    }
+
+    public class Trap : Empty
+    {
+        bool isActivated;
+        public Trap(int x, int y, bool isActivated) : base(x, y)
+        {
+            this.isActivated = isActivated;
+        }
+
+        public void Activate()
+        {
+            isActivated = true;
+        }
+
+        public void Deactivate()
+        {
+            isActivated = false;
+        }
+    }
+
+    public class Portal : Trap
+    {
+        (int x, int y)? finalPosition;
+        public Portal(int x, int y, bool isActivated, (int x, int y)? finalPosition) : base(x, y, isActivated)
+        {
+            this.finalPosition = finalPosition;
+        }
     }
 }

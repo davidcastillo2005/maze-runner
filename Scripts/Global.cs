@@ -4,7 +4,7 @@ using MazeRunner.Scripts.Logic;
 public partial class Global : Node
 {
 	public int LevelDifficulty => _levelDifficulty;
-	private int _levelDifficulty = 4;
+	private int _levelDifficulty = 12;
 	
 	private int _seed = 202;
 	
@@ -15,8 +15,6 @@ public partial class Global : Node
 	public override void _Ready()
 	{
 		Setting = new(_levelDifficulty, _seed, _isRandomSeed);
-		GD.Print("Maze size: " + Setting.MazeGenerator.Size);
-		GD.Print("Seed: " + Setting.MazeGenerator.Seed);
 		Setting.MazeGenerator.GenerateMaze();
 	}
 

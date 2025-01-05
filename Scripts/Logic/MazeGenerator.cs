@@ -1,26 +1,20 @@
 //TODO: Error con el generador de laberintos (prueba con semilla: 757191438, -379204873, -1124538791, -2130386984, 20293741, 332626077).
 using System;
 using System.Collections.Generic;
+using Godot;
 using MazeRunner.Scripts.Data;
 namespace MazeRunner.Scripts.Logic
 {
     public class MazeGenerator
     {
-        public (int x, int y)[] Directions { get => _directions; set => _directions = value; }
-        private (int x, int y)[] _directions = new (int x, int y)[] { (2, 0), (-2, 0), (0, 2), (0, -2) };
-        
-        public Tile[,] Maze => _maze;
-        private Tile[,] _maze;
-
+        public (int x, int y)[] Directions { get; } = { (2, 0), (-2, 0), (0, 2), (0, -2) };
+        public Tile[,] Maze { get; private set; }
         public int Size { get; set; }
-
         public int Seed { get; set; }
-
         public (int x, int y) SpawnerCoord { get; set; }
-
         public (int x, int y) ExitCoord { get; set; }
-
         private readonly Random _random;
+        public List<Portal> portalTiles = new();
 
         public MazeGenerator(int size, int seed, bool isRandomSeed)
         {
@@ -41,9 +35,9 @@ namespace MazeRunner.Scripts.Logic
         void GenerateMazeRandomizedDFS((int x, int y) currentCoord, bool[,] maskVisitedCoords)
         {
             maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
-            _maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
-            Shuffle(_directions);
-            foreach ((int x, int y) in _directions)
+            Maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
+            Shuffle(Directions);
+            foreach ((int x, int y) in Directions)
             {
                 (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
                 if (IsInsideBounds(neighbourCoord) && !maskVisitedCoords[neighbourCoord.x, neighbourCoord.y])
@@ -69,12 +63,12 @@ namespace MazeRunner.Scripts.Logic
 
         public void GenerateMaze()
         {
-            _maze = new Tile[Size, Size];
+            Maze = new Tile[Size, Size];
             for (int x = 0; x < Size; x++)
             {
                 for (int y = 0; y < Size; y++)
                 {
-                    _maze[x, y] = new Wall(x, y);
+                    Maze[x, y] = new Wall(x, y);
                 }
             }
             bool[,] maskVisitedCoords = new bool[Size, Size];
@@ -88,6 +82,7 @@ namespace MazeRunner.Scripts.Logic
             GenerateMazeRandomizedDFS(GetInitialCoord(), maskVisitedCoords);
             CreateSpawner();
             CreateExit();
+            CreatePortals();
         }
 
         (int x, int y) GetInitialCoord()
@@ -107,7 +102,7 @@ namespace MazeRunner.Scripts.Logic
             List<(int x, int y)> coords = new();
             for (int i = 0; i < Size; i++)
             {
-                if (_maze[i, 0 + 1] is Empty && _maze[i, 0] is not Spawner)
+                if (Maze[i, 0 + 1] is Empty && Maze[i, 0] is not Spawner)
                 {
                     bool allCoordsAreWalls = true;
 
@@ -117,7 +112,7 @@ namespace MazeRunner.Scripts.Logic
                         {
                             if (IsInsideBounds((i + j, 0 + k)))
                             {
-                                if (_maze[i + j, 0 + k] is Spawner)
+                                if (Maze[i + j, 0 + k] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -126,7 +121,7 @@ namespace MazeRunner.Scripts.Logic
 
                             if (IsInsideBounds((i - j, 0 + k)))
                             {
-                                if (_maze[i - j, 0 + k] is Spawner)
+                                if (Maze[i - j, 0 + k] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -141,7 +136,7 @@ namespace MazeRunner.Scripts.Logic
                     }
                 }
 
-                if (_maze[0 + 1, i] is Empty && _maze[0, i] is not Spawner)
+                if (Maze[0 + 1, i] is Empty && Maze[0, i] is not Spawner)
                 {
                     bool allCoordsAreWalls = true;
 
@@ -151,7 +146,7 @@ namespace MazeRunner.Scripts.Logic
                         {
                             if (IsInsideBounds((0 + k, i + j)))
                             {
-                                if (_maze[0 + k, i + j] is Spawner)
+                                if (Maze[0 + k, i + j] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -160,7 +155,7 @@ namespace MazeRunner.Scripts.Logic
 
                             if (IsInsideBounds((0 + k, i - j)))
                             {
-                                if (_maze[0 + k, i - j] is Spawner)
+                                if (Maze[0 + k, i - j] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -175,7 +170,7 @@ namespace MazeRunner.Scripts.Logic
                     }
                 }
 
-                if (_maze[i, Size - 1 - 1] is Empty && _maze[i, Size - 1] is not Spawner)
+                if (Maze[i, Size - 1 - 1] is Empty && Maze[i, Size - 1] is not Spawner)
                 {
                     bool allCoordsAreWalls = true;
 
@@ -185,7 +180,7 @@ namespace MazeRunner.Scripts.Logic
                         {
                             if (IsInsideBounds((i + j, Size - 1 - k)))
                             {
-                                if (_maze[i + j, Size - 1 - k] is Spawner)
+                                if (Maze[i + j, Size - 1 - k] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -194,7 +189,7 @@ namespace MazeRunner.Scripts.Logic
 
                             if (IsInsideBounds((i - j, Size - 1 - k)))
                             {
-                                if (_maze[i - j, Size - 1 - k] is Spawner)
+                                if (Maze[i - j, Size - 1 - k] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -209,7 +204,7 @@ namespace MazeRunner.Scripts.Logic
                     }
                 }
 
-                if (_maze[Size - 1 - 1, i] is Empty && _maze[Size - 1, i] is not Spawner)
+                if (Maze[Size - 1 - 1, i] is Empty && Maze[Size - 1, i] is not Spawner)
                 {
                     bool allCoordsAreWalls = true;
 
@@ -219,16 +214,16 @@ namespace MazeRunner.Scripts.Logic
                         {
                             if (IsInsideBounds((Size - 1 - k, i + j)))
                             {
-                                if (_maze[Size - 1 - k, i + j] is Spawner)
+                                if (Maze[Size - 1 - k, i + j] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
                                 }
                             }
-    
+
                             if (IsInsideBounds((Size - 1 - k, i - j)))
                             {
-                                if (_maze[Size - 1 - k, i - j] is Spawner)
+                                if (Maze[Size - 1 - k, i - j] is Spawner)
                                 {
                                     allCoordsAreWalls = false;
                                     break;
@@ -254,19 +249,19 @@ namespace MazeRunner.Scripts.Logic
             List<(int x, int y)> coords = new();
             for (int i = 0; i < Size; i++)
             {
-                if (_maze[i, 0 + 1] is Empty)
+                if (Maze[i, 0 + 1] is Empty)
                 {
                     coords.Add((i, 0));
                 }
-                if (_maze[0 + 1, i] is Empty)
+                if (Maze[0 + 1, i] is Empty)
                 {
                     coords.Add((0, i));
                 }
-                if (_maze[i, Size - 1 - 1] is Empty)
+                if (Maze[i, Size - 1 - 1] is Empty)
                 {
                     coords.Add((i, Size - 1));
                 }
-                if (_maze[Size - 1 - 1, i] is Empty)
+                if (Maze[Size - 1 - 1, i] is Empty)
                 {
                     coords.Add((Size - 1, i));
                 }
@@ -279,12 +274,37 @@ namespace MazeRunner.Scripts.Logic
 
         void CreateSpawner(int x, int y)
         {
-            _maze[x, y] = new Spawner(x, y);
+            Maze[x, y] = new Spawner(x, y);
         }
 
         void CreateExit(int x, int y)
         {
-            _maze[x, y] = new Exit(x, y);
+            Maze[x, y] = new Exit(x, y);
+        }
+
+        void CreatePortal((int x, int y) position, (int x, int y) finalPosition)
+        {
+            Maze[position.x, position.y] = new Portal(position.x, position.y, true, finalPosition);
+        }
+
+        void CreatePortals()
+        {
+            List<(int x, int y)> posibleCoords = new();
+
+            for (int x = 0; x < Size; x++)
+            {
+                for (int y = 0; y < Size; y++)
+                {
+                    if (Maze[x, y] is Empty && Maze[x, y] is not Spawner && Maze[x, y] is not Exit)
+                    {
+                        posibleCoords.Add((x, y));
+                    }
+                }
+            }
+
+            Portal portal = new Portal(posibleCoords[1].x, posibleCoords[1].y, true, (posibleCoords[5].x, posibleCoords[5].y));
+            Maze[posibleCoords[1].x, posibleCoords[1].y] = portal;
+            portalTiles.Add(portal);
         }
     }
 }

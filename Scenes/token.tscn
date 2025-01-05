@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Token.cs" id="1_sacbm"]
 [ext_resource type="Texture2D" uid="uid://blhc51yjc1a6r" path="res://Resources/BoardAtlas.png" id="2_yf52n"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4dnag"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(0.5, 0.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j8ggb"]
@@ -14,7 +14,7 @@ region = Rect2(4, 0, 1, 1)
 script = ExtResource("1_sacbm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_4dnag")
+shape = SubResource("RectangleShape2D_wmeri")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
