@@ -48,7 +48,6 @@ public partial class PlayerCamera : Camera2D
     public override void _Input(InputEvent @event)
     {
         _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
-        _cameraOffset += _tileSize * _input;
     }
 
     public override void _Process(double delta)
@@ -78,6 +77,8 @@ public partial class PlayerCamera : Camera2D
 
                 break;
             case State.Extensive: OnExtensive(); break;
+            default:
+                throw new Exception();
         }
     }
 
@@ -88,6 +89,7 @@ public partial class PlayerCamera : Camera2D
 
     private void OnFree()
     {
+        _cameraOffset += _tileSize * _input;
         Position = _tokenNode.Position + _cameraOffset;
     }
 

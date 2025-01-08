@@ -8,11 +8,11 @@ namespace MazeRunner.Scripts.Logic;
 
 public class MazeGenerator
 {
-    public (int x, int y)[] Directions { get; } = { (2, 0), (-2, 0), (0, 2), (0, -2) };
+    private readonly (int x, int y)[] _directions = { (2, 0), (-2, 0), (0, 2), (0, -2) };
     public Tile[,] Maze { get; private set; }
-    public int Size { get; set; }
-    public int Seed { get; set; }
-    public (int x, int y) SpawnerCoord { get; private set; }
+    public int Size { get; }
+    public int Seed { get; }
+    public (int x, int y) SpawnerCoord;
     public (int x, int y) ExitCoord { get; private set; }
     public List<(int x, int y)> SpikesTrapsCoords { get; } = new();
     private readonly Random _random;
@@ -29,18 +29,18 @@ public class MazeGenerator
             Seed = seed;
         }
 
-        _random = new(Seed);
+        _random = new Random(Seed);
     }
 
-    public bool IsInsideBounds((int x, int y) coord) => coord.x >= 0 && coord.y >= 0 &&
-                                                        coord.x < Maze.GetLength(0) && coord.y < Maze.GetLength(1);
+    private bool IsInsideBounds((int x, int y) coord) => coord.x >= 0 && coord.y >= 0 &&
+                                                         coord.x < Maze.GetLength(0) && coord.y < Maze.GetLength(1);
 
     private void GenerateMazeRandomizedDfs((int x, int y) currentCoord, bool[,] maskVisitedCoords)
     {
         maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
         Maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
-        Shuffle(Directions);
-        foreach ((int x, int y) in Directions)
+        Shuffle(_directions);
+        foreach ((int x, int y) in _directions)
         {
             (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
             if (IsInsideBounds(neighbourCoord) && !maskVisitedCoords[neighbourCoord.x, neighbourCoord.y])
@@ -56,7 +56,7 @@ public class MazeGenerator
         }
     }
 
-    void Shuffle((int x, int y)[] coordsArray)
+    private void Shuffle((int x, int y)[] coordsArray)
     {
         for (int i = coordsArray.Length - 1; i > 0; i--)
         {
@@ -90,6 +90,8 @@ public class MazeGenerator
         GenerateExit();
         GenerateSpikesTrap(15);
     }
+    
+    private 
 
     (int x, int y) GetInitialCoord()
     {

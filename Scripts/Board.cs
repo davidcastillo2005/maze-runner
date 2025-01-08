@@ -17,7 +17,6 @@ public partial class Board : TileMapLayer
         _mazeGenerator = _global.Setting.MazeGenerator;
         _mazeGenerator.GenerateMaze();
         TileSize = TileSet.TileSize.X;
-
     }
 
     public override void _Process(double delta)
@@ -32,12 +31,12 @@ public partial class Board : TileMapLayer
         {
             for (int y = 0; y < _mazeGenerator.Size; y++)
             {
-                if (_mazeGenerator.Maze[x, y] is Spikes) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0), 0);
-                else if (_mazeGenerator.Maze[x, y] is Empty) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0), 0);
-                else if (_mazeGenerator.Maze[x, y] is Wall) SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0), 0);
+                if (_mazeGenerator.Maze[x, y] is Spikes) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Empty) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Wall) SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0));
                 else if (_mazeGenerator.Maze[x, y] is Spawner)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0), 0);
-                else if (_mazeGenerator.Maze[x, y] is Exit) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0), 0);
+                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Exit) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
             }
         }
     }

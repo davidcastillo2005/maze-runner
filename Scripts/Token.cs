@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using MazeRunner.Scripts.Data;
 using MazeRunner.Scripts.Logic;
@@ -22,20 +23,24 @@ public partial class Token : CharacterBody2D
         Moving,
         Winning
     }
-    public State CurrentState { get; private set; }
+
+    public State CurrentState { get; private set; } = State.Spawning;
 
     public enum Condition
     {
         None,
         SpikeTrapped
     }
+
     public Condition CurrentCondition { get; private set; }
-    
+
     public string CurrentFloor { get; private set; }
-    
+
     private Vector2 _input;
     private Vector2I _tokenCoord;
     private float _speed;
+    private float _minPosition;
+    private float _maxPosition;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -47,42 +52,35 @@ public partial class Token : CharacterBody2D
         _spikeTrappedTimer = GetNode<SpikeTrappedTimer>("/root/Game/MainGame/Token/SpikeTrappedTimer");
         _timer = GetNode<SpikeTrappedTimer>("/root/Game/MainGame/Token/SpikeTrappedTimer");
 
+        _defaultSpeed *= _board.TileSize;
         CurrentState = State.Spawning;
         CurrentCondition = Condition.None;
-        _defaultSpeed *= _board.TileSize;
+        _input = Vector2.Zero;
+        _minPosition = GetConvertedPos(0) - _board.TileSize * (float)Math.Pow(4, -1);
+        _maxPosition = GetConvertedPos(_mazeGenerator.Size - 1) + _board.TileSize * (float)Math.Pow(4, -1);
+    }
+
+
+    public override void _Input(InputEvent @event)
+    {
+        if (_playerCamera.CurrentState == PlayerCamera.State.Player)
+        {
+            _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
+            if (_input == Vector2.Zero && CurrentState != State.Spawning)
+            {
+                CurrentState = State.Moving;
+            }
+        }
+        else
+        {
+            _input = Vector2.Zero;
+        }
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        if (Input.IsActionJustPressed("UIShiftCamera"))
-        {
-            CurrentState = State.Idle;
-        }
-
-        _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
-        CurrentState = _input == Vector2.Zero && _playerCamera.CurrentState != PlayerCamera.State.Free
-            ? State.Idle
-            : State.Moving;
-
         _tokenCoord = _board.LocalToMap(Position);
-
-        for (int i = 0; i < _mazeGenerator.SpikesTrapsCoords.Count; i++)
-        {
-            if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes)
-            {
-                if (CurrentCondition != Condition.SpikeTrapped)
-                {
-                    CurrentCondition = Condition.SpikeTrapped;
-                    _timer.Start();
-                }
-            }
-        }
-
-        if (CurrentCondition == Condition.SpikeTrapped && _timer.IsStopped())
-        {
-            CurrentCondition = Condition.None;
-        }
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y)
         {
@@ -105,6 +103,23 @@ public partial class Token : CharacterBody2D
                 break;
         }
 
+        for (int i = 0; i < _mazeGenerator.SpikesTrapsCoords.Count; i++)
+        {
+            if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes)
+            {
+                if (CurrentCondition != Condition.SpikeTrapped)
+                {
+                    CurrentCondition = Condition.SpikeTrapped;
+                    _timer.Start();
+                }
+            }
+        }
+
+        if (CurrentCondition == Condition.SpikeTrapped && _timer.IsStopped())
+        {
+            CurrentCondition = Condition.None;
+        }
+
         switch (CurrentCondition)
         {
             case Condition.None:
@@ -122,6 +137,11 @@ public partial class Token : CharacterBody2D
         else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Empty) CurrentFloor = "Empty";
     }
 
+    private void OnSpikeTrappedTimerTimeout()
+    {
+        CurrentCondition = Condition.None;
+    }
+
     private void ResetStats()
     {
         _speed = 20 * _board.TileSize;
@@ -130,11 +150,6 @@ public partial class Token : CharacterBody2D
     private void GetHurtBySpikeTrap()
     {
         _speed = 1 * _board.TileSize;
-    }
-
-    private void OnSpikeTrappedTimerTimeout()
-    {
-        CurrentCondition = Condition.None;
     }
 
     private float GetConvertedPos(int i)
@@ -150,10 +165,18 @@ public partial class Token : CharacterBody2D
     {
         Velocity = _input * _speed;
         MoveAndSlide();
+
+        Position = new Vector2(Math.Clamp(Position.X, _minPosition,
+                _maxPosition),
+            Math.Clamp(Position.Y, _minPosition,
+                _maxPosition));
     }
 
     private void Spawn()
     {
+        Position = new Vector2(GetConvertedPos(_mazeGenerator.SpawnerCoord.x),
+            GetConvertedPos(_mazeGenerator.SpawnerCoord.y));
+        CurrentState = State.Idle;
     }
 
     private void Win()
