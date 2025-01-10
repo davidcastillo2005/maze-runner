@@ -19,9 +19,8 @@ namespace MazeRunner.Scripts.Data
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public Tile(int x, int y)
+        protected Tile(int x, int y)
         {
-            //Assign values.
             X = x;
             Y = y;
         }
@@ -81,20 +80,20 @@ namespace MazeRunner.Scripts.Data
 
     public class Trap : Empty
     {
-        bool isActivated;
+        public bool IsActivated { get; set; }
         public Trap(int x, int y, bool isActivated) : base(x, y)
         {
-            this.isActivated = isActivated;
+            this.IsActivated = isActivated;
         }
 
         public void Activate()
         {
-            isActivated = true;
+            IsActivated = true;
         }
 
         public void Deactivate()
         {
-            isActivated = false;
+            IsActivated = false;
         }
     }
 

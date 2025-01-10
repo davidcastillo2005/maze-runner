@@ -52,7 +52,7 @@ public partial class Token : CharacterBody2D
         _spikeTrappedTimer = GetNode<SpikeTrappedTimer>("/root/Game/MainGame/Token/SpikeTrappedTimer");
         _timer = GetNode<SpikeTrappedTimer>("/root/Game/MainGame/Token/SpikeTrappedTimer");
 
-        _defaultSpeed *= _board.TileSize;
+        _speed = _defaultSpeed * _board.TileSize;
         CurrentState = State.Spawning;
         CurrentCondition = Condition.None;
         _input = Vector2.Zero;
@@ -103,14 +103,18 @@ public partial class Token : CharacterBody2D
                 break;
         }
 
-        for (int i = 0; i < _mazeGenerator.SpikesTrapsCoords.Count; i++)
+        foreach (var item in _mazeGenerator.SpikesTrapsCoords)
         {
-            if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes)
+            if (_tokenCoord.X == item.Key.x && _tokenCoord.Y == item.Key.y)
             {
-                if (CurrentCondition != Condition.SpikeTrapped)
+                if (item.Value.IsActivated)
                 {
-                    CurrentCondition = Condition.SpikeTrapped;
-                    _timer.Start();
+                    item.Value.Deactivate();
+                    if (CurrentCondition != Condition.SpikeTrapped)
+                    {
+                        CurrentCondition = Condition.SpikeTrapped;
+                        _timer.Start();
+                    }
                 }
             }
         }
@@ -144,12 +148,12 @@ public partial class Token : CharacterBody2D
 
     private void ResetStats()
     {
-        _speed = 20 * _board.TileSize;
+        _speed = _defaultSpeed * _board.TileSize;
     }
 
     private void GetHurtBySpikeTrap()
     {
-        _speed = 1 * _board.TileSize;
+        _speed = _board.TileSize;
     }
 
     private float GetConvertedPos(int i)
