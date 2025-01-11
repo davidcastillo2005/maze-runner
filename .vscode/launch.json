@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "C:\\Users\\Audiovisual1\\Downloads\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64.exe",
+            "program": "${config:godotTools.editorPath.godot4}",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -20,7 +20,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "C:\\Users\\Audiovisual1\\Downloads\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64.exe",
+            "program": "${config:godotTools.editorPath.godot4}",
             "args": [
                 "${fileDirname}/${fileBasenameNoExtension}.tscn"
             ],

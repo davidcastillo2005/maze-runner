@@ -6,8 +6,8 @@ public partial class Global : Node
     public int LevelDifficulty => _levelDifficulty;
     public Setting Setting { get; set; }
 
-    private int _levelDifficulty = 5;
-    private int _seed = 202;
+    private int _levelDifficulty = 10;
+    private int _seed = 757191438;
     private bool _isRandomSeed = true;
 
     public override void _Ready()

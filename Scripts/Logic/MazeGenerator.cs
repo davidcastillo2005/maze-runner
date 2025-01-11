@@ -14,8 +14,8 @@ public class MazeGenerator
     public int Seed { get; }
     public (int x, int y) SpawnerCoord;
     public (int x, int y) ExitCoord { get; private set; }
-    public List<(int x, int y)> SpikesTrapsCoords { get; } = new();
     private readonly Random _random;
+    private List<(int x, int y)> emptyCoords = new();
 
     public MazeGenerator(int size, int seed, bool isRandomSeed)
     {
@@ -32,8 +32,7 @@ public class MazeGenerator
         _random = new Random(Seed);
     }
 
-    private bool IsInsideBounds((int x, int y) coord) => coord.x >= 0 && coord.y >= 0 &&
-                                                         coord.x < Maze.GetLength(0) && coord.y < Maze.GetLength(1);
+    private bool IsInsideBounds(int x, int y) => x >= 0 && y >= 0 && x < Maze.GetLength(0) && y < Maze.GetLength(1);
 
     private void GenerateMazeRandomizedDfs((int x, int y) currentCoord, bool[,] maskVisitedCoords)
     {
@@ -43,7 +42,8 @@ public class MazeGenerator
         foreach ((int x, int y) in _directions)
         {
             (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
-            if (IsInsideBounds(neighbourCoord) && !maskVisitedCoords[neighbourCoord.x, neighbourCoord.y])
+            if (IsInsideBounds(neighbourCoord.x, neighbourCoord.y) &&
+                !maskVisitedCoords[neighbourCoord.x, neighbourCoord.y])
             {
                 Maze[neighbourCoord.x, neighbourCoord.y] = new Empty(neighbourCoord.x, neighbourCoord.y);
 
@@ -86,14 +86,13 @@ public class MazeGenerator
         }
 
         GenerateMazeRandomizedDfs(GetInitialCoord(), maskVisitedCoords);
+        GetEmptyCoords();
         GenerateSpawner();
         GenerateExit();
-        GenerateSpikesTrap(15);
+        GenerateSpikesTrap(1);
     }
-    
-    private 
 
-    (int x, int y) GetInitialCoord()
+    private (int x, int y) GetInitialCoord()
     {
         int x;
         int y;
@@ -106,205 +105,111 @@ public class MazeGenerator
         return (x, y);
     }
 
-
-    void GenerateExit()
+    private void GenerateExit()
     {
-        List<(int x, int y)> coords = new();
-        for (int i = 0; i < Size; i++)
-        {
-            if (Maze[i, 0 + 1] is Empty && Maze[i, 0] is not Spawner)
-            {
-                bool allCoordsAreWalls = true;
+        List<(int x, int y)> possibleCoords = new();
 
-                for (int j = 0; j < (Size - 1) / 2; j++)
-                {
-                    for (int k = 0; k < (Size - 1) / 2; k++)
-                    {
-                        if (IsInsideBounds((i + j, 0 + k)))
-                        {
-                            if (Maze[i + j, 0 + k] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-
-                        if (IsInsideBounds((i - j, 0 + k)))
-                        {
-                            if (Maze[i - j, 0 + k] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (allCoordsAreWalls)
-                {
-                    coords.Add((i, 0));
-                }
-            }
-
-            if (Maze[0 + 1, i] is Empty && Maze[0, i] is not Spawner)
-            {
-                bool allCoordsAreWalls = true;
-
-                for (int j = 0; j < (Size - 1) / 2; j++)
-                {
-                    for (int k = 0; k < (Size - 1) / 2; k++)
-                    {
-                        if (IsInsideBounds((0 + k, i + j)))
-                        {
-                            if (Maze[0 + k, i + j] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-
-                        if (IsInsideBounds((0 + k, i - j)))
-                        {
-                            if (Maze[0 + k, i - j] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (allCoordsAreWalls)
-                {
-                    coords.Add((0, i));
-                }
-            }
-
-            if (Maze[i, Size - 1 - 1] is Empty && Maze[i, Size - 1] is not Spawner)
-            {
-                bool allCoordsAreWalls = true;
-
-                for (int j = 0; j < (Size - 1) / 2; j++)
-                {
-                    for (int k = 0; k < (Size - 1) / 2; k++)
-                    {
-                        if (IsInsideBounds((i + j, Size - 1 - k)))
-                        {
-                            if (Maze[i + j, Size - 1 - k] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-
-                        if (IsInsideBounds((i - j, Size - 1 - k)))
-                        {
-                            if (Maze[i - j, Size - 1 - k] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (allCoordsAreWalls)
-                {
-                    coords.Add((i, Size - 1));
-                }
-            }
-
-            if (Maze[Size - 1 - 1, i] is Empty && Maze[Size - 1, i] is not Spawner)
-            {
-                bool allCoordsAreWalls = true;
-
-                for (int j = 0; j < (Size - 1) / 2; j++)
-                {
-                    for (int k = 0; k < (Size - 1) / 2; k++)
-                    {
-                        if (IsInsideBounds((Size - 1 - k, i + j)))
-                        {
-                            if (Maze[Size - 1 - k, i + j] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-
-                        if (IsInsideBounds((Size - 1 - k, i - j)))
-                        {
-                            if (Maze[Size - 1 - k, i - j] is Spawner)
-                            {
-                                allCoordsAreWalls = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (allCoordsAreWalls)
-                {
-                    coords.Add((Size - 1, i));
-                }
-            }
-        }
-
-        int index = _random.Next(coords.Count);
-        ExitCoord = (coords[index].x, coords[index].y);
-        Maze[ExitCoord.x, ExitCoord.y] = new Exit(ExitCoord.x, ExitCoord.y);
-    }
-
-    void GenerateSpawner()
-    {
-        List<(int x, int y)> coords = new();
         for (int i = 0; i < Size; i++)
         {
             if (Maze[i, 1] is Empty)
             {
-                coords.Add((i, 0));
-            }
-
-            if (Maze[0 + 1, i] is Empty)
-            {
-                coords.Add((0, i));
-            }
-
-            if (Maze[i, Size - 1 - 1] is Empty)
-            {
-                coords.Add((i, Size - 1));
-            }
-
-            if (Maze[Size - 1 - 1, i] is Empty)
-            {
-                coords.Add((Size - 1, i));
-            }
-        }
-
-        int index = _random.Next(coords.Count);
-        SpawnerCoord = (coords[index].x, coords[index].y);
-        Maze[SpawnerCoord.x, SpawnerCoord.y] = new Spawner(SpawnerCoord.x, SpawnerCoord.y);
-    }
-
-    void GenerateSpikesTrap(int num)
-    {
-        List<(int x, int y)> posibleCoords = new();
-
-        for (int i = 1; i < Size - 1; i++)
-        {
-            for (int j = 1; j < Size - 1; j++)
-            {
-                if (Maze[i, j] is Empty and not Spikes and not Spawner and not Exit)
+                if (IsInsideBounds(i + SpawnerCoord.x, 0 + SpawnerCoord.y) &&
+                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
+                     Math.Abs(0 + SpawnerCoord.y) > (Size - 1) / 2))
                 {
-                    posibleCoords.Add((i, j));
+                    possibleCoords.Add((i, 0));
+                }
+            }
+
+            if (Maze[1, i] is Empty)
+            {
+                if (IsInsideBounds(0 + SpawnerCoord.x, i + SpawnerCoord.y) &&
+                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
+                     Math.Abs(0 + SpawnerCoord.y) > (Size - 1) / 2))
+                {
+                    possibleCoords.Add((0, i));
+                }
+            }
+
+            if (Maze[i, Size - 2] is Empty)
+            {
+                if (IsInsideBounds(i + SpawnerCoord.x, Size - 1 + SpawnerCoord.y) &&
+                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
+                     Math.Abs(Size - 1 + SpawnerCoord.y) > (Size - 1) / 2))
+                {
+                    possibleCoords.Add((i, Size - 1));
+                }
+            }
+
+            if (Maze[Size - 2, i] is Empty)
+            {
+                if (IsInsideBounds(Size - 1 + SpawnerCoord.x, i + SpawnerCoord.y) &&
+                    (Math.Abs(Size - 1 + SpawnerCoord.x) > (Size - 1) / 2 ||
+                     Math.Abs(i + SpawnerCoord.y) > (Size - 1) / 2))
+                {
+                    possibleCoords.Add((Size - 1, i));
                 }
             }
         }
 
-        for (int i = 0; i < num + 1; i++)
+        int index = _random.Next(possibleCoords.Count);
+        ExitCoord = (possibleCoords[index].x, possibleCoords[index].y);
+        Maze[ExitCoord.x, ExitCoord.y] = new Exit(ExitCoord.x, ExitCoord.y);
+    }
+
+    private void GenerateSpawner()
+    {
+        List<(int x, int y)> possibleCoords = new();
+        for (int i = 0; i < Size; i++)
         {
-            int index = _random.Next(posibleCoords.Count);
-            Maze[posibleCoords[index].x, posibleCoords[index].y] = new Spikes(posibleCoords[index].x, posibleCoords[index].y, true);
-            SpikesTrapsCoords.Add((posibleCoords[index].x, posibleCoords[index].y));
+            if (Maze[i, 1] is Empty)
+            {
+                possibleCoords.Add((i, 0));
+            }
+
+            if (Maze[1, i] is Empty)
+            {
+                possibleCoords.Add((0, i));
+            }
+
+            if (Maze[i, Size - 1 - 1] is Empty)
+            {
+                possibleCoords.Add((i, Size - 1));
+            }
+
+            if (Maze[Size - 1 - 1, i] is Empty)
+            {
+                possibleCoords.Add((Size - 1, i));
+            }
+        }
+
+        int index = _random.Next(possibleCoords.Count);
+        SpawnerCoord = (possibleCoords[index].x, possibleCoords[index].y);
+        Maze[SpawnerCoord.x, SpawnerCoord.y] = new Empty(SpawnerCoord.x, SpawnerCoord.y);
+    }
+
+    private void GenerateSpikesTrap(float percentage)
+    {
+        float num = emptyCoords.Count * percentage / 100;
+        for (int i = 0; i <= (int)num; i++)
+        {
+            int index = _random.Next(emptyCoords.Count);
+            Spikes spikeTrap = new Spikes(emptyCoords[index].x, emptyCoords[index].y, true); 
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes) continue;
+            Maze[emptyCoords[index].x, emptyCoords[index].y] = spikeTrap;
+        }
+    }
+
+    private void GetEmptyCoords()
+    {
+        for (int i = 1; i < Size - 1; i++)
+        {
+            for (int j = 1; j < Size - 1; j++)
+            {
+                if (Maze[i, j] is Wall) continue;
+                emptyCoords.Add((i, j));
+            }
         }
     }
 }

@@ -103,18 +103,15 @@ public partial class Token : CharacterBody2D
                 break;
         }
 
-        foreach (var item in _mazeGenerator.SpikesTrapsCoords)
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes)
         {
-            if (_tokenCoord.X == item.Key.x && _tokenCoord.Y == item.Key.y)
+            if (spikes.IsActivated)
             {
-                if (item.Value.IsActivated)
+                spikes.Deactivate();
+                if (CurrentCondition != Condition.SpikeTrapped)
                 {
-                    item.Value.Deactivate();
-                    if (CurrentCondition != Condition.SpikeTrapped)
-                    {
-                        CurrentCondition = Condition.SpikeTrapped;
-                        _timer.Start();
-                    }
+                    CurrentCondition = Condition.SpikeTrapped;
+                    _timer.Start();
                 }
             }
         }

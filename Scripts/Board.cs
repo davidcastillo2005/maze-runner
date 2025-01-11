@@ -31,25 +31,17 @@ public partial class Board : TileMapLayer
         {
             for (int y = 0; y < _mazeGenerator.Size; y++)
             {
-                bool isSpikeTrap = false;
-                bool isActivated = false;
-                
-                foreach (var item in _mazeGenerator.SpikesTrapsCoords)
+                if (_mazeGenerator.Maze[x, y] is Spawner)
+                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Exit)
+                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Empty and not Exit and not Spawner and not Spikes)
+                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Wall)
+                    SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0));
+                else if (_mazeGenerator.Maze[x, y] is Spikes spikes)
                 {
-                    if (x == item.Key.x && y == item.Key.y)
-                    {
-                        isSpikeTrap = true;
-                        if (item.Value.IsActivated)
-                        {
-                            isActivated = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (isSpikeTrap)
-                {
-                    if (isActivated)
+                    if (spikes.IsActivated)
                     {
                         SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
                     }
@@ -58,13 +50,6 @@ public partial class Board : TileMapLayer
                         SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                     }
                 }
-                else if (_mazeGenerator.Maze[x, y] is Spawner)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Exit)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Empty)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Wall) SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0));
             }
         }
     }
