@@ -31,14 +31,10 @@ public partial class Board : TileMapLayer
         {
             for (int y = 0; y < _mazeGenerator.Size; y++)
             {
-                if (_mazeGenerator.Maze[x, y] is Spawner)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Exit)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Empty and not Exit and not Spawner and not Spikes)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Wall)
-                    SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0));
+                if (_mazeGenerator.Maze[x, y] is Spawner) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Exit) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Empty and not Exit and not Spawner and not Spikes and not Trampoline) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                else if (_mazeGenerator.Maze[x, y] is Wall) SetCell(new Vector2I(x, y), 2, new Vector2I(3, 0));
                 else if (_mazeGenerator.Maze[x, y] is Spikes spikes)
                 {
                     if (spikes.IsActivated)
@@ -49,6 +45,11 @@ public partial class Board : TileMapLayer
                     {
                         SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                     }
+                }
+                else if (_mazeGenerator.Maze[x, y] is Trampoline trampoline)
+                {
+                    if (trampoline.IsActivated) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
+                    else SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                 }
             }
         }

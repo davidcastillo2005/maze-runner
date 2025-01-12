@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Token.cs" id="1_sacbm"]
 [ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="2_fcpdt"]
-[ext_resource type="Script" path="res://Scripts/SpikeTrappedTimer.cs" id="3_y5vmm"]
+[ext_resource type="Script" path="res://Scripts/SpikesTimer.cs" id="3_y5vmm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(0.5, 0.5)
@@ -22,8 +22,8 @@ shape = SubResource("RectangleShape2D_wmeri")
 scale = Vector2(16, 16)
 texture = SubResource("AtlasTexture_uggnw")
 
-[node name="SpikeTrappedTimer" type="Timer" parent="."]
+[node name="SpikesTimer" type="Timer" parent="."]
 wait_time = 10.0
 script = ExtResource("3_y5vmm")
 
-[connection signal="timeout" from="SpikeTrappedTimer" to="." method="OnSpikeTrappedTimerTimeout"]
+[connection signal="timeout" from="SpikesTimer" to="." method="OnSpikeTimerTimeout"]

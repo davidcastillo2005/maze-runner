@@ -36,13 +36,9 @@ public partial class PlayerCamera : Camera2D
         _input = Vector2.Zero;
         _cameraOffset = Vector2.Zero;
 
-        Zoom = new Vector2((float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720),
-            (float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
-
-        if (_global.LevelDifficulty < 5)
-        {
-            CurrentState = State.Extensive;
-        }
+        Zoom = new Vector2((float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720), (float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
+        
+        if (_global.LevelDifficulty < 5) CurrentState = State.Extensive;
     }
 
     public override void _Input(InputEvent @event)
@@ -55,30 +51,17 @@ public partial class PlayerCamera : Camera2D
         switch (CurrentState)
         {
             case State.Player:
-                if (Input.IsActionJustPressed("UIShiftCamera"))
-                {
-                    CurrentState = State.Free;
-                }
-                else
-                {
-                    OnPlayer();
-                }
-
+                if (Input.IsActionJustPressed("UIShiftCamera")) CurrentState = State.Free;
+                else OnPlayer();
                 break;
             case State.Free:
-                if (Input.IsActionJustPressed("UIShiftCamera"))
-                {
-                    CurrentState = State.Player;
-                }
-                else
-                {
-                    OnFree();
-                }
-
+                if (Input.IsActionJustPressed("UIShiftCamera")) CurrentState = State.Player;
+                else OnFree();
                 break;
-            case State.Extensive: OnExtensive(); break;
-            default:
-                throw new Exception();
+            case State.Extensive:
+                OnExtensive();
+                break;
+            default: throw new Exception();
         }
     }
 

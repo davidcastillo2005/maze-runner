@@ -2,44 +2,38 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Godot;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts.Logic;
 
 public class MazeGenerator
 {
-    private readonly (int x, int y)[] _directions = { (2, 0), (-2, 0), (0, 2), (0, -2) };
+    public (int x, int y)[] Directions { get; set; } = { (2, 0), (-2, 0), (0, 2), (0, -2) };
     public Tile[,] Maze { get; private set; }
     public int Size { get; }
     public int Seed { get; }
     public (int x, int y) SpawnerCoord;
     public (int x, int y) ExitCoord { get; private set; }
-    private readonly Random _random;
+    public Random Random { get; private set; }
     private List<(int x, int y)> emptyCoords = new();
 
     public MazeGenerator(int size, int seed, bool isRandomSeed)
     {
         Size = size % 2 == 0 ? size + 1 : size;
-        if (isRandomSeed)
-        {
-            Seed = (int)DateTime.Now.Ticks;
-        }
-        else
-        {
-            Seed = seed;
-        }
-
-        _random = new Random(Seed);
+        Seed = isRandomSeed ? (int)DateTime.Now.Ticks : seed;
+        Random = new Random(Seed);
     }
 
-    private bool IsInsideBounds(int x, int y) => x >= 0 && y >= 0 && x < Maze.GetLength(0) && y < Maze.GetLength(1);
+    public bool IsInsideBounds(int x, int y) => x >= 0 && y >= 0 && x < Maze.GetLength(0) && y < Maze.GetLength(1);
 
     private void GenerateMazeRandomizedDfs((int x, int y) currentCoord, bool[,] maskVisitedCoords)
     {
         maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
         Maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
-        Shuffle(_directions);
-        foreach ((int x, int y) in _directions)
+        Shuffle(Directions);
+        foreach ((int x, int y) in Directions)
         {
             (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
             if (IsInsideBounds(neighbourCoord.x, neighbourCoord.y) &&
@@ -60,7 +54,7 @@ public class MazeGenerator
     {
         for (int i = coordsArray.Length - 1; i > 0; i--)
         {
-            int j = _random.Next(0, i + 1);
+            int j = Random.Next(0, i + 1);
             (coordsArray[j], coordsArray[i]) = (coordsArray[i], coordsArray[j]);
         }
     }
@@ -89,7 +83,7 @@ public class MazeGenerator
         GetEmptyCoords();
         GenerateSpawner();
         GenerateExit();
-        GenerateSpikesTrap(1);
+        GenerateTraps(5);
     }
 
     private (int x, int y) GetInitialCoord()
@@ -98,8 +92,8 @@ public class MazeGenerator
         int y;
         do
         {
-            x = _random.Next(Size);
-            y = _random.Next(Size);
+            x = Random.Next(Size);
+            y = Random.Next(Size);
         } while (x % 2 == 0 || y % 2 == 0);
 
         return (x, y);
@@ -111,48 +105,46 @@ public class MazeGenerator
 
         for (int i = 0; i < Size; i++)
         {
-            if (Maze[i, 1] is Empty)
+            if (Maze[i, 0] is Wall && Maze[i, 1] is Empty or Trampoline or Spikes)
             {
-                if (IsInsideBounds(i + SpawnerCoord.x, 0 + SpawnerCoord.y) &&
-                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
-                     Math.Abs(0 + SpawnerCoord.y) > (Size - 1) / 2))
+                (float x, float y) distanceBetweenSpawnerExit;
+                distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - i), Math.Abs(SpawnerCoord.y));
+                if (distanceBetweenSpawnerExit.x > Size / 2 && distanceBetweenSpawnerExit.y > Size / 2)
                 {
                     possibleCoords.Add((i, 0));
                 }
-            }
 
-            if (Maze[1, i] is Empty)
+            }
+            if (Maze[0, i] is Wall && Maze[1, i] is Empty or Trampoline or Spikes)
             {
-                if (IsInsideBounds(0 + SpawnerCoord.x, i + SpawnerCoord.y) &&
-                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
-                     Math.Abs(0 + SpawnerCoord.y) > (Size - 1) / 2))
+                (float x, float y) distanceBetweenSpawnerExit;
+                distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x), Math.Abs(SpawnerCoord.y - i));
+                if (distanceBetweenSpawnerExit.x > Size / 2 && distanceBetweenSpawnerExit.y > Size / 2)
                 {
                     possibleCoords.Add((0, i));
                 }
             }
-
-            if (Maze[i, Size - 2] is Empty)
+            if (Maze[i, Size - 1] is Wall && Maze[i, Size - 2] is Empty or Trampoline or Spikes)
             {
-                if (IsInsideBounds(i + SpawnerCoord.x, Size - 1 + SpawnerCoord.y) &&
-                    (Math.Abs(i + SpawnerCoord.x) > (Size - 1) / 2 ||
-                     Math.Abs(Size - 1 + SpawnerCoord.y) > (Size - 1) / 2))
+                (float x, float y) distanceBetweenSpawnerExit;
+                distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - i), Math.Abs(SpawnerCoord.y - Size - 1));
+                if (distanceBetweenSpawnerExit.x > Size / 2 && distanceBetweenSpawnerExit.y > Size / 2)
                 {
                     possibleCoords.Add((i, Size - 1));
                 }
             }
-
-            if (Maze[Size - 2, i] is Empty)
+            if (Maze[Size - 1, i] is Wall && Maze[Size - 2, i] is Empty or Trampoline or Spikes)
             {
-                if (IsInsideBounds(Size - 1 + SpawnerCoord.x, i + SpawnerCoord.y) &&
-                    (Math.Abs(Size - 1 + SpawnerCoord.x) > (Size - 1) / 2 ||
-                     Math.Abs(i + SpawnerCoord.y) > (Size - 1) / 2))
+                (float x, float y) distanceBetweenSpawnerExit;
+                distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - Size - 1), Math.Abs(SpawnerCoord.y - i));
+                if (distanceBetweenSpawnerExit.x > Size / 2 && distanceBetweenSpawnerExit.y > Size / 2)
                 {
                     possibleCoords.Add((Size - 1, i));
                 }
             }
         }
 
-        int index = _random.Next(possibleCoords.Count);
+        int index = Random.Next(possibleCoords.Count);
         ExitCoord = (possibleCoords[index].x, possibleCoords[index].y);
         Maze[ExitCoord.x, ExitCoord.y] = new Exit(ExitCoord.x, ExitCoord.y);
     }
@@ -183,22 +175,9 @@ public class MazeGenerator
             }
         }
 
-        int index = _random.Next(possibleCoords.Count);
+        int index = Random.Next(possibleCoords.Count);
         SpawnerCoord = (possibleCoords[index].x, possibleCoords[index].y);
         Maze[SpawnerCoord.x, SpawnerCoord.y] = new Empty(SpawnerCoord.x, SpawnerCoord.y);
-    }
-
-    private void GenerateSpikesTrap(float percentage)
-    {
-        float num = emptyCoords.Count * percentage / 100;
-        for (int i = 0; i <= (int)num; i++)
-        {
-            int index = _random.Next(emptyCoords.Count);
-            Spikes spikeTrap = new Spikes(emptyCoords[index].x, emptyCoords[index].y, true); 
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes) continue;
-            Maze[emptyCoords[index].x, emptyCoords[index].y] = spikeTrap;
-        }
     }
 
     private void GetEmptyCoords()
@@ -209,6 +188,63 @@ public class MazeGenerator
             {
                 if (Maze[i, j] is Wall) continue;
                 emptyCoords.Add((i, j));
+            }
+        }
+    }
+
+    private void GenerateTraps(float percentage)
+    {
+        GenerateSpikes(percentage / 2);
+        GenerateTrampoline(percentage / 2);
+    }
+
+    private void GenerateSpikes(float percentage)
+    {
+        int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
+
+        for (int i = 0; i <= num; i++)
+        {
+            int index = Random.Next(emptyCoords.Count);
+            Spikes spikes = new(emptyCoords[index].x, emptyCoords[index].y, true);
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
+            Maze[emptyCoords[index].x, emptyCoords[index].y] = spikes;
+        }
+
+    }
+
+    private void GenerateTrampoline(float percentage)
+    {
+        int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
+
+        int i = 0;
+        while (i <= num)
+        {
+            int index = Random.Next(emptyCoords.Count);
+            Trampoline trampoline = new(emptyCoords[index].x, emptyCoords[index].y, true);
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
+
+            int numWalls = 0;
+            (int x, int y)[] dir = { (0, 1), (0, -1), (1, 0), (-1, 0) };
+            foreach (var (x, y) in Directions)
+            {
+                (int x, int y) nCoord = (emptyCoords[index].x + x, emptyCoords[index].y + y);
+                if (IsInsideBounds(nCoord.x, nCoord.y) && Maze[nCoord.x, nCoord.y] is Empty or Spikes or Trampoline)
+                {
+                    (int x, int y) inBetweenCoord;
+                    inBetweenCoord = ((int)((nCoord.x + emptyCoords[index].x) * 0.5f), (int)((nCoord.y + emptyCoords[index].y) * 0.5f));
+                    if (Maze[inBetweenCoord.x, inBetweenCoord.y] is Wall)
+                    {
+                        numWalls++;
+                    }
+                }
+            }
+
+            if (numWalls > 1)
+            {
+                Maze[emptyCoords[index].x, emptyCoords[index].y] = trampoline;
+                i++;
             }
         }
     }
