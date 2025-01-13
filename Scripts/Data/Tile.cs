@@ -13,7 +13,7 @@ namespace MazeRunner.Scripts.Data
         /// Y component
         /// </summary>
         public int Y { get; set; }
-        
+
         protected Tile(int x, int y)
         {
             X = x;
@@ -74,17 +74,16 @@ namespace MazeRunner.Scripts.Data
 
     public class Spikes : Trap
     {
-        public Spikes(int x, int y, bool isActivated) : base(x, y, isActivated)
-        {
-
-        }
+        public Spikes(int x, int y, bool isActivated) : base(x, y, isActivated) { }
     }
 
     public class Trampoline : Trap
     {
-        public Trampoline(int x, int y, bool isActivated) : base(x, y, isActivated)
-        {
+        public Trampoline(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+    }
 
-        }
+    public class Sticky : Trap
+    {
+        public Sticky(int x, int y, bool isActivated) : base(x, y, isActivated) { }
     }
 }

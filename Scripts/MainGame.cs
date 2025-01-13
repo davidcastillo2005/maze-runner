@@ -31,7 +31,9 @@ public partial class MainGame : Node2D
     {
         // GD.Print("Floor: " + _token.CurrentFloor);
         // GD.Print("PlayerState: " + _token.CurrentState);
-        // if (_token.CurrentCondition == Token.Condition.Spikes) GD.Print("TimeLeft for SpikeTrapped Condition: " + Math.Floor(_spikesTimer.TimeLeft + 1));
+        // GD.Print("PlayerCondition: " + _token.CurrentCondition);
+        if (_token.CurrentCondition == Token.Condition.Spikes) GD.Print("TimeLeft for SpikeTrapped Condition: " + Math.Floor(_spikesTimer.TimeLeft + 1));
+        // if (_token.CurrentCondition == Token.Condition.Sticky) GD.Print("_directionalKeysPressCount: " + _token._directionalKeysPressCount);
         // GD.Print("");
     }
 

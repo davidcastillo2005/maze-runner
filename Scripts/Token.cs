@@ -30,7 +30,8 @@ public partial class Token : CharacterBody2D
     {
         None,
         Spikes,
-        Trampoline
+        Trampoline,
+        Sticky
     }
     private Condition? _previusCondition;
     public Condition CurrentCondition { get; private set; }
@@ -42,6 +43,7 @@ public partial class Token : CharacterBody2D
     private float _speed;
     private float _minPosition;
     private float _maxPosition;
+    public int _directionalKeysPressCount;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -52,7 +54,7 @@ public partial class Token : CharacterBody2D
         _board = GetNode<Board>("/root/Game/MainGame/Board");
         _spikesTimer = GetNode<SpikesTimer>("/root/Game/MainGame/Token/SpikesTimer");
         _timer = GetNode<SpikesTimer>("/root/Game/MainGame/Token/SpikesTimer");
-        
+
         _speed = _defaultSpeed * _board.TileSize;
         CurrentState = State.Spawning;
         CurrentCondition = Condition.None;
@@ -64,12 +66,13 @@ public partial class Token : CharacterBody2D
 
     public override void _Input(InputEvent @event)
     {
-        if (_playerCamera.CurrentState == PlayerCamera.State.Player)
+        if (_playerCamera.CurrentState != PlayerCamera.State.Free)
         {
             _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
-            if (_input == Vector2.Zero && CurrentState != State.Spawning)
+            if (CurrentState != State.Spawning)
             {
-                CurrentState = State.Moving;
+                if (_input != Vector2.Zero) CurrentState = State.Moving;
+                else CurrentState = State.Idle;
             }
         }
         else
@@ -84,6 +87,62 @@ public partial class Token : CharacterBody2D
         _tokenCoord = _board.LocalToMap(Position);
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y) CurrentState = State.Winning;
+
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
+        {
+            spikes.Deactivate();
+            if (CurrentCondition != Condition.Spikes)
+            {
+                CurrentCondition = Condition.Spikes;
+                _timer.Start();
+            }
+        }
+
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Trampoline trampoline && trampoline.IsActivated)
+        {
+            trampoline.Deactivate();
+            if (CurrentCondition != Condition.Trampoline)
+            {
+                _previusCondition = CurrentCondition;
+                CurrentCondition = Condition.Trampoline;
+                _timer.Start();
+            }
+
+        }
+
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
+        {
+            sticky.Deactivate();
+            if (CurrentCondition != Condition.Sticky)
+            {
+                CurrentCondition = Condition.Sticky;
+                _timer.Start();
+            }
+        }
+
+        if (CurrentCondition == Condition.Spikes && _timer.IsStopped()) CurrentCondition = Condition.None;
+
+        if (CurrentCondition == Condition.Sticky && _directionalKeysPressCount == 10)
+        {
+            _directionalKeysPressCount = 0;
+            CurrentCondition = Condition.None;
+        }
+
+        switch (CurrentCondition)
+        {
+            case Condition.None:
+                ResetStats();
+                break;
+            case Condition.Spikes:
+                HurtBySpikes();
+                break;
+            case Condition.Trampoline:
+                BounceOnTrampoline();
+                break;
+            case Condition.Sticky:
+                GetStuckBySticky();
+                break;
+        }
 
         switch (CurrentState)
         {
@@ -101,50 +160,33 @@ public partial class Token : CharacterBody2D
                 break;
         }
 
-        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Trampoline trampoline && trampoline.IsActivated)
+        switch (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y])
         {
-            trampoline.Deactivate();
-            if (CurrentCondition != Condition.Trampoline)
-            {
-                _previusCondition = CurrentCondition;
-                CurrentCondition = Condition.Trampoline;
-                _timer.Start();
-            }
+            case Spawner:
+                CurrentFloor = "Spawner";
+                break;
+            case Exit:
+                CurrentFloor = "Exit";
+                break;
+            case Spikes:
+                CurrentFloor = "Spikes";
+                break;
+            case Trampoline:
+                CurrentFloor = "Trampoline";
+                break;
+            case Sticky:
+                CurrentFloor = "Sticky";
+                break;
+            case Wall:
+                CurrentFloor = "Wall";
+                break;
+            case Empty:
+                CurrentFloor = "Empty";
+                break;
+            default:
+                throw new Exception();
 
         }
-
-        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
-        {
-            spikes.Deactivate();
-            if (CurrentCondition != Condition.Spikes)
-            {
-                CurrentCondition = Condition.Spikes;
-                _timer.Start();
-            }
-
-        }
-
-        if (CurrentCondition == Condition.Spikes && _timer.IsStopped()) CurrentCondition = Condition.None;
-
-        switch (CurrentCondition)
-        {
-            case Condition.None:
-                ResetStats();
-                break;
-            case Condition.Spikes:
-                HurtBySpikes();
-                break;
-            case Condition.Trampoline:
-                BounceOnTrampoline();
-                break;
-        }
-
-        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spawner) CurrentFloor = "Spawner";
-        else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Exit) CurrentFloor = "Exit";
-        else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes) CurrentFloor = "Spikes";
-        else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Trampoline) CurrentFloor = "Trampoline";
-        else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Wall) CurrentFloor = "Wall";
-        else if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Empty) CurrentFloor = "Empty";
     }
 
     void OnSpikeTimerTimeout()
@@ -155,6 +197,15 @@ public partial class Token : CharacterBody2D
     private void ResetStats()
     {
         _speed = _defaultSpeed * _board.TileSize;
+    }
+
+    private void GetStuckBySticky()
+    {
+        if (_input != Vector2.Zero) _input = Vector2.Zero;
+        if (Input.IsActionJustPressed("UILeft") || Input.IsActionJustPressed("UIRight") || Input.IsActionJustPressed("UIUp") || Input.IsActionJustPressed("UIDown"))
+        {
+            _directionalKeysPressCount++;
+        }
     }
 
     private void HurtBySpikes()

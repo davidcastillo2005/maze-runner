@@ -4,7 +4,7 @@ using MazeRunner.Scripts.Logic;
 public partial class Global : Node
 {
     public Setting Setting { get; set; }
-    public int LevelDifficulty {get; set;} = 6;
+    public int LevelDifficulty {get; set;} = 5;
 
     private int _seed = -831256837;
     private bool _isRandomSeed = true;

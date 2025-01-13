@@ -83,7 +83,7 @@ public class MazeGenerator
         GetEmptyCoords();
         GenerateSpawner();
         GenerateExit();
-        GenerateTraps(5);
+        GenerateTraps(3);
     }
 
     private (int x, int y) GetInitialCoord()
@@ -194,11 +194,12 @@ public class MazeGenerator
 
     private void GenerateTraps(float percentage)
     {
-        GenerateSpikes(percentage / 2);
-        GenerateTrampoline(percentage / 2);
+        GenerateSpikesTraps(percentage / 3);
+        GenerateStickyTraps(percentage / 3);
+        GenerateTrampolineTraps(percentage / 3);
     }
 
-    private void GenerateSpikes(float percentage)
+    private void GenerateSpikesTraps(float percentage)
     {
         int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
 
@@ -206,14 +207,14 @@ public class MazeGenerator
         {
             int index = Random.Next(emptyCoords.Count);
             Spikes spikes = new(emptyCoords[index].x, emptyCoords[index].y, true);
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
             Maze[emptyCoords[index].x, emptyCoords[index].y] = spikes;
         }
 
     }
 
-    private void GenerateTrampoline(float percentage)
+    private void GenerateTrampolineTraps(float percentage)
     {
         int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
 
@@ -222,7 +223,7 @@ public class MazeGenerator
         {
             int index = Random.Next(emptyCoords.Count);
             Trampoline trampoline = new(emptyCoords[index].x, emptyCoords[index].y, true);
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
 
             int numWalls = 0;
@@ -246,6 +247,20 @@ public class MazeGenerator
                 Maze[emptyCoords[index].x, emptyCoords[index].y] = trampoline;
                 i++;
             }
+        }
+    }
+
+    private void GenerateStickyTraps(float percentage)
+    {
+        int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
+
+        for (int i = 0; i <= num; i++)
+        {
+            int index = Random.Next(emptyCoords.Count);
+            Sticky sticky = new(emptyCoords[index].x, emptyCoords[index].y, true);
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
+            Maze[emptyCoords[index].x, emptyCoords[index].y] = sticky;
         }
     }
 }

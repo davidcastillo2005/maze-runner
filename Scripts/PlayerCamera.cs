@@ -67,6 +67,7 @@ public partial class PlayerCamera : Camera2D
 
     private void OnPlayer()
     {
+        _cameraOffset = Vector2.Zero;
         Position = _tokenNode.Position;
     }
 
