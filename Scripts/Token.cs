@@ -17,6 +17,8 @@ public partial class Token : CharacterBody2D
     private SpikesTimer _spikesTimer;
     private Timer _timer;
 
+    public List<Skill> Skill { get; private set; }
+    
     public enum State
     {
         Spawning,
@@ -24,7 +26,7 @@ public partial class Token : CharacterBody2D
         Moving,
         Winning
     }
-    public State CurrentState { get; private set; } = State.Spawning;
+    public State CurrentState { get; set; } = State.Spawning;
 
     public enum Condition
     {
@@ -98,7 +100,7 @@ public partial class Token : CharacterBody2D
             }
         }
 
-        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Trampoline trampoline && trampoline.IsActivated)
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal trampoline && trampoline.IsActivated)
         {
             trampoline.Deactivate();
             if (CurrentCondition != Condition.Trampoline)
@@ -171,7 +173,7 @@ public partial class Token : CharacterBody2D
             case Spikes:
                 CurrentFloor = "Spikes";
                 break;
-            case Trampoline:
+            case Portal:
                 CurrentFloor = "Trampoline";
                 break;
             case Sticky:
@@ -220,7 +222,7 @@ public partial class Token : CharacterBody2D
         {
             Vector2I nTokenCoord = new Vector2I(x + _tokenCoord.X, y + _tokenCoord.Y);
             Vector2I inBetweenCoord;
-            if (!_mazeGenerator.IsInsideBounds(nTokenCoord.X, nTokenCoord.Y) || _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is Trampoline || _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Empty and not Spikes) continue;
+            if (!_mazeGenerator.IsInsideBounds(nTokenCoord.X, nTokenCoord.Y) || _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is Portal || _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Empty and not Spikes) continue;
             inBetweenCoord = new Vector2I((int)((_tokenCoord.X + nTokenCoord.X) * 0.5f), (int)((_tokenCoord.Y + nTokenCoord.Y) * 0.5f));
             if (_mazeGenerator.Maze[inBetweenCoord.X, inBetweenCoord.Y] is not Wall) continue;
             possibleNPosition.Add(nTokenCoord);

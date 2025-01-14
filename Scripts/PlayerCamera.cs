@@ -36,8 +36,9 @@ public partial class PlayerCamera : Camera2D
         _input = Vector2.Zero;
         _cameraOffset = Vector2.Zero;
 
-        Zoom = new Vector2((float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720), (float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
-        
+        Zoom = new Vector2(_global.LevelDifficulty / 4, _global.LevelDifficulty / 4);
+        // Zoom = new Vector2((float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720), (float)(Math.Pow(_tileSize, -1) * Math.Pow(_mazeGenerator.Size, -1) * 720));
+
         if (_global.LevelDifficulty < 5) CurrentState = State.Extensive;
     }
 
@@ -73,7 +74,7 @@ public partial class PlayerCamera : Camera2D
 
     private void OnFree()
     {
-        _cameraOffset += _tileSize * _input;
+        _cameraOffset += _tileSize * _input / 3;
         Position = _tokenNode.Position + _cameraOffset;
     }
 

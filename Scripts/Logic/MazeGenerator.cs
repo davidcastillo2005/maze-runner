@@ -10,7 +10,7 @@ namespace MazeRunner.Scripts.Logic;
 
 public class MazeGenerator
 {
-    public (int x, int y)[] Directions { get; set; } = { (2, 0), (-2, 0), (0, 2), (0, -2) };
+    public (int x, int y)[] Directions { get; private set; } = { (2, 0), (-2, 0), (0, 2), (0, -2) };
     public Tile[,] Maze { get; private set; }
     public int Size { get; }
     public int Seed { get; }
@@ -105,7 +105,7 @@ public class MazeGenerator
 
         for (int i = 0; i < Size; i++)
         {
-            if (Maze[i, 0] is Wall && Maze[i, 1] is Empty or Trampoline or Spikes)
+            if (Maze[i, 0] is Wall && Maze[i, 1] is Empty or Portal or Spikes)
             {
                 (float x, float y) distanceBetweenSpawnerExit;
                 distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - i), Math.Abs(SpawnerCoord.y));
@@ -115,7 +115,7 @@ public class MazeGenerator
                 }
 
             }
-            if (Maze[0, i] is Wall && Maze[1, i] is Empty or Trampoline or Spikes)
+            if (Maze[0, i] is Wall && Maze[1, i] is Empty or Portal or Spikes)
             {
                 (float x, float y) distanceBetweenSpawnerExit;
                 distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x), Math.Abs(SpawnerCoord.y - i));
@@ -124,7 +124,7 @@ public class MazeGenerator
                     possibleCoords.Add((0, i));
                 }
             }
-            if (Maze[i, Size - 1] is Wall && Maze[i, Size - 2] is Empty or Trampoline or Spikes)
+            if (Maze[i, Size - 1] is Wall && Maze[i, Size - 2] is Empty or Portal or Spikes)
             {
                 (float x, float y) distanceBetweenSpawnerExit;
                 distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - i), Math.Abs(SpawnerCoord.y - Size - 1));
@@ -133,7 +133,7 @@ public class MazeGenerator
                     possibleCoords.Add((i, Size - 1));
                 }
             }
-            if (Maze[Size - 1, i] is Wall && Maze[Size - 2, i] is Empty or Trampoline or Spikes)
+            if (Maze[Size - 1, i] is Wall && Maze[Size - 2, i] is Empty or Portal or Spikes)
             {
                 (float x, float y) distanceBetweenSpawnerExit;
                 distanceBetweenSpawnerExit = (Math.Abs(SpawnerCoord.x - Size - 1), Math.Abs(SpawnerCoord.y - i));
@@ -177,7 +177,7 @@ public class MazeGenerator
 
         int index = Random.Next(possibleCoords.Count);
         SpawnerCoord = (possibleCoords[index].x, possibleCoords[index].y);
-        Maze[SpawnerCoord.x, SpawnerCoord.y] = new Empty(SpawnerCoord.x, SpawnerCoord.y);
+        Maze[SpawnerCoord.x, SpawnerCoord.y] = new Spawner(SpawnerCoord.x, SpawnerCoord.y);
     }
 
     private void GetEmptyCoords()
@@ -207,7 +207,7 @@ public class MazeGenerator
         {
             int index = Random.Next(emptyCoords.Count);
             Spikes spikes = new(emptyCoords[index].x, emptyCoords[index].y, true);
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
             Maze[emptyCoords[index].x, emptyCoords[index].y] = spikes;
         }
@@ -222,8 +222,8 @@ public class MazeGenerator
         while (i <= num)
         {
             int index = Random.Next(emptyCoords.Count);
-            Trampoline trampoline = new(emptyCoords[index].x, emptyCoords[index].y, true);
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
+            Portal trampoline = new(emptyCoords[index].x, emptyCoords[index].y, true);
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
 
             int numWalls = 0;
@@ -231,7 +231,7 @@ public class MazeGenerator
             foreach (var (x, y) in Directions)
             {
                 (int x, int y) nCoord = (emptyCoords[index].x + x, emptyCoords[index].y + y);
-                if (IsInsideBounds(nCoord.x, nCoord.y) && Maze[nCoord.x, nCoord.y] is Empty or Spikes or Trampoline)
+                if (IsInsideBounds(nCoord.x, nCoord.y) && Maze[nCoord.x, nCoord.y] is Empty or Spikes or Portal)
                 {
                     (int x, int y) inBetweenCoord;
                     inBetweenCoord = ((int)((nCoord.x + emptyCoords[index].x) * 0.5f), (int)((nCoord.y + emptyCoords[index].y) * 0.5f));
@@ -258,7 +258,7 @@ public class MazeGenerator
         {
             int index = Random.Next(emptyCoords.Count);
             Sticky sticky = new(emptyCoords[index].x, emptyCoords[index].y, true);
-            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Trampoline or Sticky) continue;
+            if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
             Maze[emptyCoords[index].x, emptyCoords[index].y] = sticky;
         }

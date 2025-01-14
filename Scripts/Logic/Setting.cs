@@ -18,11 +18,24 @@ namespace MazeRunner.Scripts.Logic
 
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
-            //Size is supported by the Level Difficulty.
-            Size = 4 * levelDifficulty + 1;
-            //Create a new instance of the Map Generator class.
+            Size = 6 * levelDifficulty + 1;
             MazeGenerator = new(Size, seed, isRandomSeed);
-            //Get map generated from Map Generator.
+        }
+
+        public void AddSkill(Skill skill, Token token)
+        {
+            if (!token.Skill.Contains(skill))
+            {
+                token.Skill.Add(skill);
+            }
+        }
+
+        public void RemoveSkill(Skill skill, Token token)
+        {
+            if (token.Skill.Contains(skill))
+            {
+                token.Skill.Remove(skill);
+            }
         }
     }
 }

@@ -53,12 +53,15 @@ namespace MazeRunner.Scripts.Data
         public Spawner(int x, int y) : base(x, y) { }
     }
 
-    public class Trap : Empty
+    /// <summary>
+    /// Base trap class.
+    /// </summary>
+    public abstract class Trap : Empty
     {
         public bool IsActivated { get; set; }
         public Trap(int x, int y, bool isActivated) : base(x, y)
         {
-            this.IsActivated = isActivated;
+            IsActivated = isActivated;
         }
 
         public void Activate()
@@ -72,16 +75,25 @@ namespace MazeRunner.Scripts.Data
         }
     }
 
+    /// <summary>
+    /// Spikes Trap.
+    /// </summary>
     public class Spikes : Trap
     {
         public Spikes(int x, int y, bool isActivated) : base(x, y, isActivated) { }
     }
 
-    public class Trampoline : Trap
+    /// <summary>
+    /// Portal Trap. 
+    /// </summary>
+    public class Portal : Trap
     {
-        public Trampoline(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+        public Portal(int x, int y, bool isActivated) : base(x, y, isActivated) { }
     }
 
+    /// <summary>
+    /// Sticky Trap.
+    /// </summary>
     public class Sticky : Trap
     {
         public Sticky(int x, int y, bool isActivated) : base(x, y, isActivated) { }
