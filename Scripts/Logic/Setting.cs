@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Godot;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts.Logic
@@ -15,6 +18,7 @@ namespace MazeRunner.Scripts.Logic
         /// Instance of the Map Generator class.
         /// </summary>
         public MazeGenerator MazeGenerator { get; private set; }
+        public bool[] SkillBools { get; private set; } = { false };
 
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
@@ -22,19 +26,15 @@ namespace MazeRunner.Scripts.Logic
             MazeGenerator = new(Size, seed, isRandomSeed);
         }
 
-        public void AddSkill(Skill skill, Token token)
+        public void CheckSkill(int index)
         {
-            if (!token.Skill.Contains(skill))
+            if (!SkillBools[index])
             {
-                token.Skill.Add(skill);
+                SkillBools[index] = true;
             }
-        }
-
-        public void RemoveSkill(Skill skill, Token token)
-        {
-            if (token.Skill.Contains(skill))
+            else
             {
-                token.Skill.Remove(skill);
+                SkillBools[index] = false;
             }
         }
     }

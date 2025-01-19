@@ -14,7 +14,7 @@ namespace MazeRunner.Scripts.Data
         /// </summary>
         public int Y { get; set; }
 
-        protected Tile(int x, int y)
+        public Tile(int x, int y)
         {
             X = x;
             Y = y;

@@ -19,7 +19,7 @@ public partial class MainMenu : Control
 
 	public void OnPlayButtonDown()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/editor.tscn");
 	}
 
 	public void OnQuitButtonDown()

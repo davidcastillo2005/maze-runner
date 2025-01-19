@@ -17,8 +17,9 @@ public partial class Token : CharacterBody2D
     private SpikesTimer _spikesTimer;
     private Timer _timer;
 
-    public List<Skill> Skill { get; private set; }
-    
+    public bool[] TokenSkillsBools { get; set; } = new bool[1];
+    public Shield Shield { get; private set; } = new Shield();
+
     public enum State
     {
         Spawning,
@@ -46,9 +47,7 @@ public partial class Token : CharacterBody2D
     private float _minPosition;
     private float _maxPosition;
     public int _directionalKeysPressCount;
-
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
+    public override void _Ready() // Called when the node enters the scene tree for the first time.
     {
         _playerCamera = GetNode<PlayerCamera>("/root/Game/MainGame/PlayerCamera");
         _global = GetNode<Global>("/root/Global");
@@ -63,6 +62,14 @@ public partial class Token : CharacterBody2D
         _input = Vector2.Zero;
         _minPosition = GetConvertedPos(0) - _board.TileSize * (float)Math.Pow(4, -1);
         _maxPosition = GetConvertedPos(_mazeGenerator.Size - 1) + _board.TileSize * (float)Math.Pow(4, -1);
+
+        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
+        {
+            if (_global.Setting.SkillBools[i])
+            {
+                TokenSkillsBools[i] = true;
+            }
+        }
     }
 
 
@@ -93,21 +100,46 @@ public partial class Token : CharacterBody2D
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
         {
             spikes.Deactivate();
-            if (CurrentCondition != Condition.Spikes)
+            if (TokenSkillsBools[0] && Shield.Health > 0)
             {
-                CurrentCondition = Condition.Spikes;
-                _timer.Start();
+                Shield.Health--;
+                goto EscapeTrap;
+            }
+            else
+            {
+                if (CurrentCondition != Condition.Spikes)
+                {
+                    CurrentCondition = Condition.Spikes;
+                    _timer.Start();
+                }
+
+            }
+            if (Shield.Health < 0)
+            {
+                Shield.Health = 0;
             }
         }
 
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal trampoline && trampoline.IsActivated)
         {
             trampoline.Deactivate();
-            if (CurrentCondition != Condition.Trampoline)
+            if (TokenSkillsBools[0] && Shield.Health > 0)
             {
-                _previusCondition = CurrentCondition;
-                CurrentCondition = Condition.Trampoline;
-                _timer.Start();
+                Shield.Health--;
+                goto EscapeTrap;
+            }
+            else
+            {
+                if (CurrentCondition != Condition.Trampoline)
+                {
+                    _previusCondition = CurrentCondition;
+                    CurrentCondition = Condition.Trampoline;
+                }
+            }
+
+            if (Shield.Health < 0)
+            {
+                Shield.Health = 0;
             }
 
         }
@@ -115,12 +147,29 @@ public partial class Token : CharacterBody2D
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
         {
             sticky.Deactivate();
-            if (CurrentCondition != Condition.Sticky)
+            if (TokenSkillsBools[0] && Shield.Health > 0)
             {
-                CurrentCondition = Condition.Sticky;
-                _timer.Start();
+                Shield.Health--;
+                goto EscapeTrap;
+            }
+            else
+            {
+                if (CurrentCondition != Condition.Sticky)
+                {
+                    CurrentCondition = Condition.Sticky;
+                    _timer.Start();
+                }
+            }
+
+            if (Shield.Health < 0)
+            {
+                Shield.Health = 0;
             }
         }
+
+    EscapeTrap:
+
+
 
         if (CurrentCondition == Condition.Spikes && _timer.IsStopped()) CurrentCondition = Condition.None;
 
@@ -264,4 +313,5 @@ public partial class Token : CharacterBody2D
     {
         GetTree().Quit();
     }
+
 }

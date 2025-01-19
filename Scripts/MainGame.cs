@@ -23,7 +23,8 @@ public partial class MainGame : Node2D
         GD.Print("ExitCoord: " + _global.Setting.MazeGenerator.ExitCoord);
         GD.Print("Size: " + _global.Setting.Size);
         GD.Print("Seed: " + _global.Setting.MazeGenerator.Seed);
-        GdPrintMaze();
+        GDPrintMaze();
+        GDPrintSkills();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -32,12 +33,19 @@ public partial class MainGame : Node2D
         // GD.Print("Floor: " + _token.CurrentFloor);
         // GD.Print("PlayerState: " + _token.CurrentState);
         // GD.Print("PlayerCondition: " + _token.CurrentCondition);
-        if (_token.CurrentCondition == Token.Condition.Spikes) GD.Print("TimeLeft for SpikeTrapped Condition: " + Math.Floor(_spikesTimer.TimeLeft + 1));
+        // if (_token.CurrentCondition == Token.Condition.Spikes) GD.Print("TimeLeft for SpikeTrapped Condition: " + Math.Floor(_spikesTimer.TimeLeft + 1));
         // if (_token.CurrentCondition == Token.Condition.Sticky) GD.Print("_directionalKeysPressCount: " + _token._directionalKeysPressCount);
         // GD.Print("");
+        for (int i = 0; i < _token.TokenSkillsBools.Length; i++)
+        {
+            if (_token.TokenSkillsBools[i])
+            {
+                GD.Print("ShieldHealth: " + _token.Shield.Health);
+            }
+        }
     }
 
-    private void GdPrintMaze()
+    private void GDPrintMaze()
     {
         for (int i = 0; i < _global.Setting.MazeGenerator.Size; i++)
         {
@@ -48,6 +56,21 @@ public partial class MainGame : Node2D
                 else if (_global.Setting.MazeGenerator.Maze[j, i] is Wall) rowLog += "# ";
             }
             GD.Print(rowLog);
+        }
+    }
+
+    private void GDPrintSkills()
+    {
+        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
+        {
+            GD.Print(_global.Setting.SkillBools[i]);
+        }
+        for (int i = 0; i < _token.TokenSkillsBools.Length; i++)
+        {
+            if (_token.TokenSkillsBools[i])
+            {
+                GD.Print(_token.TokenSkillsBools[i]);
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_syhqm")
-_playButton = NodePath("VBoxContainer/PlayButton")
+_playButton = NodePath("VBoxContainer/NewGameButton")
 _quitButton = NodePath("VBoxContainer/QuitButton")
 
 [node name="Title" type="Label" parent="."]
@@ -24,7 +24,7 @@ offset_left = -57.0
 offset_right = 57.0
 offset_bottom = 23.0
 grow_horizontal = 2
-text = "MAZE RUNNER"
+text = "Main Menu"
 label_settings = SubResource("LabelSettings_2oqmm")
 horizontal_alignment = 1
 
@@ -43,15 +43,15 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(21, 0)
 
-[node name="PlayButton" type="Button" parent="VBoxContainer"]
+[node name="NewGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Play"
+text = "New Game"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Quit"
 
-[connection signal="button_down" from="VBoxContainer/PlayButton" to="." method="OnPlayButtonDown"]
+[connection signal="button_down" from="VBoxContainer/NewGameButton" to="." method="OnPlayButtonDown"]
 [connection signal="button_down" from="VBoxContainer/QuitButton" to="." method="OnQuitButtonDown"]
