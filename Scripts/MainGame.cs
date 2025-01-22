@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts;
@@ -23,8 +22,8 @@ public partial class MainGame : Node2D
         GD.Print("ExitCoord: " + _global.Setting.MazeGenerator.ExitCoord);
         GD.Print("Size: " + _global.Setting.Size);
         GD.Print("Seed: " + _global.Setting.MazeGenerator.Seed);
-        GDPrintMaze();
         GDPrintSkills();
+        GDPrintMaze();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -36,13 +35,20 @@ public partial class MainGame : Node2D
         // if (_token.CurrentCondition == Token.Condition.Spikes) GD.Print("TimeLeft for SpikeTrapped Condition: " + Math.Floor(_spikesTimer.TimeLeft + 1));
         // if (_token.CurrentCondition == Token.Condition.Sticky) GD.Print("_directionalKeysPressCount: " + _token._directionalKeysPressCount);
         // GD.Print("");
-        for (int i = 0; i < _token.TokenSkillsBools.Length; i++)
-        {
-            if (_token.TokenSkillsBools[i])
-            {
-                GD.Print("ShieldHealth: " + _token.Shield.Health);
-            }
-        }
+        // for (int i = 0; i < _token.TokenSkillsBools.Length; i++)
+        // {
+        //     if (_token.TokenSkillsBools[i] && i == 0)
+        //     {
+        //         GD.Print("ShieldHealth: " + _token.Shield.Health);
+        //     }
+        //     if (_token.TokenSkillsBools[i] && i == 1)
+        //     {
+        //         GD.Print("SlowerWaitTime: " + _token.OwnTempo.TimeScalar);
+        //     }
+        // }
+        // GD.Print("Token.IsBoostOn: " + _token._isBoostOn);
+        // GD.Print("Token.ISBoostStillOn: " + _token._isBoolStillOn);
+        // GD.Print("Token.Boost.Battery: " + _token.Boost.Battery);
     }
 
     private void GDPrintMaze()
@@ -61,16 +67,13 @@ public partial class MainGame : Node2D
 
     private void GDPrintSkills()
     {
-        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
-        {
-            GD.Print(_global.Setting.SkillBools[i]);
-        }
+        // for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
+        // {
+        //     GD.Print($"Setting.SkillBools[{i}]: " + _global.Setting.SkillBools[i]);
+        // }
         for (int i = 0; i < _token.TokenSkillsBools.Length; i++)
         {
-            if (_token.TokenSkillsBools[i])
-            {
-                GD.Print(_token.TokenSkillsBools[i]);
-            }
+            GD.Print($"token.TokenSkillBools[{i}]: " + _token.TokenSkillsBools[i]);
         }
     }
 }

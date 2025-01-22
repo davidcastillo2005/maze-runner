@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${config:godotTools.editorPath.godot4}",
+            "program": "C:\\Users\\Audiovisual1\\Downloads\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64\\Godot_v4.3-stable_mono_win64.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

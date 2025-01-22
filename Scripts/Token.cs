@@ -17,8 +17,17 @@ public partial class Token : CharacterBody2D
     private SpikesTimer _spikesTimer;
     private Timer _timer;
 
-    public bool[] TokenSkillsBools { get; set; } = new bool[1];
+    public bool[] TokenSkillsBools { get; set; }
+    
+    public bool _isShieldOn = false;
     public Shield Shield { get; private set; } = new Shield();
+    
+    public bool _isPortalGunOn = false;
+    public PortalGun PortalGun { get; private set; } = new PortalGun();
+    
+    public Boost Boost { get; private set; } = new Boost();
+    public bool _isBoostOn { get; private set; } = false;
+    public bool _isBoolStillOn { get; private set; } = false;
 
     public enum State
     {
@@ -46,8 +55,9 @@ public partial class Token : CharacterBody2D
     private float _speed;
     private float _minPosition;
     private float _maxPosition;
-    public int _directionalKeysPressCount;
-    public override void _Ready() // Called when the node enters the scene tree for the first time.
+    private int _directionalKeysPressCount;
+    
+    public override void _Ready()
     {
         _playerCamera = GetNode<PlayerCamera>("/root/Game/MainGame/PlayerCamera");
         _global = GetNode<Global>("/root/Global");
@@ -63,15 +73,16 @@ public partial class Token : CharacterBody2D
         _minPosition = GetConvertedPos(0) - _board.TileSize * (float)Math.Pow(4, -1);
         _maxPosition = GetConvertedPos(_mazeGenerator.Size - 1) + _board.TileSize * (float)Math.Pow(4, -1);
 
-        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
-        {
-            if (_global.Setting.SkillBools[i])
-            {
-                TokenSkillsBools[i] = true;
-            }
-        }
+        SetSkills();
     }
 
+    private void SetSkills()
+    {
+        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
+        {
+            TokenSkillsBools = _global.Setting.SkillBools;
+        }
+    }
 
     public override void _Input(InputEvent @event)
     {
@@ -83,6 +94,33 @@ public partial class Token : CharacterBody2D
                 if (_input != Vector2.Zero) CurrentState = State.Moving;
                 else CurrentState = State.Idle;
             }
+
+            if (TokenSkillsBools[0] && Input.IsActionPressed("Skill") && Shield.Health != 0)
+            {
+                _isShieldOn = true;
+            }
+            else
+            {
+                _isShieldOn = false;
+            }
+
+            if (TokenSkillsBools[1] && _input != Vector2.Zero && Input.IsActionJustPressed("Skill") && PortalGun.Battery > 0)
+            {
+                _isPortalGunOn = true;
+            }
+            else
+            {
+                _isPortalGunOn = false;
+            }
+
+            if (TokenSkillsBools[2] && Input.IsActionPressed("Skill") && Boost.Battery >= 1 && CurrentCondition == Condition.None)
+            {
+                _isBoostOn = true;
+            }
+            else
+            {
+                _isBoostOn = false;
+            }
         }
         else
         {
@@ -90,17 +128,42 @@ public partial class Token : CharacterBody2D
         }
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
         _tokenCoord = _board.LocalToMap(Position);
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
+        if (_isBoostOn && !_isBoolStillOn)
+        {
+            Boost.Battery--;
+        }
+        if (Boost.Battery < 1) Boost.Battery = 0;
+        if (_isBoostOn)
+        {
+            _isBoolStillOn = true;
+        }
+        else
+        {
+            _isBoolStillOn = false;
+        }
+
+        if (_isPortalGunOn)
+        {
+            Vector2I nTokenCoord = (Vector2I)(_input * 2 + _tokenCoord);
+            if (nTokenCoord.X >= 0 && nTokenCoord.Y >= 0 && nTokenCoord.X < _mazeGenerator.Size && nTokenCoord.Y < _mazeGenerator.Size && _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
+            {
+                Position = new Vector2(GetConvertedPos(nTokenCoord.X), GetConvertedPos(nTokenCoord.Y));
+                PortalGun.Battery--;
+                _isPortalGunOn = false;
+            }
+        }
+        if (PortalGun.Battery < 0) PortalGun.Battery = 0;
+
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
         {
             spikes.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0)
+            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
@@ -112,18 +175,13 @@ public partial class Token : CharacterBody2D
                     CurrentCondition = Condition.Spikes;
                     _timer.Start();
                 }
-
-            }
-            if (Shield.Health < 0)
-            {
-                Shield.Health = 0;
             }
         }
 
-        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal trampoline && trampoline.IsActivated)
+        if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal portal && portal.IsActivated)
         {
-            trampoline.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0)
+            portal.Deactivate();
+            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
@@ -136,18 +194,12 @@ public partial class Token : CharacterBody2D
                     CurrentCondition = Condition.Trampoline;
                 }
             }
-
-            if (Shield.Health < 0)
-            {
-                Shield.Health = 0;
-            }
-
         }
 
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
         {
             sticky.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0)
+            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
@@ -160,16 +212,14 @@ public partial class Token : CharacterBody2D
                     _timer.Start();
                 }
             }
+        }
 
-            if (Shield.Health < 0)
-            {
-                Shield.Health = 0;
-            }
+        if (Shield.Health < 0)
+        {
+            Shield.Health = 0;
         }
 
     EscapeTrap:
-
-
 
         if (CurrentCondition == Condition.Spikes && _timer.IsStopped()) CurrentCondition = Condition.None;
 
@@ -236,7 +286,6 @@ public partial class Token : CharacterBody2D
                 break;
             default:
                 throw new Exception();
-
         }
     }
 
@@ -247,16 +296,13 @@ public partial class Token : CharacterBody2D
 
     private void ResetStats()
     {
-        _speed = _defaultSpeed * _board.TileSize;
+        _speed = _isBoostOn ? _defaultSpeed * _board.TileSize * Boost.Multiplier : _defaultSpeed * _board.TileSize;
     }
 
     private void GetStuckBySticky()
     {
         if (_input != Vector2.Zero) _input = Vector2.Zero;
-        if (Input.IsActionJustPressed("UILeft") || Input.IsActionJustPressed("UIRight") || Input.IsActionJustPressed("UIUp") || Input.IsActionJustPressed("UIDown"))
-        {
-            _directionalKeysPressCount++;
-        }
+        if (Input.IsActionJustPressed("UILeft") || Input.IsActionJustPressed("UIRight") || Input.IsActionJustPressed("UIUp") || Input.IsActionJustPressed("UIDown")) _directionalKeysPressCount++;
     }
 
     private void HurtBySpikes()
@@ -311,7 +357,6 @@ public partial class Token : CharacterBody2D
 
     private void Win()
     {
-        GetTree().Quit();
+        GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
     }
-
 }

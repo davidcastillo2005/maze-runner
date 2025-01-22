@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Editor.cs" id="1_lfke3"]
 
-[node name="Editor" type="Control" node_paths=PackedStringArray("shieldButton")]
+[node name="Editor" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,7 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lfke3")
-shieldButton = NodePath("ScrollContainer/SkillsSelector/Shield/Button")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -23,20 +22,36 @@ horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 0
-offset_left = 207.0
-offset_top = 49.0
-offset_right = 346.0
-offset_bottom = 101.0
+offset_left = 300.0
+offset_top = 53.0
+offset_right = 430.0
+offset_bottom = 139.0
 
 [node name="SkillsSelector" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="PortalGun" type="HBoxContainer" parent="ScrollContainer/SkillsSelector"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/SkillsSelector/PortalGun"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/SkillsSelector/PortalGun"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Portal Gun"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Shield" type="HBoxContainer" parent="ScrollContainer/SkillsSelector"]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 
-[node name="Button" type="CheckBox" parent="ScrollContainer/SkillsSelector/Shield"]
+[node name="Button" type="Button" parent="ScrollContainer/SkillsSelector/Shield"]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 size_flags_horizontal = 2
@@ -49,8 +64,21 @@ text = "Shield
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Control" type="Control" parent="ScrollContainer/SkillsSelector/Shield"]
+[node name="Boost" type="HBoxContainer" parent="ScrollContainer/SkillsSelector"]
+custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
+
+[node name="Button" type="Button" parent="ScrollContainer/SkillsSelector/Boost"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/SkillsSelector/Boost"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Boost"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1
@@ -67,5 +95,7 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "Start"
 
+[connection signal="pressed" from="ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPortalGunPressed"]
 [connection signal="pressed" from="ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnShieldButtonPressed"]
+[connection signal="pressed" from="ScrollContainer/SkillsSelector/Boost/Button" to="." method="OnBoostButtonPressed"]
 [connection signal="pressed" from="Button" to="." method="OnStartButtonPressed"]

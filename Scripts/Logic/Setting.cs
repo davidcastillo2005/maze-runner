@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Godot;
-using MazeRunner.Scripts.Data;
-
 namespace MazeRunner.Scripts.Logic
 {
     /// <summary>
@@ -14,11 +9,12 @@ namespace MazeRunner.Scripts.Logic
         /// Size of the map to be generated.
         /// </summary>
         public int Size { get; set; }
+
         /// <summary>
         /// Instance of the Map Generator class.
         /// </summary>
         public MazeGenerator MazeGenerator { get; private set; }
-        public bool[] SkillBools { get; private set; } = { false };
+        public bool[] SkillBools { get; private set; } = { false, false, false };
 
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
@@ -28,13 +24,16 @@ namespace MazeRunner.Scripts.Logic
 
         public void CheckSkill(int index)
         {
-            if (!SkillBools[index])
+            for (int i = 0; i < SkillBools.Length; i++)
             {
-                SkillBools[index] = true;
-            }
-            else
-            {
-                SkillBools[index] = false;
+                if (i == index)
+                {
+                    SkillBools[i] = true;
+                }
+                else
+                {
+                    SkillBools[i] = false;
+                }
             }
         }
     }
