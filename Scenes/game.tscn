@@ -1,11 +1,11 @@
 [gd_scene load_steps=10 format=4 uid="uid://2q322tyxvreq"]
 
-[ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/token.tscn" id="1_8oosl"]
+[ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/player.tscn" id="1_8oosl"]
 [ext_resource type="Script" path="res://Scripts/MainGame.cs" id="1_a0sd4"]
 [ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="1_vkpc8"]
 [ext_resource type="Texture2D" uid="uid://vljiu5tm20d6" path="res://Resources/wall_g.png" id="2_utsdj"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="3_7j6rw"]
-[ext_resource type="Script" path="res://Scripts/PlayerCamera.cs" id="4_ii6ff"]
+[ext_resource type="Script" path="res://Scripts/PlayerCamera.cs" id="6_yssce"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e7hwg"]
 texture = ExtResource("2_utsdj")
@@ -25,14 +25,19 @@ texture_region_size = Vector2i(64, 64)
 
 [sub_resource type="TileSet" id="TileSet_4wqoe"]
 tile_size = Vector2i(64, 64)
-physics_layer_0/collision_layer = 3
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
 sources/2 = SubResource("TileSetAtlasSource_l6rc5")
 sources/0 = SubResource("TileSetAtlasSource_e7hwg")
 
 [node name="Game" type="Node2D"]
 
-[node name="MainGame" type="Node2D" parent="."]
+[node name="MainGame" type="Node2D" parent="." node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo")]
 script = ExtResource("1_a0sd4")
+_playerOneCamera = NodePath("PlayerCamera2D")
+_playerTwoCamera = NodePath("PlayerCamera2D2")
+_playerOne = NodePath("Player1")
+_playerTwo = NodePath("Player2")
 
 [node name="Board" type="TileMapLayer" parent="MainGame"]
 z_index = 1
@@ -41,12 +46,29 @@ tile_map_data = PackedByteArray("AAAAAAAAAAABAAEAAAABAAAAAAABAAEAAAACAAAAAAABAAE
 tile_set = SubResource("TileSet_4wqoe")
 script = ExtResource("3_7j6rw")
 
-[node name="Token" parent="MainGame" instance=ExtResource("1_8oosl")]
-z_index = 2
-z_as_relative = false
-position = Vector2(32, 32)
-_defaultSpeed = 10.0
+[node name="Player1" parent="MainGame" node_paths=PackedStringArray("PlayerCamera", "Board") instance=ExtResource("1_8oosl")]
+collision_layer = 4
+collision_mask = 1
+PlayerCamera = NodePath("../PlayerCamera2D")
+Board = NodePath("../Board")
 
-[node name="PlayerCamera" type="Camera2D" parent="MainGame"]
-zoom = Vector2(34.286, 34.286)
-script = ExtResource("4_ii6ff")
+[node name="PlayerCamera2D" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
+position_smoothing_enabled = true
+script = ExtResource("6_yssce")
+_player = NodePath("../Player1")
+
+[node name="Player2" parent="MainGame" node_paths=PackedStringArray("PlayerCamera", "Board") instance=ExtResource("1_8oosl")]
+collision_mask = 1
+Left = "Left2"
+Right = "Right2"
+Up = "Up2"
+Down = "Down2"
+ShiftCamera = "ShiftCamera2"
+Skill = "Skill2"
+PlayerCamera = NodePath("../PlayerCamera2D2")
+Board = NodePath("../Board")
+
+[node name="PlayerCamera2D2" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
+position_smoothing_enabled = true
+script = ExtResource("6_yssce")
+_player = NodePath("../Player2")

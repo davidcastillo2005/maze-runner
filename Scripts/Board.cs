@@ -40,9 +40,9 @@ public partial class Board : TileMapLayer
                     if (spikes.IsActivated) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
                     else SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                 }
-                else if (_mazeGenerator.Maze[x, y] is Portal trampoline)
+                else if (_mazeGenerator.Maze[x, y] is Portal portal)
                 {
-                    if (trampoline.IsActivated) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
+                    if (portal.IsActivated) SetCell(new Vector2I(x, y), -1, new Vector2I(0, 0));
                     else SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                 }
                 else if (_mazeGenerator.Maze[x, y] is Sticky sticky)

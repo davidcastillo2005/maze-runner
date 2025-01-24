@@ -9,21 +9,16 @@ namespace MazeRunner.Scripts.Data;
 /// </summary>
 public class Skill
 {
-    public string Name { get; set; }
 
-    public string Description { get; set; }
-
-    public Skill(string name, string description)
+    public Skill()
     {
-        Name = name;
-        Description = description;
     }
 }
 
 public class Shield : Skill
 {
     public int Health { get; set; } = 2;
-    public Shield() : base("Escudo", "Protección contra trampas.")
+    public Shield() : base()
     {
     }
 }
@@ -31,7 +26,7 @@ public class Shield : Skill
 public class PortalGun : Skill
 {
     public int Battery { get; set; } = 2;
-    public PortalGun() : base("Pistola de portales", "Atravieza portales.")
+    public PortalGun() : base()
     {
     }
 }
@@ -39,8 +34,15 @@ public class PortalGun : Skill
 public class Boost : Skill
 {
     public int Battery { get; set; } = 2;
-    public int Multiplier {get; private set; } = 2;
-    public Boost() : base("Velocidad", "Mayor velocidad hasta llegar a una trampa.")
+    public int Multiplier { get; private set; } = 4;
+    public Boost() : base()
+    {
+    }
+}
+
+public class Blindness : Skill
+{
+    public Blindness() : base()
     {
     }
 }

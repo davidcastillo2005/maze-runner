@@ -6,25 +6,30 @@ using MazeRunner.Scripts.Logic;
 
 namespace MazeRunner.Scripts;
 
-public partial class Token : CharacterBody2D
+public partial class Player : CharacterBody2D
 {
-    [Export] float _defaultSpeed = 20;
+    [Export] float _speed = 20;
+    [Export] public string Left;
+    [Export] public string Right;
+    [Export] public string Up;
+    [Export] public string Down;
+    [Export] public string ShiftCamera;
+    [Export] public string Skill;
+    [Export] public PlayerCamera PlayerCamera;
+    [Export] public Board Board;
+    [Export] public Timer Timer;
 
     private Global _global;
-    private PlayerCamera _playerCamera;
-    private Board _board;
     private MazeGenerator _mazeGenerator;
-    private SpikesTimer _spikesTimer;
-    private Timer _timer;
 
-    public bool[] TokenSkillsBools { get; set; }
-    
+    public bool[] PlayerSkillsBools { get; set; }
+
     public bool _isShieldOn = false;
     public Shield Shield { get; private set; } = new Shield();
-    
+
     public bool _isPortalGunOn = false;
     public PortalGun PortalGun { get; private set; } = new PortalGun();
-    
+
     public Boost Boost { get; private set; } = new Boost();
     public bool _isBoostOn { get; private set; } = false;
     public bool _isBoolStillOn { get; private set; } = false;
@@ -42,7 +47,7 @@ public partial class Token : CharacterBody2D
     {
         None,
         Spikes,
-        Trampoline,
+        Portal,
         Sticky
     }
     private Condition? _previusCondition;
@@ -52,50 +57,54 @@ public partial class Token : CharacterBody2D
 
     private Vector2 _input;
     private Vector2I _tokenCoord;
-    private float _speed;
     private float _minPosition;
     private float _maxPosition;
     private int _directionalKeysPressCount;
-    
+
+    private float _currentSpeed;
+    private float _defaultSpeed;
+    private float _paralizedSpeed;
+
+
     public override void _Ready()
     {
-        _playerCamera = GetNode<PlayerCamera>("/root/Game/MainGame/PlayerCamera");
         _global = GetNode<Global>("/root/Global");
         _mazeGenerator = _global.Setting.MazeGenerator;
-        _board = GetNode<Board>("/root/Game/MainGame/Board");
-        _spikesTimer = GetNode<SpikesTimer>("/root/Game/MainGame/Token/SpikesTimer");
-        _timer = GetNode<SpikesTimer>("/root/Game/MainGame/Token/SpikesTimer");
-
-        _speed = _defaultSpeed * _board.TileSize;
         CurrentState = State.Spawning;
         CurrentCondition = Condition.None;
         _input = Vector2.Zero;
-        _minPosition = GetConvertedPos(0) - _board.TileSize * (float)Math.Pow(4, -1);
-        _maxPosition = GetConvertedPos(_mazeGenerator.Size - 1) + _board.TileSize * (float)Math.Pow(4, -1);
+        _minPosition = GetConvertedPos(0) - Board.TileSize * (float)Math.Pow(4, -1);
+        _maxPosition = GetConvertedPos(_mazeGenerator.Size - 1) + Board.TileSize * (float)Math.Pow(4, -1);
+
+        _defaultSpeed = _speed * Board.TileSize;
+        _paralizedSpeed = _defaultSpeed / 10;
+        _currentSpeed = _defaultSpeed;
 
         SetSkills();
+
+        Position = new Vector2(GetConvertedPos(_mazeGenerator.SpawnerCoord.x), GetConvertedPos(_mazeGenerator.SpawnerCoord.y));
     }
 
     private void SetSkills()
     {
         for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
         {
-            TokenSkillsBools = _global.Setting.SkillBools;
+            PlayerSkillsBools = _global.Setting.SkillBools;
         }
     }
 
     public override void _Input(InputEvent @event)
     {
-        if (_playerCamera.CurrentState != PlayerCamera.State.Free)
+        if (PlayerCamera.CurrentState != PlayerCamera.State.Free)
         {
-            _input = Input.GetVector("UILeft", "UIRight", "UIUp", "UIDown");
+            _input = Input.GetVector(Left, Right, Up, Down);
             if (CurrentState != State.Spawning)
             {
                 if (_input != Vector2.Zero) CurrentState = State.Moving;
                 else CurrentState = State.Idle;
             }
 
-            if (TokenSkillsBools[0] && Input.IsActionPressed("Skill") && Shield.Health != 0)
+            if (PlayerSkillsBools[0] && Input.IsActionPressed(Skill) && Shield.Health != 0)
             {
                 _isShieldOn = true;
             }
@@ -104,7 +113,7 @@ public partial class Token : CharacterBody2D
                 _isShieldOn = false;
             }
 
-            if (TokenSkillsBools[1] && _input != Vector2.Zero && Input.IsActionJustPressed("Skill") && PortalGun.Battery > 0)
+            if (PlayerSkillsBools[1] && _input != Vector2.Zero && Input.IsActionJustPressed(Skill) && PortalGun.Battery > 0)
             {
                 _isPortalGunOn = true;
             }
@@ -113,14 +122,14 @@ public partial class Token : CharacterBody2D
                 _isPortalGunOn = false;
             }
 
-            if (TokenSkillsBools[2] && Input.IsActionPressed("Skill") && Boost.Battery >= 1 && CurrentCondition == Condition.None)
-            {
-                _isBoostOn = true;
-            }
-            else
-            {
-                _isBoostOn = false;
-            }
+            // if (TokenSkillsBools[2] && Input.IsActionPressed(Skill) && Boost.Battery >= 1 && CurrentCondition == Condition.None)
+            // {
+            //     _isBoostOn = true;
+            // }
+            // else
+            // {
+            //     _isBoostOn = false;
+            // }
         }
         else
         {
@@ -130,23 +139,23 @@ public partial class Token : CharacterBody2D
 
     public override void _Process(double delta)
     {
-        _tokenCoord = _board.LocalToMap(Position);
+        _tokenCoord = Board.LocalToMap(Position);
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
-        if (_isBoostOn && !_isBoolStillOn)
-        {
-            Boost.Battery--;
-        }
-        if (Boost.Battery < 1) Boost.Battery = 0;
-        if (_isBoostOn)
-        {
-            _isBoolStillOn = true;
-        }
-        else
-        {
-            _isBoolStillOn = false;
-        }
+        // if (_isBoostOn && !_isBoolStillOn)
+        // {
+        //     Boost.Battery--;
+        // }
+        // if (Boost.Battery < 1) Boost.Battery = 0;
+        // if (_isBoostOn)
+        // {
+        //     _isBoolStillOn = true;
+        // }
+        // else
+        // {
+        //     _isBoolStillOn = false;
+        // }
 
         if (_isPortalGunOn)
         {
@@ -163,7 +172,7 @@ public partial class Token : CharacterBody2D
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
         {
             spikes.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
+            if (PlayerSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
@@ -173,7 +182,7 @@ public partial class Token : CharacterBody2D
                 if (CurrentCondition != Condition.Spikes)
                 {
                     CurrentCondition = Condition.Spikes;
-                    _timer.Start();
+                    Timer.Start();
                 }
             }
         }
@@ -181,17 +190,17 @@ public partial class Token : CharacterBody2D
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal portal && portal.IsActivated)
         {
             portal.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
+            if (PlayerSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
             }
             else
             {
-                if (CurrentCondition != Condition.Trampoline)
+                if (CurrentCondition != Condition.Portal)
                 {
                     _previusCondition = CurrentCondition;
-                    CurrentCondition = Condition.Trampoline;
+                    CurrentCondition = Condition.Portal;
                 }
             }
         }
@@ -199,7 +208,7 @@ public partial class Token : CharacterBody2D
         if (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
         {
             sticky.Deactivate();
-            if (TokenSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
+            if (PlayerSkillsBools[0] && Shield.Health > 0 && _isShieldOn)
             {
                 Shield.Health--;
                 goto EscapeTrap;
@@ -209,7 +218,7 @@ public partial class Token : CharacterBody2D
                 if (CurrentCondition != Condition.Sticky)
                 {
                     CurrentCondition = Condition.Sticky;
-                    _timer.Start();
+                    Timer.Start();
                 }
             }
         }
@@ -221,7 +230,7 @@ public partial class Token : CharacterBody2D
 
     EscapeTrap:
 
-        if (CurrentCondition == Condition.Spikes && _timer.IsStopped()) CurrentCondition = Condition.None;
+        if (CurrentCondition == Condition.Spikes && Timer.IsStopped()) CurrentCondition = Condition.None;
 
         if (CurrentCondition == Condition.Sticky && _directionalKeysPressCount == 10)
         {
@@ -237,12 +246,15 @@ public partial class Token : CharacterBody2D
             case Condition.Spikes:
                 HurtBySpikes();
                 break;
-            case Condition.Trampoline:
-                BounceOnTrampoline();
+            case Condition.Portal:
+                MoveThroughPortal();
                 break;
             case Condition.Sticky:
                 GetStuckBySticky();
                 break;
+            default:
+                break;
+
         }
 
         switch (CurrentState)
@@ -259,34 +271,22 @@ public partial class Token : CharacterBody2D
             case State.Winning:
                 Win();
                 break;
-        }
-
-        switch (_mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y])
-        {
-            case Spawner:
-                CurrentFloor = "Spawner";
-                break;
-            case Exit:
-                CurrentFloor = "Exit";
-                break;
-            case Spikes:
-                CurrentFloor = "Spikes";
-                break;
-            case Portal:
-                CurrentFloor = "Trampoline";
-                break;
-            case Sticky:
-                CurrentFloor = "Sticky";
-                break;
-            case Wall:
-                CurrentFloor = "Wall";
-                break;
-            case Empty:
-                CurrentFloor = "Empty";
-                break;
             default:
                 throw new Exception();
         }
+
+        CurrentFloor = _mazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] switch
+        {
+            Spawner => "Spawner",
+            Exit => "Exit",
+            Spikes => "Spikes",
+            Portal => "Trampoline",
+            Sticky => "Sticky",
+            Wall => "Wall",
+            Empty => "Empty",
+            _ => throw new Exception(),
+        };
+
     }
 
     void OnSpikeTimerTimeout()
@@ -296,21 +296,21 @@ public partial class Token : CharacterBody2D
 
     private void ResetStats()
     {
-        _speed = _isBoostOn ? _defaultSpeed * _board.TileSize * Boost.Multiplier : _defaultSpeed * _board.TileSize;
+        _currentSpeed = _defaultSpeed;
     }
 
     private void GetStuckBySticky()
     {
         if (_input != Vector2.Zero) _input = Vector2.Zero;
-        if (Input.IsActionJustPressed("UILeft") || Input.IsActionJustPressed("UIRight") || Input.IsActionJustPressed("UIUp") || Input.IsActionJustPressed("UIDown")) _directionalKeysPressCount++;
+        if (Input.IsActionJustPressed(Left) || Input.IsActionJustPressed(Right) || Input.IsActionJustPressed(Up) || Input.IsActionJustPressed(Down)) _directionalKeysPressCount++;
     }
 
     private void HurtBySpikes()
     {
-        _speed = _board.TileSize;
+        _currentSpeed = _paralizedSpeed;
     }
 
-    private void BounceOnTrampoline()
+    private void MoveThroughPortal()
     {
         List<Vector2I> possibleNPosition = new();
         foreach (var (x, y) in _mazeGenerator.Directions)
@@ -332,9 +332,9 @@ public partial class Token : CharacterBody2D
         _previusCondition = null;
     }
 
-    private float GetConvertedPos(int i)
+    public float GetConvertedPos(int i)
     {
-        return (i + 0.5f) * _board.TileSize;
+        return (i + 0.5f) * Board.TileSize;
     }
 
     private void Idle()
@@ -343,7 +343,7 @@ public partial class Token : CharacterBody2D
 
     private void Move()
     {
-        Velocity = _input * _speed;
+        Velocity = _input * _currentSpeed;
         MoveAndSlide();
 
         Position = new Vector2(Math.Clamp(Position.X, _minPosition, _maxPosition), Math.Clamp(Position.Y, _minPosition, _maxPosition));

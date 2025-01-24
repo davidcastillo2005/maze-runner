@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bjoeblbdmvsm1"]
+[gd_scene load_steps=5 format=3 uid="uid://bjoeblbdmvsm1"]
 
-[ext_resource type="Script" path="res://Scripts/Token.cs" id="1_sacbm"]
+[ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sacbm"]
 [ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="2_fcpdt"]
-[ext_resource type="Script" path="res://Scripts/SpikesTimer.cs" id="3_y5vmm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(0.5, 0.5)
@@ -11,8 +10,19 @@ size = Vector2(0.5, 0.5)
 atlas = ExtResource("2_fcpdt")
 region = Rect2(79, 62, 2, 2)
 
-[node name="Token" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Timer")]
+z_index = 10
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1_sacbm")
+_speed = 10.0
+Left = "Left"
+Right = "Right"
+Up = "Up"
+Down = "Down"
+ShiftCamera = "ShiftCamera"
+Skill = "Skill"
+Timer = NodePath("Timer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(64, 64)
@@ -22,8 +32,7 @@ shape = SubResource("RectangleShape2D_wmeri")
 scale = Vector2(16, 16)
 texture = SubResource("AtlasTexture_uggnw")
 
-[node name="SpikesTimer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="."]
 wait_time = 10.0
-script = ExtResource("3_y5vmm")
 
-[connection signal="timeout" from="SpikesTimer" to="." method="OnSpikeTimerTimeout"]
+[connection signal="timeout" from="Timer" to="." method="OnSpikeTimerTimeout"]
