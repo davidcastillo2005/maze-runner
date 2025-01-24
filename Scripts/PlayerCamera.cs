@@ -7,9 +7,13 @@ namespace MazeRunner.Scripts;
 public partial class PlayerCamera : Camera2D
 {
     [Export] private Player _player;
+    [Export] private Board _board;
 
     private Global _global;
     private MazeGenerator _mazeGenerator;
+
+    private float _minPosition;
+    private float _maxPosition;
 
     public enum State
     {
@@ -31,14 +35,17 @@ public partial class PlayerCamera : Camera2D
         _input = Vector2.Zero;
         _cameraOffset = Vector2.Zero;
 
-        Position = new Vector2(_player.GetConvertedPos(_mazeGenerator.SpawnerCoord.x), _player.GetConvertedPos(_mazeGenerator.SpawnerCoord.y));
+        _minPosition = 0 + 720 / 2;
+        _maxPosition = _board.PixelSize - 720 / 2;
+
+        Position = _player.Position;
 
         if (_global.LevelDifficulty < 5) CurrentState = State.Extensive;
     }
 
     public override void _Input(InputEvent @event)
     {
-        _input = Input.GetVector(_player.Left, _player.Right, _player.Up, _player.Down);
+        _input = Input.GetVector(_player.Leftkey, _player.RightKey, _player.UpKey, _player.DownKey);
     }
 
 
@@ -47,11 +54,11 @@ public partial class PlayerCamera : Camera2D
         switch (CurrentState)
         {
             case State.Player:
-                if (Input.IsActionJustPressed(_player.ShiftCamera)) CurrentState = State.Free;
+                if (Input.IsActionJustPressed(_player.ShiftCameraKey)) CurrentState = State.Free;
                 else OnPlayer();
                 break;
             case State.Free:
-                if (Input.IsActionJustPressed(_player.ShiftCamera)) CurrentState = State.Player;
+                if (Input.IsActionJustPressed(_player.ShiftCameraKey)) CurrentState = State.Player;
                 else OnFree();
                 break;
             case State.Extensive:
@@ -64,13 +71,33 @@ public partial class PlayerCamera : Camera2D
     private void OnPlayer()
     {
         _cameraOffset = Vector2.Zero;
-        Position = _player.Position;
+        Position = new Vector2(Math.Clamp(_player.Position.X, _minPosition, _maxPosition), Math.Clamp(_player.Position.Y, _minPosition, _maxPosition));
     }
 
     private void OnFree()
     {
-        _cameraOffset += _player.Board.TileSize * _input;
-        Position = _player.Position + _cameraOffset;
+        _cameraOffset += _player.Board.TileSize * _input * 0.5f;
+        Position = new Vector2(Math.Clamp(_player.Position.X + _cameraOffset.X, _minPosition, _maxPosition), Math.Clamp(_player.Position.Y + _cameraOffset.Y, _minPosition, _maxPosition));
+
+        Vector2 temp = new Vector2(_player.Position.X + _cameraOffset.X, _player.Position.Y + _cameraOffset.Y);
+        if (temp.X < _minPosition)// || temp.Y < _minPosition || temp.X > _maxPosition || temp.Y > _maxPosition)
+        {
+            temp = new Vector2(_minPosition, temp.Y);
+        }
+        else if (temp.X > _maxPosition)
+        {
+            temp = new Vector2(_maxPosition, temp.Y);
+        }
+        if (temp.Y < _minPosition)
+        {
+            temp = new Vector2(temp.X, _minPosition);
+        }
+        else if (temp.Y > _maxPosition)
+        {
+            temp = new Vector2(temp.X, _maxPosition);
+        }
+
+        _cameraOffset = temp - _player.Position;
     }
 
     private void OnExtensive()

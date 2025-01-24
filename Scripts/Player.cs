@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Godot;
 using MazeRunner.Scripts.Data;
 using MazeRunner.Scripts.Logic;
@@ -8,17 +9,20 @@ namespace MazeRunner.Scripts;
 
 public partial class Player : CharacterBody2D
 {
-    [Export] float _speed = 20;
-    [Export] public string Left;
-    [Export] public string Right;
-    [Export] public string Up;
-    [Export] public string Down;
-    [Export] public string ShiftCamera;
-    [Export] public string Skill;
-    [Export] public PlayerCamera PlayerCamera;
+    [Export] private float _speed = 20;
+    [Export] public string Leftkey;
+    [Export] public string RightKey;
+    [Export] public string UpKey;
+    [Export] public string DownKey;
+    [Export] public string ShiftCameraKey;
+    [Export] public string SkillKey;
     [Export] public Board Board;
-    [Export] public Timer Timer;
-    [Export] public int CurrentPlayer;
+
+    [Export] private Timer _spikesTimer;
+    [Export] public Timer _blindnessTimer;
+    [Export] private int _currentPlayerNum;
+    [Export] private Player _oppositePlayer;
+    [Export] private PlayerCamera _playerCamera;
 
     private Global _global;
     private MazeGenerator _mazeGenerator;
@@ -31,9 +35,12 @@ public partial class Player : CharacterBody2D
     public bool _isPortalGunOn = false;
     public PortalGun PortalGun { get; private set; } = new PortalGun();
 
-    public Boost Boost { get; private set; } = new Boost();
-    public bool _isBoostOn { get; private set; } = false;
-    public bool _isBoolStillOn { get; private set; } = false;
+    public bool IsBlindnessOn = false;
+    public Blindness Blindness { get; private set; } = new Blindness();
+
+    // public Boost Boost { get; private set; } = new Boost();
+    // public bool _isBoostOn { get; private set; } = false;
+    // public bool _isBoolStillOn { get; private set; } = false;
 
     public enum State
     {
@@ -80,8 +87,8 @@ public partial class Player : CharacterBody2D
         _defaultSpeed = _speed * Board.TileSize;
         _paralizedSpeed = _defaultSpeed / 10;
         _currentSpeed = _defaultSpeed;
-
-        switch (CurrentPlayer)
+        
+        switch (_currentPlayerNum)
         {
             case 1:
                 PlayerOneSetSkills();
@@ -114,16 +121,16 @@ public partial class Player : CharacterBody2D
 
     public override void _Input(InputEvent @event)
     {
-        if (PlayerCamera.CurrentState != PlayerCamera.State.Free)
+        if (_playerCamera.CurrentState != PlayerCamera.State.Free)
         {
-            _input = Input.GetVector(Left, Right, Up, Down);
+            _input = Input.GetVector(Leftkey, RightKey, UpKey, DownKey);
             if (CurrentState != State.Spawning)
             {
                 if (_input != Vector2.Zero) CurrentState = State.Moving;
                 else CurrentState = State.Idle;
             }
 
-            if (PlayerSkillsBools[0] && Input.IsActionPressed(Skill) && Shield.Health != 0)
+            if (PlayerSkillsBools[0] && Input.IsActionPressed(SkillKey) && Shield.Health != 0)
             {
                 _isShieldOn = true;
             }
@@ -132,7 +139,7 @@ public partial class Player : CharacterBody2D
                 _isShieldOn = false;
             }
 
-            if (PlayerSkillsBools[1] && _input != Vector2.Zero && Input.IsActionJustPressed(Skill) && PortalGun.Battery > 0)
+            if (PlayerSkillsBools[1] && _input != Vector2.Zero && Input.IsActionJustPressed(SkillKey) && PortalGun.Battery > 0)
             {
                 _isPortalGunOn = true;
             }
@@ -141,7 +148,12 @@ public partial class Player : CharacterBody2D
                 _isPortalGunOn = false;
             }
 
-            // if (TokenSkillsBools[2] && Input.IsActionPressed(Skill) && Boost.Battery >= 1 && CurrentCondition == Condition.None)
+            if (PlayerSkillsBools[2] && Input.IsActionJustPressed(SkillKey) && _blindnessTimer.IsStopped())
+            {
+                _oppositePlayer.IsBlindnessOn = true;
+                _oppositePlayer._blindnessTimer.Start();
+            }
+            // if (TokenSkillsBools[2] && Input.IsActionPressed(Skill) & Boost.Battery >= 1 && CurrentCondition == Condition.None)
             // {
             //     _isBoostOn = true;
             // }
@@ -201,7 +213,7 @@ public partial class Player : CharacterBody2D
                 if (CurrentCondition != Condition.Spikes)
                 {
                     CurrentCondition = Condition.Spikes;
-                    Timer.Start();
+                    _spikesTimer.Start();
                 }
             }
         }
@@ -237,7 +249,7 @@ public partial class Player : CharacterBody2D
                 if (CurrentCondition != Condition.Sticky)
                 {
                     CurrentCondition = Condition.Sticky;
-                    Timer.Start();
+                    _spikesTimer.Start();
                 }
             }
         }
@@ -249,7 +261,7 @@ public partial class Player : CharacterBody2D
 
     EscapeTrap:
 
-        if (CurrentCondition == Condition.Spikes && Timer.IsStopped()) CurrentCondition = Condition.None;
+        if (CurrentCondition == Condition.Spikes && _spikesTimer.IsStopped()) CurrentCondition = Condition.None;
 
         if (CurrentCondition == Condition.Sticky && _directionalKeysPressCount == 10)
         {
@@ -313,6 +325,11 @@ public partial class Player : CharacterBody2D
         CurrentCondition = Condition.None;
     }
 
+    public void OnBlindnessTimerTimeout()
+    {
+        IsBlindnessOn = false;
+    }
+
     private void ResetStats()
     {
         _currentSpeed = _defaultSpeed;
@@ -321,7 +338,7 @@ public partial class Player : CharacterBody2D
     private void GetStuckBySticky()
     {
         if (_input != Vector2.Zero) _input = Vector2.Zero;
-        if (Input.IsActionJustPressed(Left) || Input.IsActionJustPressed(Right) || Input.IsActionJustPressed(Up) || Input.IsActionJustPressed(Down)) _directionalKeysPressCount++;
+        if (Input.IsActionJustPressed(Leftkey) || Input.IsActionJustPressed(RightKey) || Input.IsActionJustPressed(UpKey) || Input.IsActionJustPressed(DownKey)) _directionalKeysPressCount++;
     }
 
     private void HurtBySpikes()

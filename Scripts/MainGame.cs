@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts;
@@ -9,6 +10,7 @@ public partial class MainGame : Node2D
     [Export] private Camera2D _playerTwoCamera;
     [Export] private Player _playerOne;
     [Export] private Player _playerTwo;
+    [Export] private Board _board;
 
     private Global _global;
 
@@ -53,6 +55,21 @@ public partial class MainGame : Node2D
         // GD.Print("Token.IsBoostOn: " + _token._isBoostOn);
         // GD.Print("Token.ISBoostStillOn: " + _token._isBoolStillOn);
         // GD.Print("Token.Boost.Battery: " + _token.Boost.Battery);
+        // if (_playerOne.IsBlindnessOn)
+        // {
+        //     GD.Print("PlayerOne is Blind.");
+        // }
+        // if (_playerTwo.IsBlindnessOn)
+        // {
+        //     GD.Print("PlayerTwo is Blind.");
+        // }
+
+        // if (_playerOne.IsBlindnessOn) GD.Print("TimeLeft for PlayerOne Blindness: " + Math.Floor(_playerOne._blindnessTimer.TimeLeft + 1));
+        // if (_playerTwo.IsBlindnessOn) GD.Print("TimeLeft for PlayerTwo Blindness: " + Math.Floor(_playerTwo._blindnessTimer.TimeLeft + 1));
+        
+        // GD.Print("Board.PixelSize: " + _board.PixelSize);
+        
+        GD.Print("");
     }
 
     private void GDPrintMaze()
@@ -77,7 +94,11 @@ public partial class MainGame : Node2D
         // }
         for (int i = 0; i < _playerOne.PlayerSkillsBools.Length; i++)
         {
-            GD.Print($"token.TokenSkillBools[{i}]: " + _playerOne.PlayerSkillsBools[i]);
+            GD.Print($"PlayerOne.PlayerSkillBools[{i}]: " + _playerOne.PlayerSkillsBools[i]);
+        }
+        for (int i = 0; i < _playerTwo.PlayerSkillsBools.Length; i++)
+        {
+            GD.Print($"PlayerTwo.PlayerSkillBools[{i}]: " + _playerTwo.PlayerSkillsBools[i]);
         }
     }
 

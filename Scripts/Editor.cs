@@ -36,8 +36,7 @@ public partial class Editor : Control
 		_global.Setting.CheckSkillPlayerOne(2);
 	}
 
-	//PlayerTwo
-
+	//PlayerTwo.
 	public void OnPlayerTwoShieldButtonPressed()
 	{
 		_global.Setting.CheckSkillPlayerTwo(0);
@@ -50,6 +49,6 @@ public partial class Editor : Control
 
 	public void OnPlayerTwoBlindnessButtonPressed()
 	{
-		_global.Setting.CheckSkillPlayerTwo(1);
+		_global.Setting.CheckSkillPlayerTwo(2);
 	}
 }

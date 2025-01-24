@@ -10,6 +10,7 @@ public partial class Board : TileMapLayer
 
     private MazeGenerator _mazeGenerator;
     private Global _global;
+    public int PixelSize;
 
     public override void _Ready()
     {
@@ -17,6 +18,7 @@ public partial class Board : TileMapLayer
         _mazeGenerator = _global.Setting.MazeGenerator;
         _mazeGenerator.GenerateMaze();
         TileSize = TileSet.TileSize.X;
+        PixelSize = TileSize * _mazeGenerator.Size;
     }
 
     public override void _Process(double delta)

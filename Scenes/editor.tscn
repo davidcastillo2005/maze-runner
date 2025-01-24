@@ -124,6 +124,22 @@ text = "Portal Gun"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Blindness" type="HBoxContainer" parent="Player2ScrollContainer/SkillsSelector"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Player2ScrollContainer/SkillsSelector/Blindness"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Label" type="Label" parent="Player2ScrollContainer/SkillsSelector/Blindness"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Blindness"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Button" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 3
@@ -141,6 +157,8 @@ text = "Start"
 
 [connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnPlayerOneShieldButtonPressed"]
 [connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPlayerOnePortalGunPressed"]
+[connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/Blindness/Button" to="." method="OnPlayerOneBlindnessButtonPressed"]
 [connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnPlayerTwoShieldButtonPressed"]
 [connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPlayerTwoPortalGunButtonPressed"]
+[connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/Blindness/Button" to="." method="OnPlayerTwoBlindnessButtonPressed"]
 [connection signal="pressed" from="Button" to="." method="OnStartButtonPressed"]

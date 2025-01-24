@@ -10,19 +10,14 @@ size = Vector2(0.5, 0.5)
 atlas = ExtResource("2_fcpdt")
 region = Rect2(79, 62, 2, 2)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Timer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_spikesTimer", "_blindnessTimer")]
 z_index = 10
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_sacbm")
 _speed = 10.0
-Left = "Left"
-Right = "Right"
-Up = "Up"
-Down = "Down"
-ShiftCamera = "ShiftCamera"
-Skill = "Skill"
-Timer = NodePath("Timer")
+_spikesTimer = NodePath("SpikesTimer")
+_blindnessTimer = NodePath("BlindnessTimer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(64, 64)
@@ -32,7 +27,11 @@ shape = SubResource("RectangleShape2D_wmeri")
 scale = Vector2(16, 16)
 texture = SubResource("AtlasTexture_uggnw")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="SpikesTimer" type="Timer" parent="."]
 wait_time = 10.0
 
-[connection signal="timeout" from="Timer" to="." method="OnSpikeTimerTimeout"]
+[node name="BlindnessTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[connection signal="timeout" from="SpikesTimer" to="." method="OnSpikeTimerTimeout"]
+[connection signal="timeout" from="BlindnessTimer" to="." method="OnBlindnessTimerTimeout"]

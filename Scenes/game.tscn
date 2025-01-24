@@ -32,12 +32,13 @@ sources/0 = SubResource("TileSetAtlasSource_e7hwg")
 
 [node name="Game" type="Node2D"]
 
-[node name="MainGame" type="Node2D" parent="." node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo")]
+[node name="MainGame" type="Node2D" parent="." node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo", "_board")]
 script = ExtResource("1_a0sd4")
 _playerOneCamera = NodePath("PlayerCamera2D")
 _playerTwoCamera = NodePath("PlayerCamera2D2")
 _playerOne = NodePath("Player1")
 _playerTwo = NodePath("Player2")
+_board = NodePath("Board")
 
 [node name="Board" type="TileMapLayer" parent="MainGame"]
 z_index = 1
@@ -46,31 +47,43 @@ tile_map_data = PackedByteArray("AAAAAAAAAAABAAEAAAABAAAAAAABAAEAAAACAAAAAAABAAE
 tile_set = SubResource("TileSet_4wqoe")
 script = ExtResource("3_7j6rw")
 
-[node name="Player1" parent="MainGame" node_paths=PackedStringArray("PlayerCamera", "Board") instance=ExtResource("1_8oosl")]
+[node name="Player1" parent="MainGame" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera") instance=ExtResource("1_8oosl")]
 collision_layer = 4
 collision_mask = 1
-PlayerCamera = NodePath("../PlayerCamera2D")
+Leftkey = "Left"
+RightKey = "Right"
+UpKey = "Up"
+DownKey = "Down"
+ShiftCameraKey = "ShiftCamera"
+SkillKey = "Skill"
 Board = NodePath("../Board")
-CurrentPlayer = 1
+_currentPlayerNum = 1
+_oppositePlayer = NodePath("../Player2")
+_playerCamera = NodePath("../PlayerCamera2D")
 
-[node name="PlayerCamera2D" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
+[node name="PlayerCamera2D" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player", "_board")]
 position_smoothing_enabled = true
+position_smoothing_speed = 20.0
 script = ExtResource("6_yssce")
 _player = NodePath("../Player1")
+_board = NodePath("../Board")
 
-[node name="Player2" parent="MainGame" node_paths=PackedStringArray("PlayerCamera", "Board") instance=ExtResource("1_8oosl")]
+[node name="Player2" parent="MainGame" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera") instance=ExtResource("1_8oosl")]
 collision_mask = 1
-Left = "Left2"
-Right = "Right2"
-Up = "Up2"
-Down = "Down2"
-ShiftCamera = "ShiftCamera2"
-Skill = "Skill2"
-PlayerCamera = NodePath("../PlayerCamera2D2")
+Leftkey = "Left2"
+RightKey = "Right2"
+UpKey = "Up2"
+DownKey = "Down2"
+ShiftCameraKey = "ShiftCamera2"
+SkillKey = "Skill2"
 Board = NodePath("../Board")
-CurrentPlayer = 2
+_currentPlayerNum = 2
+_oppositePlayer = NodePath("../Player1")
+_playerCamera = NodePath("../PlayerCamera2D2")
 
-[node name="PlayerCamera2D2" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
+[node name="PlayerCamera2D2" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player", "_board")]
 position_smoothing_enabled = true
+position_smoothing_speed = 10.0
 script = ExtResource("6_yssce")
 _player = NodePath("../Player2")
+_board = NodePath("../Board")
