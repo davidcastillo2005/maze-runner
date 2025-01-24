@@ -31,22 +31,6 @@ offset_bottom = 228.0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PortalGun" type="HBoxContainer" parent="Player1ScrollContainer/SkillsSelector"]
-custom_minimum_size = Vector2(25, 25)
-layout_mode = 2
-
-[node name="Button" type="Button" parent="Player1ScrollContainer/SkillsSelector/PortalGun"]
-custom_minimum_size = Vector2(25, 25)
-layout_mode = 2
-size_flags_horizontal = 2
-
-[node name="Label" type="Label" parent="Player1ScrollContainer/SkillsSelector/PortalGun"]
-layout_mode = 2
-size_flags_vertical = 1
-text = "Portal Gun"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Shield" type="HBoxContainer" parent="Player1ScrollContainer/SkillsSelector"]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
@@ -61,6 +45,22 @@ layout_mode = 2
 size_flags_vertical = 1
 text = "Shield
 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PortalGun" type="HBoxContainer" parent="Player1ScrollContainer/SkillsSelector"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Player1ScrollContainer/SkillsSelector/PortalGun"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Label" type="Label" parent="Player1ScrollContainer/SkillsSelector/PortalGun"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Portal Gun"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -91,22 +91,6 @@ offset_bottom = 231.0
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PortalGun" type="HBoxContainer" parent="Player2ScrollContainer/SkillsSelector"]
-custom_minimum_size = Vector2(25, 25)
-layout_mode = 2
-
-[node name="Button" type="Button" parent="Player2ScrollContainer/SkillsSelector/PortalGun"]
-custom_minimum_size = Vector2(25, 25)
-layout_mode = 2
-size_flags_horizontal = 2
-
-[node name="Label" type="Label" parent="Player2ScrollContainer/SkillsSelector/PortalGun"]
-layout_mode = 2
-size_flags_vertical = 1
-text = "Portal Gun"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Shield" type="HBoxContainer" parent="Player2ScrollContainer/SkillsSelector"]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
@@ -121,6 +105,22 @@ layout_mode = 2
 size_flags_vertical = 1
 text = "Shield
 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PortalGun" type="HBoxContainer" parent="Player2ScrollContainer/SkillsSelector"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Player2ScrollContainer/SkillsSelector/PortalGun"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Label" type="Label" parent="Player2ScrollContainer/SkillsSelector/PortalGun"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Portal Gun"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -139,8 +139,8 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "Start"
 
-[connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPortalGunPressed"]
-[connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnShieldButtonPressed"]
-[connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPortalGunPressed"]
-[connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnShieldButtonPressed"]
+[connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnPlayerOneShieldButtonPressed"]
+[connection signal="pressed" from="Player1ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPlayerOnePortalGunPressed"]
+[connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/Shield/Button" to="." method="OnPlayerTwoShieldButtonPressed"]
+[connection signal="pressed" from="Player2ScrollContainer/SkillsSelector/PortalGun/Button" to="." method="OnPlayerTwoPortalGunButtonPressed"]
 [connection signal="pressed" from="Button" to="." method="OnStartButtonPressed"]

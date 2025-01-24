@@ -18,6 +18,7 @@ public partial class Player : CharacterBody2D
     [Export] public PlayerCamera PlayerCamera;
     [Export] public Board Board;
     [Export] public Timer Timer;
+    [Export] public int CurrentPlayer;
 
     private Global _global;
     private MazeGenerator _mazeGenerator;
@@ -80,16 +81,34 @@ public partial class Player : CharacterBody2D
         _paralizedSpeed = _defaultSpeed / 10;
         _currentSpeed = _defaultSpeed;
 
-        SetSkills();
+        switch (CurrentPlayer)
+        {
+            case 1:
+                PlayerOneSetSkills();
+                break;
+            case 2:
+                PlayerTwoSetSkills();
+                break;
+            default:
+                throw new Exception();
+        }
 
         Position = new Vector2(GetConvertedPos(_mazeGenerator.SpawnerCoord.x), GetConvertedPos(_mazeGenerator.SpawnerCoord.y));
     }
 
-    private void SetSkills()
+    private void PlayerOneSetSkills()
     {
-        for (int i = 0; i < _global.Setting.SkillBools.Length; i++)
+        for (int i = 0; i < _global.Setting.PlayerOneSkillBools.Length; i++)
         {
-            PlayerSkillsBools = _global.Setting.SkillBools;
+            PlayerSkillsBools = _global.Setting.PlayerOneSkillBools;
+        }
+    }
+
+    private void PlayerTwoSetSkills()
+    {
+        for (int i = 0; i < _global.Setting.PlayerTwoSkillBools.Length; i++)
+        {
+            PlayerSkillsBools = _global.Setting.PlayerTwoSkillBools;
         }
     }
 
@@ -253,7 +272,7 @@ public partial class Player : CharacterBody2D
                 GetStuckBySticky();
                 break;
             default:
-                break;
+                throw new Exception();
 
         }
 

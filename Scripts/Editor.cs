@@ -1,10 +1,11 @@
 using Godot;
+using MazeRunner.Scripts;
 using System;
 
 public partial class Editor : Control
 {
 	private Global _global;
-	
+
 	public override void _Ready()
 	{
 		_global = GetNode<Global>("/root/Global");
@@ -19,18 +20,36 @@ public partial class Editor : Control
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 
-	public void OnShieldButtonPressed()
+	//PlayerOne.
+	public void OnPlayerOneShieldButtonPressed()
 	{
-		_global.Setting.CheckSkill(0);
+		_global.Setting.CheckSkillPlayerOne(0);
 	}
 
-	public void OnPortalGunPressed()
+	public void OnPlayerOnePortalGunPressed()
 	{
-		_global.Setting.CheckSkill(1);
+		_global.Setting.CheckSkillPlayerOne(1);
 	}
 
-	public void OnBoostButtonPressed()
+	public void OnPlayerOneBlindnessButtonPressed()
 	{
-		_global.Setting.CheckSkill(2);
+		_global.Setting.CheckSkillPlayerOne(2);
+	}
+
+	//PlayerTwo
+
+	public void OnPlayerTwoShieldButtonPressed()
+	{
+		_global.Setting.CheckSkillPlayerTwo(0);
+	}
+
+	public void OnPlayerTwoPortalGunButtonPressed()
+	{
+		_global.Setting.CheckSkillPlayerTwo(1);
+	}
+
+	public void OnPlayerTwoBlindnessButtonPressed()
+	{
+		_global.Setting.CheckSkillPlayerTwo(1);
 	}
 }

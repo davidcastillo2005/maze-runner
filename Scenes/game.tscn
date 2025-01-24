@@ -51,6 +51,7 @@ collision_layer = 4
 collision_mask = 1
 PlayerCamera = NodePath("../PlayerCamera2D")
 Board = NodePath("../Board")
+CurrentPlayer = 1
 
 [node name="PlayerCamera2D" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
 position_smoothing_enabled = true
@@ -67,6 +68,7 @@ ShiftCamera = "ShiftCamera2"
 Skill = "Skill2"
 PlayerCamera = NodePath("../PlayerCamera2D2")
 Board = NodePath("../Board")
+CurrentPlayer = 2
 
 [node name="PlayerCamera2D2" type="Camera2D" parent="MainGame" node_paths=PackedStringArray("_player")]
 position_smoothing_enabled = true

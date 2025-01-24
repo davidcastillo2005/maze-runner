@@ -1,20 +1,12 @@
 namespace MazeRunner.Scripts.Logic
 {
-    /// <summary>
-    /// Game setup.
-    /// </summary>
     public class Setting
     {
-        /// <summary>
-        /// Size of the map to be generated.
-        /// </summary>
         public int Size { get; set; }
-
-        /// <summary>
-        /// Instance of the Map Generator class.
-        /// </summary>
         public MazeGenerator MazeGenerator { get; private set; }
-        public bool[] SkillBools { get; private set; } = { false, false, false };
+
+        public bool[] PlayerOneSkillBools { get; private set; } = { false, false, false };
+        public bool[] PlayerTwoSkillBools { get; private set; } = { false, false, false };
 
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
@@ -22,17 +14,32 @@ namespace MazeRunner.Scripts.Logic
             MazeGenerator = new(Size, seed, isRandomSeed);
         }
 
-        public void CheckSkill(int index)
+        public void CheckSkillPlayerOne(int index)
         {
-            for (int i = 0; i < SkillBools.Length; i++)
+            for (int i = 0; i < PlayerOneSkillBools.Length; i++)
             {
                 if (i == index)
                 {
-                    SkillBools[i] = true;
+                    PlayerOneSkillBools[i] = true;
                 }
                 else
                 {
-                    SkillBools[i] = false;
+                    PlayerOneSkillBools[i] = false;
+                }
+            }
+        }
+
+        public void CheckSkillPlayerTwo(int index)
+        {
+            for (int i = 0; i < PlayerTwoSkillBools.Length; i++)
+            {
+                if (i == index)
+                {
+                    PlayerTwoSkillBools[i] = true;
+                }
+                else
+                {
+                    PlayerTwoSkillBools[i] = false;
                 }
             }
         }
