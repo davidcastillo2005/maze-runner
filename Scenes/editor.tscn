@@ -31,9 +31,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 360.0
-offset_top = -13.0
 offset_right = -360.0
-offset_bottom = -13.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -103,7 +101,7 @@ layout_mode = 2
 [node name="LineEdit" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Level Diffifculty"
+placeholder_text = "Diffifculty"
 alignment = 1
 
 [node name="LineEdit2" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
@@ -115,14 +113,20 @@ alignment = 1
 [node name="CheckButton" type="CheckButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Random Seed"
+button_pressed = true
+text = "Random"
+alignment = 1
 
 [node name="Button" type="Button" parent="Control/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Start"
 
+[connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer/LineEdit" to="." method="OnPlayeOneNameLineEditTextChanged"]
 [connection signal="item_selected" from="Control/ScrollContainer/VBoxContainer/HBoxContainer/OptionButton" to="." method="OnPlayerOneOptionButtonItemSelected"]
+[connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer2/LineEdit" to="." method="OnPlayerTwoNameLineEditTextChanged"]
 [connection signal="item_selected" from="Control/ScrollContainer/VBoxContainer/HBoxContainer2/OptionButton" to="." method="OnPlayerTwoOptionButtonItemSelected"]
-[connection signal="text_submitted" from="Control/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit" to="." method="OnLineEditTextSubmitted"]
+[connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit" to="." method="OnDifficultyLineEditTextChanged"]
+[connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer3/LineEdit2" to="." method="OnSeedLineEditTextChanged"]
+[connection signal="toggled" from="Control/ScrollContainer/VBoxContainer/HBoxContainer3/CheckButton" to="." method="OnRandomCheckButtonToggled"]
 [connection signal="pressed" from="Control/ScrollContainer/VBoxContainer/Button" to="." method="OnStartButtonPressed"]

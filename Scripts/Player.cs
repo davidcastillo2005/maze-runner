@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 using MazeRunner.Scripts.Data;
 using MazeRunner.Scripts.Logic;
@@ -9,7 +10,6 @@ namespace MazeRunner.Scripts;
 
 public partial class Player : CharacterBody2D
 {
-    [Export] private float _speed = 20;
     [Export] public string Leftkey;
     [Export] public string RightKey;
     [Export] public string UpKey;
@@ -18,6 +18,8 @@ public partial class Player : CharacterBody2D
     [Export] public string SkillKey;
     [Export] public Board Board;
 
+    [Export] private float _speed = 20;
+    [Export] private Label _nameLabel;
     [Export] private Timer _spikesTimer;
     [Export] public Timer _blindnessTimer;
     [Export] public Timer _mutedTimer;
@@ -28,6 +30,8 @@ public partial class Player : CharacterBody2D
 
     private Global _global;
     private MazeGenerator _mazeGenerator;
+
+    public string PlayerName { get; set; } = string.Empty;
 
     public bool[] PlayerSkillsBools { get; set; }
 
@@ -92,14 +96,17 @@ public partial class Player : CharacterBody2D
         switch (_currentPlayerNum)
         {
             case 1:
+                PlayerName = _global.PlayerOneName;
                 PlayerOneSetSkills();
                 break;
             case 2:
+                PlayerName = _global.PlayerTwoName;
                 PlayerTwoSetSkills();
                 break;
             default:
                 throw new Exception();
         }
+        _nameLabel.Text = PlayerName;
 
         Position = new Vector2(GetConvertedPos(_mazeGenerator.SpawnerCoord.x), GetConvertedPos(_mazeGenerator.SpawnerCoord.y));
     }

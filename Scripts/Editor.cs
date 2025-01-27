@@ -1,3 +1,5 @@
+using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
@@ -23,6 +25,35 @@ public partial class Editor : Control
 		_global.Setting.CheckSkillPlayerOne(_global.PlayerOneSkill);
 		_global.Setting.CheckSkillPlayerTwo(_global.PlayerTwoSkill);
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
+	}
+
+	void OnDifficultyLineEditTextChanged(string text)
+	{
+		if (text == "") return;
+		int num = int.Parse(text);
+		_global.Difficulty = num;
+	}
+
+	void OnSeedLineEditTextChanged(string text)
+	{
+		if (text == "") return;
+		int num = int.Parse(text);
+		_global.Seed = num;
+	}
+
+	void OnRandomCheckButtonToggled(bool b)
+	{
+		_global.IsRandom = b;
+	}
+
+	void OnPlayeOneNameLineEditTextChanged(string name)
+	{
+		_global.PlayerOneName = name;
+	}
+
+	void OnPlayerTwoNameLineEditTextChanged(string name)
+	{
+		_global.PlayerTwoName = name;
 	}
 
 	void OnPlayerOneOptionButtonItemSelected(int index)

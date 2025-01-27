@@ -5,13 +5,14 @@ namespace MazeRunner.Scripts;
 public partial class Global : Node
 {
     public Setting Setting { get; set; }
-    public int LevelDifficulty { get; set; } = 5;
+    public int Difficulty { get; set; } = 5;
 
     public int Seed { get; set; } = 1805123040;
-    public bool IsRandomSeed { get; set; } = true;
+    public bool IsRandom { get; set; } = true;
     public int PlayerOneSkill { get; set; } = 0;
     public int PlayerTwoSkill { get; set; } = 0;
-
+    public string PlayerOneName { get; set; } = string.Empty;
+    public string PlayerTwoName { get; set; } = string.Empty;
     public override void _Ready()
     {
     }
@@ -22,6 +23,6 @@ public partial class Global : Node
 
     public void SetMaze()
     {
-        Setting = new(LevelDifficulty, Seed, IsRandomSeed);
+        Setting = new(Difficulty, Seed, IsRandom);
     }
 }
