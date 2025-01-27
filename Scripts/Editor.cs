@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Godot;
-using MazeRunner.Scripts;
-using System;
+
+namespace MazeRunner.Scripts;
 
 public partial class Editor : Control
 {
@@ -15,40 +17,23 @@ public partial class Editor : Control
 	{
 	}
 
-	public void OnStartButtonPressed()
+	private void OnStartButtonPressed()
 	{
+		_global.SetMaze();
+		_global.Setting.CheckSkillPlayerOne(_global.PlayerOneSkill);
+		_global.Setting.CheckSkillPlayerTwo(_global.PlayerTwoSkill);
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 
-	//PlayerOne.
-	public void OnPlayerOneShieldButtonPressed()
+	void OnPlayerOneOptionButtonItemSelected(int index)
 	{
-		_global.Setting.CheckSkillPlayerOne(0);
+		_global.PlayerOneSkill = index - 1;
+		GD.Print(_global.PlayerOneSkill);
 	}
 
-	public void OnPlayerOnePortalGunPressed()
+	void OnPlayerTwoOptionButtonItemSelected(int index)
 	{
-		_global.Setting.CheckSkillPlayerOne(1);
-	}
-
-	public void OnPlayerOneBlindnessButtonPressed()
-	{
-		_global.Setting.CheckSkillPlayerOne(2);
-	}
-
-	//PlayerTwo.
-	public void OnPlayerTwoShieldButtonPressed()
-	{
-		_global.Setting.CheckSkillPlayerTwo(0);
-	}
-
-	public void OnPlayerTwoPortalGunButtonPressed()
-	{
-		_global.Setting.CheckSkillPlayerTwo(1);
-	}
-
-	public void OnPlayerTwoBlindnessButtonPressed()
-	{
-		_global.Setting.CheckSkillPlayerTwo(2);
+		_global.PlayerTwoSkill = index - 1;
+		GD.Print(_global.PlayerTwoSkill);
 	}
 }

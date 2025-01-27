@@ -64,8 +64,8 @@ public partial class MainGame : Node2D
         //     GD.Print("PlayerTwo is Blind.");
         // }
 
-        // if (_playerOne.IsBlindnessOn) GD.Print("TimeLeft for PlayerOne Blindness: " + Math.Floor(_playerOne._blindnessTimer.TimeLeft + 1));
-        // if (_playerTwo.IsBlindnessOn) GD.Print("TimeLeft for PlayerTwo Blindness: " + Math.Floor(_playerTwo._blindnessTimer.TimeLeft + 1));
+        if (_playerOne.IsBlindOn) GD.Print("TimeLeft for PlayerOne Blindness: " + Math.Floor(_playerOne._blindnessTimer.TimeLeft + 1) + " & " + "Blindness.Battery: " + _playerOne.Blindness.Battery);
+        if (_playerTwo.IsBlindOn) GD.Print("TimeLeft for PlayerTwo Blindness: " + Math.Floor(_playerTwo._blindnessTimer.TimeLeft + 1) + " & " + "Blindness.Battery: " + _playerOne.Blindness.Battery);
         
         // GD.Print("Board.PixelSize: " + _board.PixelSize);
         

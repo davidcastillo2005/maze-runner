@@ -1,37 +1,38 @@
-[gd_scene load_steps=5 format=3 uid="uid://bjoeblbdmvsm1"]
+[gd_scene load_steps=4 format=3 uid="uid://bjoeblbdmvsm1"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sacbm"]
-[ext_resource type="Texture2D" uid="uid://b2jww50aqccw2" path="res://Resources/Atlas.png" id="2_fcpdt"]
+[ext_resource type="Texture2D" uid="uid://chrssh0jflyr1" path="res://icon.svg" id="2_1k4mo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
-size = Vector2(0.5, 0.5)
+size = Vector2(1.03125, 1.03125)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uggnw"]
-atlas = ExtResource("2_fcpdt")
-region = Rect2(79, 62, 2, 2)
-
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_spikesTimer", "_blindnessTimer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_spikesTimer", "_blindnessTimer", "_mutedTimer")]
 z_index = 10
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_sacbm")
 _speed = 10.0
 _spikesTimer = NodePath("SpikesTimer")
-_blindnessTimer = NodePath("BlindnessTimer")
+_blindnessTimer = NodePath("BlindTimer")
+_mutedTimer = NodePath("MutedTimer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(64, 64)
 shape = SubResource("RectangleShape2D_wmeri")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(16, 16)
-texture = SubResource("AtlasTexture_uggnw")
+position = Vector2(-9.53674e-07, 0)
+scale = Vector2(0.515625, 0.515625)
+texture = ExtResource("2_1k4mo")
 
 [node name="SpikesTimer" type="Timer" parent="."]
 wait_time = 10.0
 
-[node name="BlindnessTimer" type="Timer" parent="."]
-wait_time = 5.0
+[node name="BlindTimer" type="Timer" parent="."]
+wait_time = 10.0
+
+[node name="MutedTimer" type="Timer" parent="."]
+wait_time = 20.0
 
 [connection signal="timeout" from="SpikesTimer" to="." method="OnSpikeTimerTimeout"]
-[connection signal="timeout" from="BlindnessTimer" to="." method="OnBlindnessTimerTimeout"]
+[connection signal="timeout" from="BlindTimer" to="." method="OnBlindnessTimerTimeout"]

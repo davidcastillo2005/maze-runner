@@ -18,6 +18,7 @@ public class MazeGenerator
     public (int x, int y) ExitCoord { get; private set; }
     public Random Random { get; private set; }
     private List<(int x, int y)> emptyCoords = new();
+    public List<(int x, int y)> trapCoords = new();
 
     public MazeGenerator(int size, int seed, bool isRandomSeed)
     {
@@ -210,8 +211,8 @@ public class MazeGenerator
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
             Maze[emptyCoords[index].x, emptyCoords[index].y] = spikes;
+            trapCoords.Add((spikes.X, spikes.Y));
         }
-
     }
 
     private void GenerateTrampolineTraps(float percentage)
@@ -245,6 +246,7 @@ public class MazeGenerator
             if (numWalls > 1)
             {
                 Maze[emptyCoords[index].x, emptyCoords[index].y] = trampoline;
+                trapCoords.Add((trampoline.X, trampoline.Y));
                 i++;
             }
         }
@@ -261,6 +263,7 @@ public class MazeGenerator
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
             if (Maze[emptyCoords[index].x, emptyCoords[index].y] is Wall) continue;
             Maze[emptyCoords[index].x, emptyCoords[index].y] = sticky;
+            trapCoords.Add((sticky.X, sticky.Y));
         }
     }
 }

@@ -35,8 +35,8 @@ public partial class PlayerCamera : Camera2D
         _input = Vector2.Zero;
         _cameraOffset = Vector2.Zero;
 
-        _minPosition = 0 + 720 / 2;
-        _maxPosition = _board.PixelSize - 720 / 2;
+        _minPosition = 0 + 720 * 0.5f * (float)Math.Pow(Zoom.X, -1);
+        _maxPosition = _board.PixelSize - 720 * 0.5f * (float)Math.Pow(Zoom.X, -1);
 
         Position = _player.Position;
 

@@ -2,6 +2,7 @@ using Godot;
 using MazeRunner.Scripts.Logic;
 using System;
 
+namespace MazeRunner.Scripts;
 public partial class MainMenu : Control
 {
 	[Export] Button _playButton;

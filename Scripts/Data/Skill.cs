@@ -42,7 +42,17 @@ public class Boost : Skill
 
 public class Blindness : Skill
 {
+    public int Battery { get; set; } = 2;
     public Blindness() : base()
+    {
+    }
+}
+
+public class Muter : Skill
+{
+    public int Battery { get; set; } = 2;
+    public int Radius {get; set; } = 10;
+    public Muter() : base()
     {
     }
 }

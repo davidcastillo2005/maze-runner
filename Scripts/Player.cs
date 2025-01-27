@@ -20,9 +20,11 @@ public partial class Player : CharacterBody2D
 
     [Export] private Timer _spikesTimer;
     [Export] public Timer _blindnessTimer;
+    [Export] public Timer _mutedTimer;
     [Export] private int _currentPlayerNum;
     [Export] private Player _oppositePlayer;
     [Export] private PlayerCamera _playerCamera;
+    [Export] private Sprite2D _blindnessSprite;
 
     private Global _global;
     private MazeGenerator _mazeGenerator;
@@ -35,12 +37,11 @@ public partial class Player : CharacterBody2D
     public bool _isPortalGunOn = false;
     public PortalGun PortalGun { get; private set; } = new PortalGun();
 
-    public bool IsBlindnessOn = false;
+    public bool IsBlindOn = false;
     public Blindness Blindness { get; private set; } = new Blindness();
 
-    // public Boost Boost { get; private set; } = new Boost();
-    // public bool _isBoostOn { get; private set; } = false;
-    // public bool _isBoolStillOn { get; private set; } = false;
+    public bool IsMutedOn = false;
+    public Muter muter { get; private set; } = new Muter();
 
     public enum State
     {
@@ -87,7 +88,7 @@ public partial class Player : CharacterBody2D
         _defaultSpeed = _speed * Board.TileSize;
         _paralizedSpeed = _defaultSpeed / 10;
         _currentSpeed = _defaultSpeed;
-        
+
         switch (_currentPlayerNum)
         {
             case 1:
@@ -130,7 +131,7 @@ public partial class Player : CharacterBody2D
                 else CurrentState = State.Idle;
             }
 
-            if (PlayerSkillsBools[0] && Input.IsActionPressed(SkillKey) && Shield.Health != 0)
+            if (PlayerSkillsBools[0] && Input.IsActionPressed(SkillKey) && Shield.Health > 0)
             {
                 _isShieldOn = true;
             }
@@ -148,19 +149,17 @@ public partial class Player : CharacterBody2D
                 _isPortalGunOn = false;
             }
 
-            if (PlayerSkillsBools[2] && Input.IsActionJustPressed(SkillKey) && _blindnessTimer.IsStopped())
+            if (PlayerSkillsBools[2] && Input.IsActionJustPressed(SkillKey) && !_oppositePlayer.IsBlindOn && Blindness.Battery > 0)
             {
-                _oppositePlayer.IsBlindnessOn = true;
-                _oppositePlayer._blindnessTimer.Start();
+                _oppositePlayer.IsBlindOn = true;
+                Blindness.Battery--;
             }
-            // if (TokenSkillsBools[2] && Input.IsActionPressed(Skill) & Boost.Battery >= 1 && CurrentCondition == Condition.None)
-            // {
-            //     _isBoostOn = true;
-            // }
-            // else
-            // {
-            //     _isBoostOn = false;
-            // }
+
+            if (PlayerSkillsBools[3] && Input.IsActionJustPressed(SkillKey))
+            {
+                _oppositePlayer.IsMutedOn = true;
+
+            }
         }
         else
         {
@@ -174,19 +173,22 @@ public partial class Player : CharacterBody2D
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
-        // if (_isBoostOn && !_isBoolStillOn)
-        // {
-        //     Boost.Battery--;
-        // }
-        // if (Boost.Battery < 1) Boost.Battery = 0;
-        // if (_isBoostOn)
-        // {
-        //     _isBoolStillOn = true;
-        // }
-        // else
-        // {
-        //     _isBoolStillOn = false;
-        // }
+        if (IsMutedOn)
+        {
+
+        }
+        if (IsBlindOn)
+        {
+            _blindnessSprite.Scale = new Vector2(5.625f, 5.625f);
+        }
+        else
+        {
+            _blindnessSprite.Scale = new Vector2(0, 0);
+        }
+        if (Blindness.Battery < 0)
+        {
+            Blindness.Battery = 0;
+        }
 
         if (_isPortalGunOn)
         {
@@ -327,7 +329,7 @@ public partial class Player : CharacterBody2D
 
     public void OnBlindnessTimerTimeout()
     {
-        IsBlindnessOn = false;
+        IsBlindOn = false;
     }
 
     private void ResetStats()

@@ -5,8 +5,8 @@ namespace MazeRunner.Scripts.Logic
         public int Size { get; set; }
         public MazeGenerator MazeGenerator { get; private set; }
 
-        public bool[] PlayerOneSkillBools { get; private set; } = { false, false, false };
-        public bool[] PlayerTwoSkillBools { get; private set; } = { false, false, false };
+        public bool[] PlayerOneSkillBools { get; private set; } = { false, false, false, false, false, false };
+        public bool[] PlayerTwoSkillBools { get; private set; } = { false, false, false, false, false, false };
 
         public Setting(int levelDifficulty, int seed, bool isRandomSeed)
         {
