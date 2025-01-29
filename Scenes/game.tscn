@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://2q322tyxvreq"]
 
 [ext_resource type="PackedScene" uid="uid://bjoeblbdmvsm1" path="res://Scenes/player.tscn" id="1_8oosl"]
-[ext_resource type="Script" path="res://Scripts/MainGame.cs" id="1_a0sd4"]
+[ext_resource type="Script" path="res://Scripts/World.cs" id="1_a0sd4"]
 [ext_resource type="TileSet" uid="uid://cvjqx1uc53fui" path="res://Resources/TileSet.tres" id="2_g7o1g"]
 [ext_resource type="Script" path="res://Scripts/Board.cs" id="3_7j6rw"]
 [ext_resource type="Texture2D" uid="uid://bjs2ohgkl7o6c" path="res://Resources/G_5.png" id="6_o01tp"]
@@ -10,7 +10,9 @@
 
 [node name="Game" type="Node2D"]
 
-[node name="Label" type="Label" parent="."]
+[node name="Player1UI" type="Node" parent="."]
+
+[node name="Label" type="Label" parent="Player1UI"]
 z_index = 15
 offset_left = 318.0
 offset_right = 403.0
@@ -18,8 +20,11 @@ offset_bottom = 23.0
 text = "Player One
 "
 horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
 
-[node name="Label2" type="Label" parent="."]
+[node name="Player2UI" type="Node" parent="."]
+
+[node name="Label2" type="Label" parent="Player2UI"]
 z_index = 15
 offset_left = 1038.0
 offset_right = 1123.0
@@ -27,12 +32,13 @@ offset_bottom = 23.0
 text = "Player Two
 "
 horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 clip_contents = true
 offset_right = 724.0
 offset_bottom = 720.0
-theme_override_constants/separation = 0
+theme_override_constants/separation = 5
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -49,19 +55,18 @@ handle_input_locally = false
 size = Vector2i(720, 720)
 render_target_update_mode = 4
 
-[node name="MainGame" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo", "_board")]
+[node name="World" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo")]
 script = ExtResource("1_a0sd4")
 _playerOneCamera = NodePath("../PlayerOneCamera")
 _playerTwoCamera = NodePath("../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
 _playerOne = NodePath("Player1")
 _playerTwo = NodePath("Player2")
-_board = NodePath("Board")
 
-[node name="Board" type="TileMapLayer" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/MainGame"]
+[node name="Board" type="TileMapLayer" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World"]
 tile_set = ExtResource("2_g7o1g")
 script = ExtResource("3_7j6rw")
 
-[node name="Player1" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/MainGame" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
+[node name="Player1" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
 collision_layer = 4
 collision_mask = 1
 Leftkey = "Left"
@@ -76,7 +81,7 @@ _oppositePlayer = NodePath("../Player2")
 _playerCamera = NodePath("../../PlayerOneCamera")
 _blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSprite")
 
-[node name="Player2" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/MainGame" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
+[node name="Player2" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
 collision_mask = 1
 Leftkey = "Left2"
 RightKey = "Right2"
@@ -94,8 +99,8 @@ _blindnessSprite = NodePath("../../../BlindnessSprite2")
 zoom = Vector2(0.5, 0.5)
 position_smoothing_speed = 20.0
 script = ExtResource("6_yssce")
-_player = NodePath("../MainGame/Player1")
-_board = NodePath("../MainGame/Board")
+_player = NodePath("../World/Player1")
+_board = NodePath("../World/Board")
 
 [node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -118,5 +123,5 @@ _subViewport = NodePath("../../SubViewportContainer/PlayerOneSubViewport")
 zoom = Vector2(0.5, 0.5)
 position_smoothing_speed = 10.0
 script = ExtResource("6_yssce")
-_player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/MainGame/Player2")
-_board = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/MainGame/Board")
+_player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Player2")
+_board = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Board")

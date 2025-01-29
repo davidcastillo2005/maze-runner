@@ -1,9 +1,5 @@
-//TODO: Error con el generador de laberintos (prueba con semilla: 757191438, -379204873, -1124538791, -2130386984, 20293741, 332626077).
-
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Godot;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts.Logic;
@@ -26,7 +22,6 @@ public class MazeGenerator
         Seed = isRandomSeed ? (int)DateTime.Now.Ticks : seed;
         Random = new Random(Seed);
     }
-
     public bool IsInsideBounds(int x, int y) => x >= 0 && y >= 0 && x < Maze.GetLength(0) && y < Maze.GetLength(1);
 
     private void GenerateMazeRandomizedDfs((int x, int y) currentCoord, bool[,] maskVisitedCoords)
@@ -49,8 +44,7 @@ public class MazeGenerator
                 GenerateMazeRandomizedDfs(neighbourCoord, maskVisitedCoords);
             }
         }
-    }
-
+    } 
     private void Shuffle((int x, int y)[] coordsArray)
     {
         for (int i = coordsArray.Length - 1; i > 0; i--)
@@ -59,7 +53,6 @@ public class MazeGenerator
             (coordsArray[j], coordsArray[i]) = (coordsArray[i], coordsArray[j]);
         }
     }
-
     public void GenerateMaze()
     {
         Maze = new Tile[Size, Size];
@@ -86,7 +79,6 @@ public class MazeGenerator
         GenerateExit();
         GenerateTraps(3);
     }
-
     private (int x, int y) GetInitialCoord()
     {
         int x;
@@ -99,7 +91,6 @@ public class MazeGenerator
 
         return (x, y);
     }
-
     private void GenerateExit()
     {
         List<(int x, int y)> possibleCoords = new();
@@ -149,7 +140,6 @@ public class MazeGenerator
         ExitCoord = (possibleCoords[index].x, possibleCoords[index].y);
         Maze[ExitCoord.x, ExitCoord.y] = new Exit(ExitCoord.x, ExitCoord.y);
     }
-
     private void GenerateSpawner()
     {
         List<(int x, int y)> possibleCoords = new();
@@ -180,7 +170,6 @@ public class MazeGenerator
         SpawnerCoord = (possibleCoords[index].x, possibleCoords[index].y);
         Maze[SpawnerCoord.x, SpawnerCoord.y] = new Spawner(SpawnerCoord.x, SpawnerCoord.y);
     }
-
     private void GetEmptyCoords()
     {
         for (int i = 1; i < Size - 1; i++)
@@ -192,14 +181,12 @@ public class MazeGenerator
             }
         }
     }
-
     private void GenerateTraps(float percentage)
     {
         GenerateSpikesTraps(percentage * 0.333f);
         GenerateStickyTraps(percentage * 0.333f);
         GenerateTrampolineTraps(percentage * 0.333f);
     }
-
     private void GenerateSpikesTraps(float percentage)
     {
         int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
@@ -214,7 +201,6 @@ public class MazeGenerator
             trapCoords.Add((spikes.X, spikes.Y));
         }
     }
-
     private void GenerateTrampolineTraps(float percentage)
     {
         int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);
@@ -251,7 +237,6 @@ public class MazeGenerator
             }
         }
     }
-
     private void GenerateStickyTraps(float percentage)
     {
         int num = (int)Math.Floor(emptyCoords.Count * percentage / 100);

@@ -7,8 +7,6 @@ namespace MazeRunner.Scripts;
 
 public partial class Board : TileMapLayer
 {
-
-    Node2D _hiddenTrapNode;
     public int TileSize { get; private set; }
 
     private MazeGenerator _mazeGenerator;
@@ -23,13 +21,16 @@ public partial class Board : TileMapLayer
         TileSize = TileSet.TileSize.X;
         PixelSize = TileSize * _mazeGenerator.Size;
     }
-
     public override void _Process(double delta)
     {
         PaintBoardTileMapLayer();
     }
+    public float GetConvertedPos(int i)
+    {
+        return (i + 0.5f) * TileSize;
+    }
 
-    void PaintBoardTileMapLayer()
+    private void PaintBoardTileMapLayer()
     {
         Clear();
         for (int x = 0; x < _mazeGenerator.Size; x++)

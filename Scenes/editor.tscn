@@ -49,7 +49,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Name"
+placeholder_text = "Player One"
 alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer"]
@@ -76,7 +76,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Name"
+placeholder_text = "Player Two"
 alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer2"]
@@ -119,7 +119,6 @@ alignment = 1
 
 [node name="Button" type="Button" parent="Control/ScrollContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
 text = "Start"
 
 [connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer/LineEdit" to="." method="OnPlayeOneNameLineEditTextChanged"]

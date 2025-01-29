@@ -1,5 +1,5 @@
 # Maze Runner
- Proyecto de CC. Hecho en Godot Engine 4.3.
+## Proyecto de CC. Hecho en Godot Engine 4.3.
  Mi objetivo es cumplir los requisitos mínimos siguientes:
  - Tablero generado aleatoriamente. (Hecho)
  - Obstáculos. (Hecho)

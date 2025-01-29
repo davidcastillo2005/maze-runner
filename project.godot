@@ -21,7 +21,7 @@ Global="*res://Scripts/Global.cs"
 
 [display]
 
-window/size/viewport_width=1440
+window/size/viewport_width=1445
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 
@@ -100,4 +100,4 @@ SwitchCamera={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-environment/defaults/default_clear_color=Color(0.278431, 0.384314, 0.309804, 1)
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
