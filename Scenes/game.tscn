@@ -10,30 +10,6 @@
 
 [node name="Game" type="Node2D"]
 
-[node name="Player1UI" type="Node" parent="."]
-
-[node name="Label" type="Label" parent="Player1UI"]
-z_index = 15
-offset_left = 318.0
-offset_right = 403.0
-offset_bottom = 23.0
-text = "Player One
-"
-horizontal_alignment = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="Player2UI" type="Node" parent="."]
-
-[node name="Label2" type="Label" parent="Player2UI"]
-z_index = 15
-offset_left = 1038.0
-offset_right = 1123.0
-offset_bottom = 23.0
-text = "Player Two
-"
-horizontal_alignment = 1
-metadata/_edit_use_anchors_ = true
-
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 clip_contents = true
 offset_right = 724.0
@@ -45,7 +21,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_stretch_ratio = 0.0
 
-[node name="BlindnessSprite2" type="Sprite2D" parent="HBoxContainer/SubViewportContainer"]
+[node name="BlindnessSpritePlayerOne" type="Sprite2D" parent="HBoxContainer/SubViewportContainer"]
 position = Vector2(360, 360)
 scale = Vector2(5.625, 5.625)
 texture = ExtResource("6_o01tp")
@@ -59,14 +35,14 @@ render_target_update_mode = 4
 script = ExtResource("1_a0sd4")
 _playerOneCamera = NodePath("../PlayerOneCamera")
 _playerTwoCamera = NodePath("../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
-_playerOne = NodePath("Player1")
-_playerTwo = NodePath("Player2")
+_playerOne = NodePath("PlayerOne")
+_playerTwo = NodePath("PlayerTwo")
 
 [node name="Board" type="TileMapLayer" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World"]
 tile_set = ExtResource("2_g7o1g")
 script = ExtResource("3_7j6rw")
 
-[node name="Player1" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
+[node name="PlayerOne" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
 collision_layer = 4
 collision_mask = 1
 Leftkey = "Left"
@@ -77,11 +53,11 @@ ShiftCameraKey = "ShiftCamera"
 SkillKey = "Skill"
 Board = NodePath("../Board")
 _currentPlayerNum = 1
-_oppositePlayer = NodePath("../Player2")
+_oppositePlayer = NodePath("../PlayerTwo")
 _playerCamera = NodePath("../../PlayerOneCamera")
-_blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSprite")
+_blindnessSprite = NodePath("../../../BlindnessSpritePlayerOne")
 
-[node name="Player2" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
+[node name="PlayerTwo" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("1_8oosl")]
 collision_mask = 1
 Leftkey = "Left2"
 RightKey = "Right2"
@@ -91,15 +67,15 @@ ShiftCameraKey = "ShiftCamera2"
 SkillKey = "Skill2"
 Board = NodePath("../Board")
 _currentPlayerNum = 2
-_oppositePlayer = NodePath("../Player1")
+_oppositePlayer = NodePath("../PlayerOne")
 _playerCamera = NodePath("../../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
-_blindnessSprite = NodePath("../../../BlindnessSprite2")
+_blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSpritePlayerTwo")
 
 [node name="PlayerOneCamera" type="Camera2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_player", "_board")]
 zoom = Vector2(0.5, 0.5)
 position_smoothing_speed = 20.0
 script = ExtResource("6_yssce")
-_player = NodePath("../World/Player1")
+_player = NodePath("../World/PlayerOne")
 _board = NodePath("../World/Board")
 
 [node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer"]
@@ -107,7 +83,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_stretch_ratio = 0.0
 
-[node name="BlindnessSprite" type="Sprite2D" parent="HBoxContainer/SubViewportContainer2"]
+[node name="BlindnessSpritePlayerTwo" type="Sprite2D" parent="HBoxContainer/SubViewportContainer2"]
 position = Vector2(360, 360)
 scale = Vector2(5.625, 5.625)
 texture = ExtResource("6_o01tp")
@@ -123,5 +99,5 @@ _subViewport = NodePath("../../SubViewportContainer/PlayerOneSubViewport")
 zoom = Vector2(0.5, 0.5)
 position_smoothing_speed = 10.0
 script = ExtResource("6_yssce")
-_player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Player2")
+_player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/PlayerTwo")
 _board = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Board")

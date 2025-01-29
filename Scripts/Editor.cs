@@ -10,19 +10,16 @@ public partial class Editor : Control
 
 	private void OnStartButtonPressed()
 	{
-		if (_global.Difficulty == null
-			|| (_global.Seed == null && !_global.IsRandom)
-			|| _global.PlayerOneName == string.Empty
-			|| _global.PlayerTwoName == string.Empty) return;
+		if (_global.Difficulty == 0
+            || (_global.Seed == 0 && !_global.IsRandom)
+            || _global.PlayerOneName == string.Empty
+            || _global.PlayerTwoName == string.Empty) return;
 		_global.SetMaze();
-		_global.Setting.CheckSkillPlayerOne(_global.PlayerOneSkill);
-		_global.Setting.CheckSkillPlayerTwo(_global.PlayerTwoSkill);
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 	private void OnDifficultyLineEditTextChanged(string text)
 	{
-		if (text == "") return;
-		int num = int.Parse(text);
+		if (text == "" || !int.TryParse(text, out int num)) return;
 		_global.Difficulty = num;
 	}
 	private void OnSeedLineEditTextChanged(string text)
@@ -34,6 +31,6 @@ public partial class Editor : Control
 	private void OnRandomCheckButtonToggled(bool b) { _global.IsRandom = b; }
 	private void OnPlayeOneNameLineEditTextChanged(string name) { _global.PlayerOneName = name; }
 	private void OnPlayerTwoNameLineEditTextChanged(string name) { _global.PlayerTwoName = name; }
-	private void OnPlayerOneOptionButtonItemSelected(int index) { _global.PlayerOneSkill = index - 1; }
-	private void OnPlayerTwoOptionButtonItemSelected(int index) { _global.PlayerTwoSkill = index - 1; }
+	private void OnPlayerOneOptionButtonItemSelected(int index) { _global.PlayerOneSkill = index; }
+	private void OnPlayerTwoOptionButtonItemSelected(int index) { _global.PlayerTwoSkill = index; }
 }

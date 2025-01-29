@@ -39,7 +39,7 @@ public abstract class Trap : Empty
 
 public class Spikes : Trap
 {
-    static public System.Timers.Timer Timer { get; private set; } = new(1000);
+    static public System.Timers.Timer Timer { get; private set; } = new(10000);
 
     public Spikes(int x, int y, bool isActivated) : base(x, y, isActivated) { }
 }
