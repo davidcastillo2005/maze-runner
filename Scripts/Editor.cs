@@ -11,7 +11,10 @@ public partial class Editor : Control
 
 	private void OnStartButtonPressed()
 	{
-		if (_global.Difficulty == null || _global.Seed == null && !_global.IsRandom || _global.PlayerOneName == string.Empty || _global.PlayerTwoName == string.Empty) return;
+		if (_global.Difficulty == null
+			|| (_global.Seed == null && !_global.IsRandom)
+			|| _global.PlayerOneName == string.Empty
+			|| _global.PlayerTwoName == string.Empty) return;
 		_global.SetMaze();
 		_global.Setting.CheckSkillPlayerOne(_global.PlayerOneSkill);
 		_global.Setting.CheckSkillPlayerTwo(_global.PlayerTwoSkill);
@@ -29,24 +32,9 @@ public partial class Editor : Control
 		int num = int.Parse(text);
 		_global.Seed = num;
 	}
-	private void OnRandomCheckButtonToggled(bool b)
-	{
-		_global.IsRandom = b;
-	}
-	private void OnPlayeOneNameLineEditTextChanged(string name)
-	{
-		_global.PlayerOneName = name;
-	}
-	private void OnPlayerTwoNameLineEditTextChanged(string name)
-	{
-		_global.PlayerTwoName = name;
-	}
-	private void OnPlayerOneOptionButtonItemSelected(int index)
-	{
-		_global.PlayerOneSkill = index - 1;
-	}
-	private void OnPlayerTwoOptionButtonItemSelected(int index)
-	{
-		_global.PlayerTwoSkill = index - 1;
-	}
+	private void OnRandomCheckButtonToggled(bool b) { _global.IsRandom = b; }
+	private void OnPlayeOneNameLineEditTextChanged(string name) { _global.PlayerOneName = name; }
+	private void OnPlayerTwoNameLineEditTextChanged(string name) { _global.PlayerTwoName = name; }
+	private void OnPlayerOneOptionButtonItemSelected(int index) { _global.PlayerOneSkill = index - 1; }
+	private void OnPlayerTwoOptionButtonItemSelected(int index) { _global.PlayerTwoSkill = index - 1; }
 }

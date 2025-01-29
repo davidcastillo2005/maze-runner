@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts;
@@ -27,14 +26,8 @@ public partial class World : Node2D
     public override void _Process(double delta) { }
     public void SwitchCamera()
     {
-        if (_playerOneCamera.IsCurrent())
-        {
-            _playerTwoCamera.MakeCurrent();
-        }
-        else if (_playerTwoCamera.IsCurrent())
-        {
-            _playerOneCamera.MakeCurrent();
-        }
+        if (_playerOneCamera.IsCurrent()) _playerTwoCamera.MakeCurrent();
+        else if (_playerTwoCamera.IsCurrent()) _playerOneCamera.MakeCurrent();
     }
 
     private void GDPrintMaze()
