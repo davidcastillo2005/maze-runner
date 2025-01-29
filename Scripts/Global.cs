@@ -13,7 +13,5 @@ public partial class Global : Node
     public string PlayerOneName { get; set; } = string.Empty;
     public string PlayerTwoName { get; set; } = string.Empty;
     
-    public override void _Ready() { }
-    public override void _Process(double delta) { }
     public void SetMaze() { Setting = new((int)Difficulty, (int)Seed, IsRandom); }
 }

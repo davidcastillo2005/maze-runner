@@ -31,10 +31,7 @@ public partial class PlayerCamera : Camera2D
 
         if (_global.Difficulty < 3) CurrentState = State.Extensive;
     }
-    public override void _Input(InputEvent @event)
-    {
-        _input = Input.GetVector(_player.Leftkey, _player.RightKey, _player.UpKey, _player.DownKey);
-    }
+    public override void _Input(InputEvent @event) { _input = Input.GetVector(_player.Leftkey, _player.RightKey, _player.UpKey, _player.DownKey); }
     public override void _Process(double delta)
     {
         switch (CurrentState)

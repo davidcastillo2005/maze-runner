@@ -23,7 +23,6 @@ public partial class World : Node2D
         if (!Input.IsActionJustPressed("SwitchCamera")) return;
         SwitchCamera();
     }
-    public override void _Process(double delta) { }
     public void SwitchCamera()
     {
         if (_playerOneCamera.IsCurrent()) _playerTwoCamera.MakeCurrent();

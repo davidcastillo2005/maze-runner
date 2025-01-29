@@ -106,20 +106,13 @@ public partial class Player : CharacterBody2D
             _input = Input.GetVector(Leftkey, RightKey, UpKey, DownKey);
             if (CurrentState != State.Spawning)
             {
-                if (_input != Vector2.Zero) CurrentState = State.Moving;
-                else CurrentState = State.Idle;
+                CurrentState = _input != Vector2.Zero ? State.Moving : State.Idle;
             }
 
             if (!Muter.Timer.Enabled && !_cooldownTimer.Enabled)
             {
-                if (PlayerSkillsBools[0] && Input.IsActionPressed(SkillKey))
-                {
-                    IsShieldOn = true;
-                }
-                else
-                {
-                    IsShieldOn = false;
-                }
+                if (PlayerSkillsBools[0] && Input.IsActionPressed(SkillKey)) IsShieldOn = true;
+                else IsShieldOn = false;
 
                 if (PlayerSkillsBools[1] && _input != Vector2.Zero
                     && Input.IsActionJustPressed(SkillKey))
@@ -127,10 +120,7 @@ public partial class Player : CharacterBody2D
                     IsPortalGunOn = true;
                     _cooldownTimer.Enabled = true;
                 }
-                else
-                {
-                    IsPortalGunOn = false;
-                }
+                else IsPortalGunOn = false;
 
                 if (PlayerSkillsBools[2] && Input.IsActionJustPressed(SkillKey)
                     && !Blindness.Timer.Enabled && !IsBlindOn)
@@ -146,10 +136,7 @@ public partial class Player : CharacterBody2D
                 }
             }
         }
-        else
-        {
-            _input = Vector2.Zero;
-        }
+        else _input = Vector2.Zero;
     }
     public override void _Process(double delta)
     {
@@ -157,24 +144,19 @@ public partial class Player : CharacterBody2D
 
         if (_tokenCoord.X == _mazeGenerator.ExitCoord.x && _tokenCoord.Y == _mazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
-        if (IsMutedOn)
-        {
-            Muter.Timer.Enabled = true;
-        }
+        if (IsMutedOn) { Muter.Timer.Enabled = true; }
 
-        if (IsBlindOn)
-        {
-            _blindnessSprite.Scale = new Vector2(5.625f, 5.625f);
-        }
-        else
-        {
-            _blindnessSprite.Scale = new Vector2(0, 0);
-        }
+        if (IsBlindOn) { _blindnessSprite.Scale = new Vector2(5.625f, 5.625f); }
+        else { _blindnessSprite.Scale = new Vector2(0, 0); }
 
         if (IsPortalGunOn)
         {
             Vector2I nTokenCoord = (Vector2I)(_input * 2 + _tokenCoord);
-            if (nTokenCoord.X >= 0 && nTokenCoord.Y >= 0 && nTokenCoord.X < _mazeGenerator.Size && nTokenCoord.Y < _mazeGenerator.Size && _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
+            if (nTokenCoord.X >= 0
+                && nTokenCoord.Y >= 0
+                && nTokenCoord.X < _mazeGenerator.Size
+                && nTokenCoord.Y < _mazeGenerator.Size
+                && _mazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
             {
                 Position = new Vector2(Board.GetConvertedPos(nTokenCoord.X), Board.GetConvertedPos(nTokenCoord.Y));
                 IsPortalGunOn = false;
@@ -224,10 +206,7 @@ public partial class Player : CharacterBody2D
             else
             {
                 sticky.Deactivate();
-                if (CurrentCondition != Condition.Sticky)
-                {
-                    CurrentCondition = Condition.Sticky;
-                }
+                if (CurrentCondition != Condition.Sticky) CurrentCondition = Condition.Sticky;
             }
         }
     EscapeTrap:
@@ -292,17 +271,11 @@ public partial class Player : CharacterBody2D
 
     private void PlayerOneSetSkills()
     {
-        for (int i = 0; i < _global.Setting.PlayerOneSkillBools.Length; i++)
-        {
-            PlayerSkillsBools = _global.Setting.PlayerOneSkillBools;
-        }
+        for (int i = 0; i < _global.Setting.PlayerOneSkillBools.Length; i++) { PlayerSkillsBools = _global.Setting.PlayerOneSkillBools; }
     }
     private void PlayerTwoSetSkills()
     {
-        for (int i = 0; i < _global.Setting.PlayerTwoSkillBools.Length; i++)
-        {
-            PlayerSkillsBools = _global.Setting.PlayerTwoSkillBools;
-        }
+        for (int i = 0; i < _global.Setting.PlayerTwoSkillBools.Length; i++) { PlayerSkillsBools = _global.Setting.PlayerTwoSkillBools; }
     }
     private void OnMutedEvent(object source, System.Timers.ElapsedEventArgs e) { IsMutedOn = false; }
     private void OnBlindEvent(object source, System.Timers.ElapsedEventArgs e)

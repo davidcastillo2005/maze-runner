@@ -21,10 +21,7 @@ public partial class Board : TileMapLayer
         TileSize = TileSet.TileSize.X;
         PixelSize = TileSize * _mazeGenerator.Size;
     }
-    public override void _Process(double delta)
-    {
-        PaintBoardTileMapLayer();
-    }
+    public override void _Process(double delta) { PaintBoardTileMapLayer(); }
     public float GetConvertedPos(int i)
     {
         return (i + 0.5f) * TileSize;
