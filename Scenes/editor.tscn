@@ -92,7 +92,7 @@ popup/item_2/text = "Portal"
 popup/item_2/id = 2
 popup/item_3/text = "Blind"
 popup/item_3/id = 3
-popup/item_4/text = "Mute"
+popup/item_4/text = "Muter"
 popup/item_4/id = 4
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]

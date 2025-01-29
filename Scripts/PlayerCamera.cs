@@ -40,7 +40,7 @@ public partial class PlayerCamera : Camera2D
 
         Position = _player.Position;
 
-        if (_global.Difficulty < 5) CurrentState = State.Extensive;
+        if (_global.Difficulty < 3) CurrentState = State.Extensive;
     }
 
     public override void _Input(InputEvent @event)

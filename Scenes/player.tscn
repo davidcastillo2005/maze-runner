@@ -6,16 +6,13 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(1.03125, 1.03125)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_nameLabel", "_spikesTimer", "_blindnessTimer", "_mutedTimer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("_nameLabel")]
 z_index = 10
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_sacbm")
 _speed = 10.0
 _nameLabel = NodePath("Label")
-_spikesTimer = NodePath("SpikesTimer")
-_blindnessTimer = NodePath("BlindTimer")
-_mutedTimer = NodePath("MutedTimer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(64, 64)
@@ -33,7 +30,7 @@ wait_time = 10.0
 wait_time = 10.0
 
 [node name="MutedTimer" type="Timer" parent="."]
-wait_time = 20.0
+wait_time = 10.0
 
 [node name="Label" type="Label" parent="."]
 offset_left = -23.0
@@ -41,6 +38,7 @@ offset_top = -59.0
 offset_right = 22.0
 offset_bottom = -36.0
 text = "David"
+horizontal_alignment = 1
 
 [connection signal="timeout" from="SpikesTimer" to="." method="OnSpikeTimerTimeout"]
 [connection signal="timeout" from="BlindTimer" to="." method="OnBlindnessTimerTimeout"]

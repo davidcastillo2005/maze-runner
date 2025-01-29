@@ -21,6 +21,7 @@ public partial class Editor : Control
 
 	private void OnStartButtonPressed()
 	{
+		if (_global.Difficulty == null || _global.Seed == null && !_global.IsRandom || _global.PlayerOneName == string.Empty || _global.PlayerTwoName == string.Empty) return;
 		_global.SetMaze();
 		_global.Setting.CheckSkillPlayerOne(_global.PlayerOneSkill);
 		_global.Setting.CheckSkillPlayerTwo(_global.PlayerTwoSkill);

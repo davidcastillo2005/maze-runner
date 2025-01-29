@@ -19,10 +19,10 @@ public partial class MainGame : Node2D
     {
         _global = GetNode<Global>("/root/Global");
 
-        GD.Print("SpawnerCoord: " + _global.Setting.MazeGenerator.SpawnerCoord);
-        GD.Print("ExitCoord: " + _global.Setting.MazeGenerator.ExitCoord);
-        GD.Print("Size: " + _global.Setting.Size);
-        GD.Print("Seed: " + _global.Setting.MazeGenerator.Seed);
+        // GD.Print("SpawnerCoord: " + _global.Setting.MazeGenerator.SpawnerCoord);
+        // GD.Print("ExitCoord: " + _global.Setting.MazeGenerator.ExitCoord);
+        // GD.Print("Size: " + _global.Setting.Size);
+        // GD.Print("Seed: " + _global.Setting.MazeGenerator.Seed);
         GDPrintSkills();
         GDPrintMaze();
     }
@@ -54,19 +54,7 @@ public partial class MainGame : Node2D
         // }
         // GD.Print("Token.IsBoostOn: " + _token._isBoostOn);
         // GD.Print("Token.ISBoostStillOn: " + _token._isBoolStillOn);
-        // GD.Print("Token.Boost.Battery: " + _token.Boost.Battery);
-        // if (_playerOne.IsBlindnessOn)
-        // {
-        //     GD.Print("PlayerOne is Blind.");
-        // }
-        // if (_playerTwo.IsBlindnessOn)
-        // {
-        //     GD.Print("PlayerTwo is Blind.");
-        // }
-
-        if (_playerOne.IsBlindOn) GD.Print("TimeLeft for PlayerOne Blindness: " + Math.Floor(_playerOne._blindnessTimer.TimeLeft + 1) + " & " + "Blindness.Battery: " + _playerOne.Blindness.Battery);
-        if (_playerTwo.IsBlindOn) GD.Print("TimeLeft for PlayerTwo Blindness: " + Math.Floor(_playerTwo._blindnessTimer.TimeLeft + 1) + " & " + "Blindness.Battery: " + _playerOne.Blindness.Battery);
-        
+        // GD.Print("Token.Boost.Battery: " + _token.Boost.Battery);        
         // GD.Print("Board.PixelSize: " + _board.PixelSize);
         
         GD.Print("");

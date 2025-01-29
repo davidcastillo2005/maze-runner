@@ -10,6 +10,24 @@
 
 [node name="Game" type="Node2D"]
 
+[node name="Label" type="Label" parent="."]
+z_index = 15
+offset_left = 318.0
+offset_right = 403.0
+offset_bottom = 23.0
+text = "Player One
+"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+z_index = 15
+offset_left = 1038.0
+offset_right = 1123.0
+offset_bottom = 23.0
+text = "Player Two
+"
+horizontal_alignment = 1
+
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 clip_contents = true
 offset_right = 724.0

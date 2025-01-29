@@ -195,9 +195,9 @@ public class MazeGenerator
 
     private void GenerateTraps(float percentage)
     {
-        GenerateSpikesTraps(percentage / 3);
-        GenerateStickyTraps(percentage / 3);
-        GenerateTrampolineTraps(percentage / 3);
+        GenerateSpikesTraps(percentage * 0.333f);
+        GenerateStickyTraps(percentage * 0.333f);
+        GenerateTrampolineTraps(percentage * 0.333f);
     }
 
     private void GenerateSpikesTraps(float percentage)
