@@ -23,8 +23,8 @@ public partial class PlayerCamera : Camera2D
         _global = GetNode<Global>("/root/Global");
         _input = Vector2.Zero;
         _cameraOffset = Vector2.Zero;
-        _minPosition = 0 + 720 * 0.5f * (float)Math.Pow(Zoom.X, -1);
-        _maxPosition = _board.PixelSize - 720 * 0.5f * (float)Math.Pow(Zoom.X, -1);
+        _minPosition = 0 + _global.Viewport * 0.5f * (float)Math.Pow(Zoom.X, -1);
+        _maxPosition = _board.PixelSize - _global.Viewport * 0.5f * (float)Math.Pow(Zoom.X, -1);
 
         CurrentState = State.Player;
         Position = _player.Position;
@@ -82,7 +82,7 @@ public partial class PlayerCamera : Camera2D
     }
     private void OnExtensive()
     {
-        Zoom = new Vector2((float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * 720), (float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * 720));
+        Zoom = new Vector2((float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * _global.Viewport), (float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * _global.Viewport));
         Position = new Vector2(_global.Setting.MazeGenerator.Size * _player.Board.TileSize * 0.5f, _global.Setting.MazeGenerator.Size * _player.Board.TileSize * 0.5f);
     }
 }

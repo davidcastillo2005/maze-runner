@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://2q322tyxvreq"]
+[gd_scene load_steps=9 format=3 uid="uid://2q322tyxvreq"]
 
 [ext_resource type="Script" path="res://Scripts/World.cs" id="1_a0sd4"]
 [ext_resource type="TileSet" uid="uid://cvjqx1uc53fui" path="res://Resources/TileSet.tres" id="2_g7o1g"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bjs2ohgkl7o6c" path="res://Resources/G_5.png" id="6_o01tp"]
 [ext_resource type="Script" path="res://Scripts/PlayerCamera.cs" id="6_yssce"]
 [ext_resource type="Script" path="res://Scripts/PlayerTwoSubViewport.cs" id="7_k6tni"]
+[ext_resource type="PackedScene" uid="uid://bqoh7g5vjkrkm" path="res://Scenes/player_ui.tscn" id="8_q0a2g"]
 
 [node name="Game" type="Node2D"]
 
@@ -100,3 +101,14 @@ position_smoothing_speed = 10.0
 script = ExtResource("6_yssce")
 _player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/PlayerTwo")
 _board = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Board")
+
+[node name="PlayerOneUI" parent="." node_paths=PackedStringArray("_player") instance=ExtResource("8_q0a2g")]
+offset_right = 720.0
+offset_bottom = 720.0
+_player = NodePath("../HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World/PlayerOne")
+
+[node name="PlayerTwoUI" parent="." node_paths=PackedStringArray("_player") instance=ExtResource("8_q0a2g")]
+offset_left = 725.0
+offset_right = 1445.0
+offset_bottom = 720.0
+_player = NodePath("../HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World/PlayerTwo")

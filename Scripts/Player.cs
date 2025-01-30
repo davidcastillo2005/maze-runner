@@ -22,18 +22,18 @@ public partial class Player : CharacterBody2D
     [Export] private PlayerCamera _playerCamera;
     [Export] private Sprite2D _blindnessSprite;
 
-    public System.Timers.Timer CoolDownTimer = new(100);
+    public System.Timers.Timer CoolDownTimer = new(1000);
     public enum State { Spawning, Idle, Moving, Winning }
     public State CurrentState { get; set; } = State.Spawning;
     public enum Condition { None, Spikes, Portal, Sticky }
     public Condition CurrentCondition { get; private set; }
     public string CurrentFloor { get; private set; }
-    public int CoolDownCounter = 0;
+    public int Energy = 0;
+    public int BatteryLife = 0;
+    public int SkillNum { get; set; } = new int();
 
-    private int _batteryLife = 0;
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
-    private int PlayerSkill { get; set; } = new int();
     private bool IsShieldOn { get; set; } = false;
     private Shield _shield = new();
     private bool IsPortalGunOn { get; set; } = false;
@@ -87,18 +87,18 @@ public partial class Player : CharacterBody2D
             case 1:
                 if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player One";
                 else _nameLabel.Text = _global.PlayerOneName;
-                PlayerSkill = _global.PlayerOneSkill;
+                SkillNum = _global.PlayerOneSkill;
                 break;
             case 2:
                 if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player Two";
                 else _nameLabel.Text = _global.PlayerTwoName;
-                PlayerSkill = _global.PlayerTwoSkill;
+                SkillNum = _global.PlayerTwoSkill;
                 break;
             default:
                 throw new Exception();
         }
 
-        _batteryLife = PlayerSkill switch
+        BatteryLife = SkillNum switch
         {
             1 => _shield.BatteryLife,
             2 => _portalGun.BatteryLife,
@@ -120,39 +120,39 @@ public partial class Player : CharacterBody2D
             else if (_input == Vector2.Zero) CurrentState = State.Idle;
             else CurrentState = State.Moving;
 
-            if (!_muter.Timer.Enabled && PlayerSkill != 0)
+            if (!_muter.Timer.Enabled && SkillNum != 0)
             {
-                if (PlayerSkill == 1
+                if (SkillNum == 1
                     && Input.IsActionPressed(SkillKey)
-                    && CoolDownCounter == _batteryLife) IsShieldOn = true;
+                    && Energy == BatteryLife) IsShieldOn = true;
                 else IsShieldOn = false;
 
-                if (PlayerSkill == 2
+                if (SkillNum == 2
                     && _input != Vector2.Zero
                     && Input.IsActionJustPressed(SkillKey)
-                    && CoolDownCounter == _batteryLife)
+                    && Energy == BatteryLife)
                 {
                     IsPortalGunOn = true;
-                    CoolDownCounter = 0;
+                    Energy = 0;
                 }
                 else IsPortalGunOn = false;
 
-                if (PlayerSkill == 3
+                if (SkillNum == 3
                     && Input.IsActionJustPressed(SkillKey)
                     && !_oppositePlayer._blindness.Timer.Enabled
                     && !_oppositePlayer.IsBlind
-                    && CoolDownCounter == _batteryLife) _oppositePlayer.IsBlind = true;
+                    && Energy == BatteryLife) _oppositePlayer.IsBlind = true;
 
-                if (PlayerSkill == 4 && Input.IsActionJustPressed(SkillKey) && CoolDownCounter == _batteryLife)
+                if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
                 {
                     _oppositePlayer.IsMuted = true;
-                    CoolDownCounter = 0;
+                    Energy = 0;
                 }
 
-                if (PlayerSkill == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _predator.Radius * Board.TileSize) && CoolDownCounter == _batteryLife)
+                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _predator.Radius * Board.TileSize) && Energy == BatteryLife)
                 {
                     _oppositePlayer.IsParalized = true;
-                    CoolDownCounter = 0;
+                    Energy = 0;
                 }
             }
         }
@@ -162,11 +162,11 @@ public partial class Player : CharacterBody2D
     {
         _tokenCoord = Board.LocalToMap(Position);
 
-        if (!CoolDownTimer.Enabled && CoolDownCounter < _batteryLife)
+        if (!CoolDownTimer.Enabled && Energy < BatteryLife)
         {
             CoolDownTimer.Enabled = true;
         }
-        if (CoolDownCounter == _batteryLife)
+        if (Energy == BatteryLife)
         {
             CoolDownTimer.Enabled = false;
         }
@@ -207,7 +207,7 @@ public partial class Player : CharacterBody2D
             spikes.Deactivate();
             if (IsShieldOn)
             {
-                CoolDownCounter = 0;
+                Energy = 0;
                 goto EscapeTrap;
             }
             else if (CurrentCondition != Condition.Spikes)
@@ -222,7 +222,7 @@ public partial class Player : CharacterBody2D
             portal.Deactivate();
             if (IsShieldOn)
             {
-                CoolDownCounter = 0;
+                Energy = 0;
                 goto EscapeTrap;
             }
             else if (CurrentCondition != Condition.Portal)
@@ -237,7 +237,7 @@ public partial class Player : CharacterBody2D
             sticky.Deactivate();
             if (IsShieldOn)
             {
-                CoolDownCounter = 0;
+                Energy = 0;
                 goto EscapeTrap;
             }
             else if (CurrentCondition != Condition.Sticky) CurrentCondition = Condition.Sticky;
@@ -307,7 +307,7 @@ public partial class Player : CharacterBody2D
         return distance <= radius;
     }
     private void OnPredatorEvent(object source, System.Timers.ElapsedEventArgs e) { IsParalized = false; }
-    private void OnCooldownEvent(object source, System.Timers.ElapsedEventArgs e) { CoolDownCounter++; }
+    private void OnCooldownEvent(object source, System.Timers.ElapsedEventArgs e) { Energy++; }
     private void OnMutedEvent(object source, System.Timers.ElapsedEventArgs e) { IsMuted = false; }
     private void OnBlindEvent(object source, System.Timers.ElapsedEventArgs e)
     {

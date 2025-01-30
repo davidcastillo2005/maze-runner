@@ -28,7 +28,7 @@ public class Blindness : Skill
 
 public class Muter : Skill
 {
-    public int BatteryLife = 10;
+    public int BatteryLife = 20;
     public System.Timers.Timer Timer { get; private set; } = new(10000);
 
     public Muter() : base() { }
@@ -37,7 +37,7 @@ public class Muter : Skill
 public class Predator : Skill
 {
     public int BatteryLife = 20;
-    public int Radius { get; set; } = 10;
+    public int Radius { get; set; } = 20;
     public System.Timers.Timer Timer { get; private set; } = new(10000);
 
     public Predator() : base() { }

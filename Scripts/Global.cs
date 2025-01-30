@@ -2,8 +2,10 @@ using Godot;
 using MazeRunner.Scripts.Logic;
 
 namespace MazeRunner.Scripts;
+
 public partial class Global : Node
 {
+    public int Viewport = 720;
     public Setting Setting { get; set; }
     public int? Difficulty { get; set; } = 0;
     public int? Seed { get; set; } = 1805123040;
