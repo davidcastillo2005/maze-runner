@@ -10,10 +10,7 @@ public partial class Editor : Control
 
 	private void OnStartButtonPressed()
 	{
-		if (_global.Difficulty == 0
-            || (_global.Seed == 0 && !_global.IsRandom)
-            || _global.PlayerOneName == string.Empty
-            || _global.PlayerTwoName == string.Empty) return;
+		if (_global.Difficulty == 0 || (_global.Seed == 0 && !_global.IsRandom)) return;
 		_global.SetMaze();
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}

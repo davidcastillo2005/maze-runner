@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Godot;
 using MazeRunner.Scripts.Data;
-using MazeRunner.Scripts.Logic;
 
 namespace MazeRunner.Scripts;
 
@@ -24,14 +22,14 @@ public partial class Player : CharacterBody2D
     [Export] private PlayerCamera _playerCamera;
     [Export] private Sprite2D _blindnessSprite;
 
-    public System.Timers.Timer CoolDownTimer = new(1000);
+    public System.Timers.Timer CoolDownTimer = new(100);
     public enum State { Spawning, Idle, Moving, Winning }
     public State CurrentState { get; set; } = State.Spawning;
     public enum Condition { None, Spikes, Portal, Sticky }
     public Condition CurrentCondition { get; private set; }
     public string CurrentFloor { get; private set; }
-
     public int CoolDownCounter = 0;
+
     private int _batteryLife = 0;
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
@@ -87,17 +85,18 @@ public partial class Player : CharacterBody2D
         switch (_currentPlayerNum)
         {
             case 1:
-                PlayerName = _global.PlayerOneName;
+                if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player One";
+                else _nameLabel.Text = _global.PlayerOneName;
                 PlayerSkill = _global.PlayerOneSkill;
                 break;
             case 2:
-                PlayerName = _global.PlayerTwoName;
+                if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player Two";
+                else _nameLabel.Text = _global.PlayerTwoName;
                 PlayerSkill = _global.PlayerTwoSkill;
                 break;
             default:
                 throw new Exception();
         }
-        _nameLabel.Text = PlayerName;
 
         _batteryLife = PlayerSkill switch
         {
@@ -108,7 +107,6 @@ public partial class Player : CharacterBody2D
             5 => _predator.BatteryLife,
             _ => 0,
         };
-
 
         Position = new Vector2(Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.y));
     }
@@ -151,7 +149,7 @@ public partial class Player : CharacterBody2D
                     CoolDownCounter = 0;
                 }
 
-                if (PlayerSkill == 5 && Input.IsActionJustPressed(SkillKey) && CoolDownCounter == _batteryLife)
+                if (PlayerSkill == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _predator.Radius * Board.TileSize) && CoolDownCounter == _batteryLife)
                 {
                     _oppositePlayer.IsParalized = true;
                     CoolDownCounter = 0;
@@ -162,7 +160,6 @@ public partial class Player : CharacterBody2D
     }
     public override void _Process(double delta)
     {
-        GD.Print(PlayerSkill);
         _tokenCoord = Board.LocalToMap(Position);
 
         if (!CoolDownTimer.Enabled && CoolDownCounter < _batteryLife)
@@ -304,6 +301,11 @@ public partial class Player : CharacterBody2D
         };
     }
 
+    private bool IsInsideRadius(Vector2 pos, Vector2 targetPos, int radius)
+    {
+        int distance = (int)Math.Sqrt(Math.Pow(pos.X - targetPos.X, 2) + Math.Pow(pos.Y - targetPos.Y, 2));
+        return distance <= radius;
+    }
     private void OnPredatorEvent(object source, System.Timers.ElapsedEventArgs e) { IsParalized = false; }
     private void OnCooldownEvent(object source, System.Timers.ElapsedEventArgs e) { CoolDownCounter++; }
     private void OnMutedEvent(object source, System.Timers.ElapsedEventArgs e) { IsMuted = false; }
