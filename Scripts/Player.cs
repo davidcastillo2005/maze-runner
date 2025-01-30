@@ -31,6 +31,7 @@ public partial class Player : CharacterBody2D
     public int Energy = 0;
     public int BatteryLife = 0;
     public int SkillNum { get; set; } = new int();
+    public string StrName;
 
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
@@ -77,6 +78,7 @@ public partial class Player : CharacterBody2D
         Spikes.Timer.AutoReset = false;
 
         _predator.Timer.Elapsed += OnPredatorEvent;
+        _predator.Timer.AutoReset = false;
 
         CoolDownTimer.Elapsed += OnCooldownEvent;
         CoolDownTimer.AutoReset = false;
@@ -85,18 +87,32 @@ public partial class Player : CharacterBody2D
         switch (_currentPlayerNum)
         {
             case 1:
-                if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player One";
-                else _nameLabel.Text = _global.PlayerOneName;
+                if (_global.PlayerOneName == string.Empty)
+                {
+                    StrName = "Player One";
+                }
+                else
+                {
+                    StrName = _global.PlayerOneName;
+                }
                 SkillNum = _global.PlayerOneSkill;
                 break;
             case 2:
-                if (_global.PlayerOneName == string.Empty) _nameLabel.Text = "Player Two";
-                else _nameLabel.Text = _global.PlayerTwoName;
+                if (_global.PlayerOneName == string.Empty)
+                {
+                    StrName = "Player Two";
+                }
+                else
+                {
+                    StrName = _global.PlayerTwoName;
+                    _nameLabel.Text = _global.PlayerTwoName;
+                }
                 SkillNum = _global.PlayerTwoSkill;
                 break;
             default:
                 throw new Exception();
         }
+        _nameLabel.Text = StrName;
 
         BatteryLife = SkillNum switch
         {
@@ -107,6 +123,7 @@ public partial class Player : CharacterBody2D
             5 => _predator.BatteryLife,
             _ => 0,
         };
+
 
         Position = new Vector2(Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.y));
     }
@@ -141,7 +158,10 @@ public partial class Player : CharacterBody2D
                     && Input.IsActionJustPressed(SkillKey)
                     && !_oppositePlayer._blindness.Timer.Enabled
                     && !_oppositePlayer.IsBlind
-                    && Energy == BatteryLife) _oppositePlayer.IsBlind = true;
+                    && Energy == BatteryLife)
+                {
+                    _oppositePlayer.IsBlind = true;
+                }
 
                 if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
                 {
@@ -162,6 +182,8 @@ public partial class Player : CharacterBody2D
     {
         _tokenCoord = Board.LocalToMap(Position);
 
+        if (_tokenCoord.X == _global.Setting.MazeGenerator.ExitCoord.x && _tokenCoord.Y == _global.Setting.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
+
         if (!CoolDownTimer.Enabled && Energy < BatteryLife)
         {
             CoolDownTimer.Enabled = true;
@@ -170,8 +192,6 @@ public partial class Player : CharacterBody2D
         {
             CoolDownTimer.Enabled = false;
         }
-
-        if (_tokenCoord.X == _global.Setting.MazeGenerator.ExitCoord.x && _tokenCoord.Y == _global.Setting.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
         if (IsParalized)
         {
@@ -312,7 +332,7 @@ public partial class Player : CharacterBody2D
     private void OnBlindEvent(object source, System.Timers.ElapsedEventArgs e)
     {
         IsBlind = false;
-        CoolDownTimer.Enabled = true;
+        _oppositePlayer.Energy = 0;
     }
     private void OnSpikedEvent(object source, System.Timers.ElapsedEventArgs e) { CurrentCondition = Condition.None; }
     private void ResetStats() { _currentSpeed = _defaultSpeed; }
@@ -361,5 +381,5 @@ public partial class Player : CharacterBody2D
         Position = new Vector2(Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.y));
         CurrentState = State.Idle;
     }
-    private void Win() { GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn"); }
+    private void Win() { GetTree().ChangeSceneToFile("res://Scenes/menu.tscn"); }
 }

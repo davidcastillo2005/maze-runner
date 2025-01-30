@@ -42,19 +42,21 @@ size_flags_vertical = 3
 alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]
-layout_direction = 2
 layout_mode = 2
 
 [node name="LineEdit" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(100, 73)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 placeholder_text = "Player One"
 alignment = 1
+max_length = 60
 
 [node name="OptionButton" type="OptionButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 alignment = 1
 selected = 0
 item_count = 6
@@ -71,19 +73,22 @@ popup/item_5/text = "Predator"
 popup/item_5/id = 5
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]
-layout_direction = 2
+custom_minimum_size = Vector2(0, 73)
 layout_mode = 2
+alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 placeholder_text = "Player Two"
 alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 alignment = 1
 selected = 0
 item_count = 6
@@ -100,29 +105,35 @@ popup/item_5/text = "Predator"
 popup/item_5/id = 5
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 73)
 layout_mode = 2
 
 [node name="LineEdit" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Diffifculty"
+theme_override_font_sizes/font_size = 22
+placeholder_text = "Size"
 alignment = 1
 
 [node name="LineEdit2" type="LineEdit" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 placeholder_text = "Seed"
 alignment = 1
 
 [node name="CheckButton" type="CheckButton" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
 button_pressed = true
 text = "Random"
 alignment = 1
 
 [node name="Button" type="Button" parent="Control/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 73)
 layout_mode = 2
+theme_override_font_sizes/font_size = 45
 text = "Start"
 
 [connection signal="text_changed" from="Control/ScrollContainer/VBoxContainer/HBoxContainer/LineEdit" to="." method="OnPlayeOneNameLineEditTextChanged"]

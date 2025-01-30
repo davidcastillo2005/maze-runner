@@ -15,8 +15,6 @@ public partial class World : Node2D
     public override void _Ready()
     {
         _global = GetNode<Global>("/root/Global");
-
-        GDPrintMaze();
     }
     public override void _Input(InputEvent @event)
     {

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c2152f7p6nquk"]
 
-[ext_resource type="Script" path="res://Scripts/Menu.cs" id="1_syhqm"]
-[ext_resource type="Texture2D" uid="uid://bx3isdhul7l2d" path="res://Resources/main_menu.png" id="2_8uph8"]
+[ext_resource type="Script" path="res://Scripts/Menu.cs" id="1_qwj8k"]
+[ext_resource type="Texture2D" uid="uid://bx3isdhul7l2d" path="res://Resources/main_menu.png" id="2_4ixxc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_2oqmm"]
 
@@ -12,14 +12,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_syhqm")
+script = ExtResource("1_qwj8k")
 _playButton = NodePath("VBoxContainer/NewGameButton")
 _quitButton = NodePath("VBoxContainer/QuitButton")
 
 [node name="MainMenu" type="Sprite2D" parent="."]
 position = Vector2(720, 360)
 scale = Vector2(2.8125, 2.8125)
-texture = ExtResource("2_8uph8")
+texture = ExtResource("2_4ixxc")
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 1
@@ -41,19 +41,23 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -46.0
-offset_top = 180.0
-offset_right = 47.0
-offset_bottom = 246.0
+offset_left = -152.5
+offset_top = 90.0
+offset_right = 147.5
+offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="NewGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 45
 text = "New Game"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 45
 text = "Quit"
 
 [connection signal="button_down" from="VBoxContainer/NewGameButton" to="." method="OnPlayButtonDown"]

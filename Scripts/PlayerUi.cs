@@ -6,10 +6,11 @@ namespace MazeRunner.Scripts;
 public partial class PlayerUi : Control
 {
 	[Export] private Player _player;
+	[Export] private Label _playerNameLabel;
+	[Export] private Label _skillLabel;
 	[Export] private ColorRect _rect0;
 	[Export] private ColorRect _rect1;
 	[Export] private ColorRect _rect2;
-	[Export] private Label _skillLabel;
 
 	private int punto0;
 	private int punto1;
@@ -28,11 +29,13 @@ public partial class PlayerUi : Control
 			0 => "(None)",
 			1 => "(Shield)",
 			2 => "(Portal)",
-			3 => "(Blindness)",
-			4 => "(Muter)",
-			5 => "(Predator)",
+			3 => "(Blind)",
+			4 => "(Mute)",
+			5 => "(Petrify)",
 			_ => throw new Exception()
 		};
+
+		_playerNameLabel.Text = _player.StrName;
 	}
 	public override void _Process(double delta)
 	{

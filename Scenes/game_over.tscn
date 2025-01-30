@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://bw0hup8rhims0"]
+
+[ext_resource type="Texture2D" uid="uid://bx3isdhul7l2d" path="res://Resources/main_menu.png" id="1_vyeks"]
+
+[node name="GameOver" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainMenu" type="Sprite2D" parent="."]
+position = Vector2(722.5, 360)
+scale = Vector2(2.82227, 2.8125)
+texture = ExtResource("1_vyeks")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 570.0
+offset_top = 450.0
+offset_right = -575.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(150, 0)
+alignment = 1
+
+[node name="Button" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 45
+text = "Restart"
+
+[node name="Button2" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 45
+text = "Exit to Menu"

@@ -1,6 +1,7 @@
-# Maze Runner
+# MAZESCAPE  
 ## Proyecto de CC. Hecho en Godot Engine 4.3.
- Mi objetivo es cumplir los requisitos mínimos siguientes:
+
+### Mi objetivo como único creador del juego es cumplir los requisitos mínimos siguientes:
  - Tablero generado aleatoriamente. (Hecho)
  - Obstáculos. (Hecho)
  - Al menos tres trampas distintas implementadas. (Hecho)
