@@ -102,13 +102,13 @@ Su función es poder configurar la partida. Sus opciones son:
 
 ---
 
-En la escena están
+La escena contiene un script en su nodo base [].
 
 ![alt text](image-5.png)
 
 ## Generador de laberintos
 
-El código que detrás de la generación de laberintos es [Maze Generator](). En el script [Setting]() existe una instancia:
+La script que define al generación de laberintos es [Maze Generator](Scripts\Logic\MazeGenerator.cs). En el script [Setting]() existe una instancia:
 
 `public MazeGenerator MazeGenerator { get; private set; }`
 
@@ -120,22 +120,21 @@ Laberinto generado a partir de una semilla. Si se eligió una semilla "aleatoria
 
 A su vez en los espacios vacíos del laberinto pueden aparecer uno de los tres tipos trampas, provocando al jugador que las pisan ciertos efectos:
 
-- Électrica 
+- `A!` 
 
 > Baja la velocidad en un 10% por 10 segundos.
 
-- Portal
+- `Portal`
 
 > Teletransporta a un espacio vacío vecino aleatorio.
 
-- Pegajosa
+- `Paralysis`
 
 > Detiene el movimiento, al menos de que intente moverse 10 veces.
 
-Añadidas para entorpecer el movimiento de los jugadores.
-Los jugadores tienen la opción de poseer habilidades 
+Añadidas para entorpecer el movimiento de los jugadores.s
 
-### Errores a solucionar:
+## Errores a solucionar:
 
 1. Cuando se juega una nueva partida después de haber ganado, el juego no resetea las habilidades.
 

@@ -1,4 +1,5 @@
-# MAZESCAPE  
+# MAZESCAPE
+
 ## Proyecto de CC. Hecho en Godot Engine 4.3.
 
 ### Mi objetivo como único creador del juego es cumplir los requisitos mínimos siguientes:
