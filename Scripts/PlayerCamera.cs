@@ -29,7 +29,7 @@ public partial class PlayerCamera : Camera2D
         CurrentState = State.Player;
         Position = _player.Position;
 
-        if (_global.Difficulty < 3) CurrentState = State.Extensive;
+        if (_global.Size < 12) CurrentState = State.Extensive;
     }
     public override void _Input(InputEvent @event) { _input = Input.GetVector(_player.Leftkey, _player.RightKey, _player.UpKey, _player.DownKey); }
     public override void _Process(double delta)
@@ -82,7 +82,7 @@ public partial class PlayerCamera : Camera2D
     }
     private void OnExtensive()
     {
-        Zoom = new Vector2((float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * _global.Viewport), (float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.Setting.MazeGenerator.Size, -1) * _global.Viewport));
-        Position = new Vector2(_global.Setting.MazeGenerator.Size * _player.Board.TileSize * 0.5f, _global.Setting.MazeGenerator.Size * _player.Board.TileSize * 0.5f);
+        Zoom = new Vector2((float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.MazeGenerator.Size, -1) * _global.Viewport), (float)(Math.Pow(_player.Board.TileSize, -1) * Math.Pow(_global.MazeGenerator.Size, -1) * _global.Viewport));
+        Position = new Vector2(_global.MazeGenerator.Size * _player.Board.TileSize * 0.5f, _global.MazeGenerator.Size * _player.Board.TileSize * 0.5f);
     }
 }

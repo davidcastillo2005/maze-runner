@@ -71,7 +71,7 @@ _playerCamera = NodePath("../../../../SubViewportContainer2/PlayerTwoSubViewport
 _blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSpritePlayerTwo")
 
 [node name="PlayerOneCamera" type="Camera2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_player", "_board")]
-zoom = Vector2(0.5, 0.5)
+zoom = Vector2(0.511, 0.511)
 position_smoothing_speed = 20.0
 script = ExtResource("6_yssce")
 _player = NodePath("../World/PlayerOne")
@@ -96,7 +96,7 @@ script = ExtResource("7_k6tni")
 _subViewport = NodePath("../../SubViewportContainer/PlayerOneSubViewport")
 
 [node name="PlayerTwoCamera" type="Camera2D" parent="HBoxContainer/SubViewportContainer2/PlayerTwoSubViewport" node_paths=PackedStringArray("_player", "_board")]
-zoom = Vector2(0.5, 0.5)
+zoom = Vector2(0.514, 0.514)
 position_smoothing_speed = 10.0
 script = ExtResource("6_yssce")
 _player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/PlayerTwo")

@@ -10,14 +10,14 @@ public partial class Editor : Control
 
 	private void OnStartButtonPressed()
 	{
-		if (_global.Difficulty == 0 || (_global.Seed == 0 && !_global.IsRandom)) return;
+		if (_global.Size == 0 || (_global.Seed == 0 && !_global.IsRandom)) return;
 		_global.SetMaze();
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 	private void OnDifficultyLineEditTextChanged(string text)
 	{
 		if (text == "" || !int.TryParse(text, out int num)) return;
-		_global.Difficulty = num;
+		_global.Size = num;
 	}
 	private void OnSeedLineEditTextChanged(string text)
 	{

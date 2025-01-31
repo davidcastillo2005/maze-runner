@@ -29,16 +29,16 @@ public partial class World : Node2D
 
     private void GDPrintMaze()
     {
-        for (int i = 0; i < _global.Setting.MazeGenerator.Size; i++)
+        for (int i = 0; i < _global.MazeGenerator.Size; i++)
         {
             string rowLog = "";
-            for (int j = 0; j < _global.Setting.MazeGenerator.Size; j++)
+            for (int j = 0; j < _global.MazeGenerator.Size; j++)
             {
-                if (_global.Setting.MazeGenerator.Maze[j, i] is Empty and not Spawner and not Exit and not Trap) rowLog += "  ";
-                else if (_global.Setting.MazeGenerator.Maze[j, i] is Wall) rowLog += "# ";
-                else if (_global.Setting.MazeGenerator.Maze[j, i] is Spawner) rowLog += "S ";
-                else if (_global.Setting.MazeGenerator.Maze[j, i] is Exit) rowLog += "E ";
-                else if (_global.Setting.MazeGenerator.Maze[j, i] is Trap) rowLog += "T ";
+                if (_global.MazeGenerator.Maze[j, i] is Empty and not Spawner and not Exit and not Trap) rowLog += "  ";
+                else if (_global.MazeGenerator.Maze[j, i] is Wall) rowLog += "# ";
+                else if (_global.MazeGenerator.Maze[j, i] is Spawner) rowLog += "S ";
+                else if (_global.MazeGenerator.Maze[j, i] is Exit) rowLog += "E ";
+                else if (_global.MazeGenerator.Maze[j, i] is Trap) rowLog += "T ";
             }
             GD.Print(rowLog);
         }

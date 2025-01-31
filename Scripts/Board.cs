@@ -16,7 +16,7 @@ public partial class Board : TileMapLayer
     public override void _Ready()
     {
         _global = GetNode<Global>("/root/Global");
-        _mazeGenerator = _global.Setting.MazeGenerator;
+        _mazeGenerator = _global.MazeGenerator;
         _mazeGenerator.GenerateMaze();
         TileSize = TileSet.TileSize.X;
         PixelSize = TileSize * _mazeGenerator.Size;

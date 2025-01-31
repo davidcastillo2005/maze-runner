@@ -60,7 +60,7 @@ public partial class Player : CharacterBody2D
         _global = GetNode<Global>("/root/Global");
         _input = Vector2.Zero;
         _minPosition = Board.GetConvertedPos(0) - Board.TileSize * (float)Math.Pow(4, -1);
-        _maxPosition = Board.GetConvertedPos(_global.Setting.MazeGenerator.Size - 1) + Board.TileSize * (float)Math.Pow(4, -1);
+        _maxPosition = Board.GetConvertedPos(_global.MazeGenerator.Size - 1) + Board.TileSize * (float)Math.Pow(4, -1);
         _defaultSpeed = _speed * Board.TileSize;
         _paralizedSpeed = _defaultSpeed * 0.1f;
         _currentSpeed = _defaultSpeed;
@@ -125,7 +125,7 @@ public partial class Player : CharacterBody2D
         };
 
 
-        Position = new Vector2(Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.y));
+        Position = new Vector2(Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.y));
     }
     public override void _Input(InputEvent @event)
     {
@@ -182,7 +182,7 @@ public partial class Player : CharacterBody2D
     {
         _tokenCoord = Board.LocalToMap(Position);
 
-        if (_tokenCoord.X == _global.Setting.MazeGenerator.ExitCoord.x && _tokenCoord.Y == _global.Setting.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
+        if (_tokenCoord.X == _global.MazeGenerator.ExitCoord.x && _tokenCoord.Y == _global.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
         if (!CoolDownTimer.Enabled && Energy < BatteryLife)
         {
@@ -213,16 +213,16 @@ public partial class Player : CharacterBody2D
             Vector2I nTokenCoord = (Vector2I)(_input * 2 + _tokenCoord);
             if (nTokenCoord.X >= 0
                 && nTokenCoord.Y >= 0
-                && nTokenCoord.X < _global.Setting.MazeGenerator.Size
-                && nTokenCoord.Y < _global.Setting.MazeGenerator.Size
-                && _global.Setting.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
+                && nTokenCoord.X < _global.MazeGenerator.Size
+                && nTokenCoord.Y < _global.MazeGenerator.Size
+                && _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
             {
                 Position = new Vector2(Board.GetConvertedPos(nTokenCoord.X), Board.GetConvertedPos(nTokenCoord.Y));
                 IsPortalGunOn = false;
             }
         }
 
-        if (_global.Setting.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
+        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
         {
             spikes.Deactivate();
             if (IsShieldOn)
@@ -237,7 +237,7 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.Setting.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal portal && portal.IsActivated)
+        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal portal && portal.IsActivated)
         {
             portal.Deactivate();
             if (IsShieldOn)
@@ -252,7 +252,7 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.Setting.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
+        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
         {
             sticky.Deactivate();
             if (IsShieldOn)
@@ -308,7 +308,7 @@ public partial class Player : CharacterBody2D
                 throw new Exception();
         }
 
-        CurrentFloor = _global.Setting.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] switch
+        CurrentFloor = _global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] switch
         {
             Spawner => "Spawner",
             Exit => "Exit",
@@ -348,21 +348,21 @@ public partial class Player : CharacterBody2D
     private void MoveThroughPortal()
     {
         List<Vector2I> possibleTargetPosition = new();
-        foreach (var (x, y) in _global.Setting.MazeGenerator.Directions)
+        foreach (var (x, y) in _global.MazeGenerator.Directions)
         {
             Vector2I nTokenCoord = new Vector2I(x + _tokenCoord.X, y + _tokenCoord.Y);
-            if (!_global.Setting.MazeGenerator.IsInsideBounds(nTokenCoord.X, nTokenCoord.Y)
-                || _global.Setting.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is Portal
-                || _global.Setting.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Empty and not Spikes) continue;
+            if (!_global.MazeGenerator.IsInsideBounds(nTokenCoord.X, nTokenCoord.Y)
+                || _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is Portal
+                || _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Empty and not Spikes) continue;
 
             Vector2I inBetweenCoord = new Vector2I((int)((_tokenCoord.X + nTokenCoord.X) * 0.5f), (int)((_tokenCoord.Y + nTokenCoord.Y) * 0.5f));
-            if (_global.Setting.MazeGenerator.Maze[inBetweenCoord.X, inBetweenCoord.Y] is not Wall) continue;
+            if (_global.MazeGenerator.Maze[inBetweenCoord.X, inBetweenCoord.Y] is not Wall) continue;
             possibleTargetPosition.Add(nTokenCoord);
         }
 
         if (possibleTargetPosition.Count > 0)
         {
-            int index = _global.Setting.MazeGenerator.Random.Next(possibleTargetPosition.Count);
+            int index = _global.MazeGenerator.Random.Next(possibleTargetPosition.Count);
             Position = new Vector2(Board.GetConvertedPos(possibleTargetPosition[index].X), Board.GetConvertedPos(possibleTargetPosition[index].Y));
         }
         CurrentCondition = (Condition)_previusCondition;
@@ -378,7 +378,7 @@ public partial class Player : CharacterBody2D
     }
     private void Spawn()
     {
-        Position = new Vector2(Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.Setting.MazeGenerator.SpawnerCoord.y));
+        Position = new Vector2(Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.y));
         CurrentState = State.Idle;
     }
     private void Win() { GetTree().ChangeSceneToFile("res://Scenes/menu.tscn"); }
