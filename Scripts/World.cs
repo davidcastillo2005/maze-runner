@@ -15,6 +15,7 @@ public partial class World : Node2D
     public override void _Ready()
     {
         _global = GetNode<Global>("/root/Global");
+        _global.MazeGenerator.GenerateMaze();
     }
     public override void _Input(InputEvent @event)
     {

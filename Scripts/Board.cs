@@ -17,15 +17,11 @@ public partial class Board : TileMapLayer
     {
         _global = GetNode<Global>("/root/Global");
         _mazeGenerator = _global.MazeGenerator;
-        _mazeGenerator.GenerateMaze();
         TileSize = TileSet.TileSize.X;
         PixelSize = TileSize * _mazeGenerator.Size;
     }
     public override void _Process(double delta) { PaintBoardTileMapLayer(); }
-    public float GetConvertedPos(int i)
-    {
-        return (i + 0.5f) * TileSize;
-    }
+    public float GetConvertedPos(int i) => (i + 0.5f) * TileSize;
 
     private void PaintBoardTileMapLayer()
     {

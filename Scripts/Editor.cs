@@ -4,9 +4,9 @@ namespace MazeRunner.Scripts;
 
 public partial class Editor : Control
 {
-	private Global _global;
-
 	public override void _Ready() { _global = GetNode<Global>("/root/Global"); }
+
+	private Global _global;
 
 	private void OnStartButtonPressed()
 	{

@@ -33,6 +33,7 @@ public partial class Player : CharacterBody2D
     public int SkillNum { get; set; } = new int();
     public string StrName;
 
+    private Random _random = new();
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
     private bool IsShieldOn { get; set; } = false;
@@ -362,7 +363,7 @@ public partial class Player : CharacterBody2D
 
         if (possibleTargetPosition.Count > 0)
         {
-            int index = _global.MazeGenerator.Random.Next(possibleTargetPosition.Count);
+            int index = _random.Next(possibleTargetPosition.Count);
             Position = new Vector2(Board.GetConvertedPos(possibleTargetPosition[index].X), Board.GetConvertedPos(possibleTargetPosition[index].Y));
         }
         CurrentCondition = (Condition)_previusCondition;

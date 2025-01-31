@@ -13,12 +13,10 @@ public partial class Global : Node
     public int PlayerTwoSkill { get; set; } = 0;
     public string PlayerOneName { get; set; } = string.Empty;
     public string PlayerTwoName { get; set; } = string.Empty;
-
     public MazeGenerator MazeGenerator;
 
     public void SetMaze()
     {
-        if (Size % 2 == 0) Size++;
         MazeGenerator = new((int)Size, (int)Seed, IsRandom);
     }
 }
