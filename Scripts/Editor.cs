@@ -1,9 +1,11 @@
+using System;
 using Godot;
 
 namespace MazeRunner.Scripts;
 
 public partial class Editor : Control
 {
+	[Export] Label SizeLabel;
 	public override void _Ready() { _global = GetNode<Global>("/root/Global"); }
 
 	private Global _global;
@@ -30,4 +32,9 @@ public partial class Editor : Control
 	private void OnPlayerTwoNameLineEditTextChanged(string name) { _global.PlayerTwoName = name; }
 	private void OnPlayerOneOptionButtonItemSelected(int index) { _global.PlayerOneSkill = index; }
 	private void OnPlayerTwoOptionButtonItemSelected(int index) { _global.PlayerTwoSkill = index; }
+	private void OnSizeHSliderValueChanged(float f)
+	{
+		_global.Size = (int)f;
+		SizeLabel.Text = f.ToString();
+	}
 }
