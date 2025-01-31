@@ -2,8 +2,6 @@
 
 Proyecto de la asignatura de Programación de Ciencia de la Computación.
 
-> Hecho en Godot v4.3.stable.mono.official [77dcf97d8].
-
 ## Resumen
 
 El proyecto es un juego multijugador de dos personas, contrarios entre sí. El objetivo de cada jugador es llegar a la salida antes que el oponente, en un laberinto generado por partida. Habrá trampas que van entorpecer a los jugadores, quitandoles ventaja y dominio sobre el laberinto. Contrarestarlas es el uso principal de las habilidades a elegir.
@@ -12,7 +10,9 @@ Las habilidades son únicas por ficha, y hay 5 para elegir. Los jugadores las us
 
 ## Dependencias y ejecución
 
-En [Game](../Game/) estará un archivo ejecutador con el juego exportado donde lo único necesario es que funciona solo en _Windows_.
+Hecho en Godot v4.3.stable.mono.official [77dcf97d8].
+
+En [Game](../Game/) estará un archivo ejecutador del juego exportado solo para _Windows_.
 
 ## Estructura
 
@@ -20,9 +20,9 @@ En [Game](../Game/) estará un archivo ejecutador con el juego exportado donde l
 
 El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Logic/) y de [Datos](../Scripts/Data/), separado del resto del proyecto.
 
-#### Datos
+#### Casillas
 
-- [Tile](../Scripts/Data/Tile.cs): Representa una casilla del laberinto. El laberinto es un array bidimensional de casillas. En ella están definidas las coordenadas del Tile.
+- [Tile](../Scripts/Data/Tile.cs): Clase casilla del laberinto. El laberinto es un array bidimensional de casillas. En esta están definidas los componenentes de la coordenada de las casillas.
 
 - [Empty y Walls](../Scripts/Data/Tile.cs): Derivan de la clase Tile, representa el camino que puede recorrer el jugador y el que no puede atravesar avazando respectivamente.
 
@@ -37,6 +37,34 @@ El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Lo
 - [Shock](../Scripts/Data/Tile.cs): Derivada de Trap, trampa électrica. Paraliza al jugador y para tendrá que tratar de moverse 10 veces.
 
   > Posee una propiedad `Struggle` de 10.
+
+#### Habilidades
+
+- [Skill](../Scripts/Data/Skill.cs): Clase abstracta habilidad del jugador. Tiene costo de energía según la habilidad.
+
+  > Posee una propiedad `BatteryLife`.
+
+- [Shield](../Scripts/Data/Skill.cs): Derivada de la clase Skill, escudo contra trampas. Activado permite al jugador atravesar trampas.
+
+  > `BatteryLife = 20`
+
+- [Portal Gun](../Scripts/Data/Skill.cs): Derivada de la clase Skill, lanza-portales. Activada permite atravesar paredes.
+
+  > `BatteryLife = 20`
+
+- [Blind](../Scripts/Data/Skill.cs): Derivada de la clase Skill, ceguera. Activada provoca ceguera al contrario.
+
+  > `BatteryLife = 20`
+
+- [Mute](../Scripts/Data/Skill.cs): Derivada de la clase Skill, silenciador. Activada prohibe al contrario de usar su habilidad durante un tiempo.
+
+  > `BatteryLife = 20`
+  
+  > `Timer = new(10000)`, 10000 milisegundos.
+
+- [Glare](../Scripts/Data/Skill.cs): Derivada de la clase Skill, mirada de odio. Activada paraliza al contrario 
+
+  > `BatteryLife = 20`
 
 ## Flujo e interacciones
 

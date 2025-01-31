@@ -2,43 +2,38 @@ namespace MazeRunner.Scripts.Data;
 
 public class Skill
 {
-    public Skill() { }
+    static public int BatteryLife { get; private set; }
+    public Skill(int batteryLife) { }
 }
 
 public class Shield : Skill
 {
-    static public int BatteryLife = 20;
-    public Shield() : base() { }
+    public Shield() : base(20) { }
 }
 
 public class PortalGun : Skill
 {
-    static public int BatteryLife = 20;
-
-    public PortalGun() : base() { }
+    public PortalGun() : base(20) { }
 }
 
 public class Blind : Skill
 {
-    static public int BatteryLife = 20;
     public System.Timers.Timer Timer { get; private set; } = new(10000);
 
-    public Blind() : base() { }
+    public Blind() : base(20) { }
 }
 
 public class Muter : Skill
 {
-    static public int BatteryLife = 20;
     public System.Timers.Timer Timer { get; private set; } = new(10000);
 
-    public Muter() : base() { }
+    public Muter() : base(20) { }
 }
 
 public class Glare : Skill
 {
-    static public int BatteryLife = 20;
     public int Radius { get; set; } = 20;
     public System.Timers.Timer Timer { get; private set; } = new(10000);
 
-    public Glare() : base() { }
+    public Glare() : base(20) { }
 }
