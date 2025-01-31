@@ -33,14 +33,16 @@ handle_input_locally = false
 size = Vector2i(720, 720)
 render_target_update_mode = 4
 
-[node name="World" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport"]
+[node name="World" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_playerOne", "_playerTwo")]
 script = ExtResource("1_a0sd4")
+_playerOne = NodePath("PlayerOne")
+_playerTwo = NodePath("PlayerTwo")
 
 [node name="Board" type="TileMapLayer" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World"]
 tile_set = ExtResource("2_g7o1g")
 script = ExtResource("3_7j6rw")
 
-[node name="PlayerOne" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
+[node name="PlayerOne" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_opponent", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
 Leftkey = "Left"
 RightKey = "Right"
 UpKey = "Up"
@@ -49,11 +51,11 @@ ShiftCameraKey = "ShiftCamera"
 SkillKey = "Skill"
 Board = NodePath("../Board")
 _currentPlayerNum = 1
-_oppositePlayer = NodePath("../PlayerTwo")
+_opponent = NodePath("../PlayerTwo")
 _playerCamera = NodePath("../../PlayerOneCamera")
 _blindnessSprite = NodePath("../../../BlindnessSpritePlayerOne")
 
-[node name="PlayerTwo" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_oppositePlayer", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
+[node name="PlayerTwo" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_opponent", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
 Leftkey = "Left2"
 RightKey = "Right2"
 UpKey = "Up2"
@@ -62,7 +64,7 @@ ShiftCameraKey = "ShiftCamera2"
 SkillKey = "Skill2"
 Board = NodePath("../Board")
 _currentPlayerNum = 2
-_oppositePlayer = NodePath("../PlayerOne")
+_opponent = NodePath("../PlayerOne")
 _playerCamera = NodePath("../../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
 _blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSpritePlayerTwo")
 

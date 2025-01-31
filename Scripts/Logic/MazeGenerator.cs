@@ -10,16 +10,18 @@ public class MazeGenerator
     public Tile[,] Maze { get; private set; }
     public int Size { get; }
     public int Seed { get; }
-    public (int x, int y) SpawnerCoord {get; private set;}
+    public (int x, int y) SpawnerCoord { get; private set; }
     public (int x, int y) ExitCoord { get; private set; }
-    
+
     private Random _random { get; set; }
     private List<(int x, int y)> _emptyCoords = new();
     private List<(int x, int y)> _trapCoords = new();
 
     public MazeGenerator(int size, int seed, bool isRandomSeed)
     {
-        Size = size % 2 == 0 ? size + 1 : size;
+        if (size <= 5) size = 5;
+        else Size = size % 2 == 0 ? size + 1 : size;
+
         Seed = isRandomSeed ? (int)DateTime.Now.Ticks : seed;
         _random = new Random(Seed);
     }
@@ -45,7 +47,7 @@ public class MazeGenerator
                 GenerateMazeRandomizedDfs(neighbourCoord, maskVisitedCoords);
             }
         }
-    } 
+    }
     private void Shuffle((int x, int y)[] coordsArray)
     {
         for (int i = coordsArray.Length - 1; i > 0; i--)
@@ -196,7 +198,7 @@ public class MazeGenerator
         {
             int index = _random.Next(_emptyCoords.Count);
             Spikes spikes = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
+            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
             if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
             Maze[_emptyCoords[index].x, _emptyCoords[index].y] = spikes;
             _trapCoords.Add((spikes.X, spikes.Y));
@@ -211,7 +213,7 @@ public class MazeGenerator
         {
             int index = _random.Next(_emptyCoords.Count);
             Portal trampoline = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
+            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
             if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
 
             int numWalls = 0;
@@ -245,8 +247,8 @@ public class MazeGenerator
         for (int i = 0; i <= num; i++)
         {
             int index = _random.Next(_emptyCoords.Count);
-            Sticky sticky = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Sticky) continue;
+            Shock sticky = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
+            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
             if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
             Maze[_emptyCoords[index].x, _emptyCoords[index].y] = sticky;
             _trapCoords.Add((sticky.X, sticky.Y));

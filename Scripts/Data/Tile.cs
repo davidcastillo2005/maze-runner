@@ -29,12 +29,12 @@ public class Spawner : Empty
 
 public abstract class Trap : Empty
 {
-    public bool IsActivated { get; set; }
+    public bool IsActive { get; set; }
 
-    public Trap(int x, int y, bool isActivated) : base(x, y) { IsActivated = isActivated; }
+    public Trap(int x, int y, bool isActive) : base(x, y) { IsActive = isActive; }
 
-    public void Activate() { IsActivated = true; }
-    public void Deactivate() { IsActivated = false; }
+    public void Activate() { IsActive = true; }
+    public void Deactivate() { IsActive = false; }
 }
 
 public class Spikes : Trap
@@ -49,9 +49,10 @@ public class Portal : Trap
     public Portal(int x, int y, bool isActivated) : base(x, y, isActivated) { }
 }
 
-public class Sticky : Trap
+public class Shock : Trap
 {
-    public Sticky(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+    static public int Struggle { get; private set; } = 10;
+    public Shock(int x, int y, bool isActivated) : base(x, y, isActivated) { }
 }
 
 public class Wall : Tile

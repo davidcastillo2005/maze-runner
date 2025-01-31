@@ -18,7 +18,7 @@ public partial class Player : CharacterBody2D
     [Export] private float _speed = 20;
     [Export] private Label _nameLabel;
     [Export] private int _currentPlayerNum;
-    [Export] private Player _oppositePlayer;
+    [Export] public Player _opponent;
     [Export] private PlayerCamera _playerCamera;
     [Export] private Sprite2D _blindnessSprite;
 
@@ -35,16 +35,16 @@ public partial class Player : CharacterBody2D
     private Random _random = new();
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
-    private bool IsInmunityOn { get; set; } = false;
-    private Shield _inmunity = new();
+    private bool IsShieldOn { get; set; } = false;
+    private Shield _shield = new();
     private bool IsPortalOn { get; set; } = false;
     private Shield _portal = new();
     private bool IsBlind = false;
-    private Blindness _blindness = new();
+    private Blind _blind = new();
     private bool IsMuted = false;
     private Muter _muter = new();
     private bool IsParalized = false;
-    private Predator _glare = new();
+    private Glare _glare = new();
     private Global _global;
     private Vector2 _input;
     private Vector2I _PlayerCoord;
@@ -53,7 +53,7 @@ public partial class Player : CharacterBody2D
     private float _currentSpeed;
     private float _defaultSpeed;
     private float _paralizedSpeed;
-    private int _directionalKeysPressCount;
+    private int _directionalKeysPressedCount;
 
     public override void _Ready()
     {
@@ -71,8 +71,8 @@ public partial class Player : CharacterBody2D
         _muter.Timer.Elapsed += OnMutedEvent;
         _muter.Timer.AutoReset = false;
 
-        _blindness.Timer.Elapsed += OnBlindEvent;
-        _blindness.Timer.AutoReset = false;
+        _blind.Timer.Elapsed += OnBlindEvent;
+        _blind.Timer.AutoReset = false;
 
         Spikes.Timer.Elapsed += OnSpikedEvent;
         Spikes.Timer.AutoReset = false;
@@ -87,26 +87,14 @@ public partial class Player : CharacterBody2D
         switch (_currentPlayerNum)
         {
             case 1:
-                if (_global.PlayerOneName == string.Empty)
-                {
-                    StrName = "Player One";
-                }
-                else
-                {
-                    StrName = _global.PlayerOneName;
-                }
+                if (_global.PlayerOneName == string.Empty) StrName = "Player One";
+                else StrName = _global.PlayerOneName;
                 SkillNum = _global.PlayerOneSkill;
                 break;
             case 2:
                 if (_global.PlayerOneName == string.Empty)
-                {
                     StrName = "Player Two";
-                }
-                else
-                {
-                    StrName = _global.PlayerTwoName;
-                    _nameLabel.Text = _global.PlayerTwoName;
-                }
+                else StrName = _global.PlayerTwoName; 
                 SkillNum = _global.PlayerTwoSkill;
                 break;
             default:
@@ -116,15 +104,14 @@ public partial class Player : CharacterBody2D
 
         BatteryLife = SkillNum switch
         {
-            1 => _inmunity.BatteryLife,
-            2 => _portal.BatteryLife,
-            3 => _blindness.BatteryLife,
-            4 => _muter.BatteryLife,
-            5 => _glare.BatteryLife,
+            1 => Shield.BatteryLife,
+            2 => PortalGun.BatteryLife,
+            3 => Blind.BatteryLife,
+            4 => Muter.BatteryLife,
+            5 => Glare.BatteryLife,
             _ => 0,
         };
-
-
+        GD.Print(SkillNum);
         Position = new Vector2(Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.y));
     }
     public override void _Input(InputEvent @event)
@@ -141,8 +128,8 @@ public partial class Player : CharacterBody2D
             {
                 if (SkillNum == 1
                     && Input.IsActionPressed(SkillKey)
-                    && Energy == BatteryLife) IsInmunityOn = true;
-                else IsInmunityOn = false;
+                    && Energy == BatteryLife) IsShieldOn = true;
+                else IsShieldOn = false;
 
                 if (SkillNum == 2
                     && _input != Vector2.Zero
@@ -156,22 +143,23 @@ public partial class Player : CharacterBody2D
 
                 if (SkillNum == 3
                     && Input.IsActionJustPressed(SkillKey)
-                    && !_oppositePlayer._blindness.Timer.Enabled
-                    && !_oppositePlayer.IsBlind
+                    && !_opponent._blind.Timer.Enabled
+                    && !_opponent.IsBlind
                     && Energy == BatteryLife)
                 {
-                    _oppositePlayer.IsBlind = true;
+                    _opponent.IsBlind = true;
+                    GD.Print("IsBlind");
                 }
 
                 if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
                 {
-                    _oppositePlayer.IsMuted = true;
+                    _opponent.IsMuted = true;
                     Energy = 0;
                 }
 
-                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
+                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _opponent.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
                 {
-                    _oppositePlayer.IsParalized = true;
+                    _opponent.IsParalized = true;
                     Energy = 0;
                 }
             }
@@ -203,8 +191,8 @@ public partial class Player : CharacterBody2D
 
         if (IsBlind)
         {
-            _blindness.Timer.Enabled = true;
             _blindnessSprite.Scale = new Vector2(5.625f, 5.625f);
+            _blind.Timer.Enabled = true;
         }
         else { _blindnessSprite.Scale = new Vector2(0, 0); }
 
@@ -222,10 +210,10 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Spikes spikes && spikes.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Spikes spikes && spikes.IsActive)
         {
             spikes.Deactivate();
-            if (IsInmunityOn)
+            if (IsShieldOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -237,10 +225,10 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Portal portal && portal.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Portal portal && portal.IsActive)
         {
             portal.Deactivate();
-            if (IsInmunityOn)
+            if (IsShieldOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -252,10 +240,10 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Sticky sticky && sticky.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Shock sticky && sticky.IsActive)
         {
             sticky.Deactivate();
-            if (IsInmunityOn)
+            if (IsShieldOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -266,9 +254,9 @@ public partial class Player : CharacterBody2D
 
         if (CurrentCondition == Condition.Spikes && !Spikes.Timer.Enabled) CurrentCondition = Condition.None;
 
-        if (CurrentCondition == Condition.Sticky && _directionalKeysPressCount == 10)
+        if (CurrentCondition == Condition.Sticky && _directionalKeysPressedCount == Shock.Struggle)
         {
-            _directionalKeysPressCount = 0;
+            _directionalKeysPressedCount = 0;
             CurrentCondition = Condition.None;
         }
 
@@ -302,7 +290,6 @@ public partial class Player : CharacterBody2D
                 Move();
                 break;
             case State.Winning:
-                Win();
                 break;
             default:
                 throw new Exception();
@@ -320,7 +307,7 @@ public partial class Player : CharacterBody2D
     private void OnBlindEvent(object source, System.Timers.ElapsedEventArgs e)
     {
         IsBlind = false;
-        _oppositePlayer.Energy = 0;
+        _opponent.Energy = 0;
     }
     private void OnSpikedEvent(object source, System.Timers.ElapsedEventArgs e) { CurrentCondition = Condition.None; }
     private void ResetStats() { _currentSpeed = _defaultSpeed; }
@@ -330,7 +317,7 @@ public partial class Player : CharacterBody2D
         if (Input.IsActionJustPressed(Leftkey)
             || Input.IsActionJustPressed(RightKey)
             || Input.IsActionJustPressed(UpKey)
-            || Input.IsActionJustPressed(DownKey)) _directionalKeysPressCount++;
+            || Input.IsActionJustPressed(DownKey)) _directionalKeysPressedCount++;
     }
     private void HurtBySpikes() { _currentSpeed = _paralizedSpeed; }
     private void MoveThroughPortal()
@@ -369,5 +356,4 @@ public partial class Player : CharacterBody2D
         Position = new Vector2(Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.y));
         CurrentState = State.Idle;
     }
-    private void Win() { GetTree().ChangeSceneToFile("res://Scenes/menu.tscn"); }
 }

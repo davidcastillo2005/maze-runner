@@ -6,62 +6,43 @@ Proyecto de la asignatura de Programación de Ciencia de la Computación.
 
 ## Resumen
 
-El juego solo se puede jugar para dos personas, enemigos entre sí. El objetivo es llegar a la salida antes que el oponente, en un laberinto generado por partida. Habrá trampas que van entorpecer a los jugadores, quitandoles ventaja y dominio sobre el laberinto. Contrarestarlas es el uso principal de las habilidades de las fichas a elegir.
+El proyecto es un juego multijugador de dos personas, contrarios entre sí. El objetivo de cada jugador es llegar a la salida antes que el oponente, en un laberinto generado por partida. Habrá trampas que van entorpecer a los jugadores, quitandoles ventaja y dominio sobre el laberinto. Contrarestarlas es el uso principal de las habilidades a elegir.
 
 Las habilidades son únicas por ficha, y hay 5 para elegir. Los jugadores las usan para esquivar contra las trampas o desfavorecer al oponente.
 
-## Godot Engine
+## Dependencias y ejecución
 
-Godot usa un sistema de nodos para administrar cada elemento del proyecto
+En [Game](../Game/) estará un archivo ejecutador con el juego exportado donde lo único necesario es que funciona solo en _Windows_.
 
----
+## Estructura
 
-### Escenas
+### Clases
 
-El proyecto consiste en las escenas:
+El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Logic/) y de [Datos](../Scripts/Data/), separado del resto del proyecto.
 
-- `Menú`
+#### Datos
 
-  > Menú del juego , permite la elección de iniciar o abandonar el juego.
+- [Tile](../Scripts/Data/Tile.cs): Representa una casilla del laberinto. El laberinto es un array bidimensional de casillas. En ella están definidas las coordenadas del Tile.
 
-- `Editor`
+- [Empty y Walls](../Scripts/Data/Tile.cs): Derivan de la clase Tile, representa el camino que puede recorrer el jugador y el que no puede atravesar avazando respectivamente.
 
-  > Editor de la partida, permite elegir las fichas y la generación del laberinto.
+- [Trap](../Scripts/Data/Tile.cs): Clase abstracta derivada de Empty, representa una trampa. Tiene un boolean `IsActive` que muestra si la trampa está activada o no, junto a dos metodos `Activate()` y `Deactivate()`.
 
-- `Game`
+- [Púas](../Scripts/Data/Tile.cs): Derivada de Trap, trampa de púas. Reduce la velocidad del jugador en un 10% por 10 segundos.
 
-  > Donde ocurre la partida
+  > Posee una propiedad `Timer` de 10000 milisegundos.
 
-- `Player`
+- [Portal](../Scripts/Data/Tile.cs): Derivada de Trap, trampa de portal. Traslada al jugador a un casilla vacía vecina.
 
-  > Base de los jugadores.
+- [Shock](../Scripts/Data/Tile.cs): Derivada de Trap, trampa électrica. Paraliza al jugador y para tendrá que tratar de moverse 10 veces.
 
-- `Player UI`
+  > Posee una propiedad `Struggle` de 10.
 
-  > Base de la interfaz visual de cada jugador.
-
-- `Game Over`
-
-  > Final de la partida, permite reiniciar con la misma configuración o volver al Menú.
-
----
-
-### Global
-
-_Godot_ tiene una función llamada _Autoload_ que permite cargar un _script_ en un nodo hijo del nodo _root_ durante todo el proceso del juego.
-
-![alt text](image-2.png)
-
-Por eso en algunos scripts habrá una referencias al [Global](../Scripts/Global.cs). En este se guardará las variables a usar entre escenas.
-
-![alt text](image-6.png)
-
----
+## Flujo e interacciones
 
 ### Menú
 
 Al abrir el juego, se presentará por el Menu junto al título. Si la decisión es iniciar un nuevo juego, entonces te enviará al `Editor`.
-Los botones funcionan gracias a una funcionalidad de Godot llamada Signals, que permite provocar eventos según ocurre una acción.
 
 - `New Game`
 
@@ -185,7 +166,9 @@ Se pueden elegir entre las 5 habilidades:
 
 > Paraliza al oponente dentro de un radio de distancia de 20 casillas durante 10 segundos.
 
-Todas tienen un tiempo de enfriamiento de 20 segundos, que se reinicia al usarlas.
+Todas tienen un tiempo de enfriamiento de 20 segundos que se reinicia al usarlas.
+
+Las habilidades están representadas por clases derivadas de una clase [Skill](../Scripts/Logic/MazeGenerator.cs)
 
 #### Cámara del jugador
 
