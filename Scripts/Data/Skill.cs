@@ -1,9 +1,12 @@
 namespace MazeRunner.Scripts.Data;
 
-public class Skill
+public abstract class Skill
 {
     static public int BatteryLife { get; private set; }
-    public Skill(int batteryLife) { }
+    public Skill(int batteryLife)
+    {
+        BatteryLife = batteryLife;
+    }
 }
 
 public class Shield : Skill

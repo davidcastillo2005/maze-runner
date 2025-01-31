@@ -42,7 +42,7 @@ _playerTwo = NodePath("PlayerTwo")
 tile_set = ExtResource("2_g7o1g")
 script = ExtResource("3_7j6rw")
 
-[node name="PlayerOne" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_opponent", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
+[node name="PlayerOne" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_enemy", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
 Leftkey = "Left"
 RightKey = "Right"
 UpKey = "Up"
@@ -50,12 +50,12 @@ DownKey = "Down"
 ShiftCameraKey = "ShiftCamera"
 SkillKey = "Skill"
 Board = NodePath("../Board")
+_enemy = NodePath("../PlayerTwo")
 _currentPlayerNum = 1
-_opponent = NodePath("../PlayerTwo")
 _playerCamera = NodePath("../../PlayerOneCamera")
 _blindnessSprite = NodePath("../../../BlindnessSpritePlayerOne")
 
-[node name="PlayerTwo" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_opponent", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
+[node name="PlayerTwo" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World" node_paths=PackedStringArray("Board", "_enemy", "_playerCamera", "_blindnessSprite") instance=ExtResource("5_fqbg0")]
 Leftkey = "Left2"
 RightKey = "Right2"
 UpKey = "Up2"
@@ -63,8 +63,8 @@ DownKey = "Down2"
 ShiftCameraKey = "ShiftCamera2"
 SkillKey = "Skill2"
 Board = NodePath("../Board")
+_enemy = NodePath("../PlayerOne")
 _currentPlayerNum = 2
-_opponent = NodePath("../PlayerOne")
 _playerCamera = NodePath("../../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
 _blindnessSprite = NodePath("../../../../SubViewportContainer2/BlindnessSpritePlayerTwo")
 

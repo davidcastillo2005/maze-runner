@@ -14,11 +14,11 @@ public partial class Player : CharacterBody2D
     [Export] public string ShiftCameraKey;
     [Export] public string SkillKey;
     [Export] public Board Board;
+    [Export] public Player _enemy;
 
     [Export] private float _speed = 20;
     [Export] private Label _nameLabel;
     [Export] private int _currentPlayerNum;
-    [Export] public Player _opponent;
     [Export] private PlayerCamera _playerCamera;
     [Export] private Sprite2D _blindnessSprite;
 
@@ -143,23 +143,23 @@ public partial class Player : CharacterBody2D
 
                 if (SkillNum == 3
                     && Input.IsActionJustPressed(SkillKey)
-                    && !_opponent._blind.Timer.Enabled
-                    && !_opponent.IsBlind
+                    && !_enemy._blind.Timer.Enabled
+                    && !_enemy.IsBlind
                     && Energy == BatteryLife)
                 {
-                    _opponent.IsBlind = true;
+                    _enemy.IsBlind = true;
                     GD.Print("IsBlind");
                 }
 
                 if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
                 {
-                    _opponent.IsMuted = true;
+                    _enemy.IsMuted = true;
                     Energy = 0;
                 }
 
-                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _opponent.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
+                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _enemy.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
                 {
-                    _opponent.IsParalized = true;
+                    _enemy.IsParalized = true;
                     Energy = 0;
                 }
             }
@@ -307,7 +307,7 @@ public partial class Player : CharacterBody2D
     private void OnBlindEvent(object source, System.Timers.ElapsedEventArgs e)
     {
         IsBlind = false;
-        _opponent.Energy = 0;
+        _enemy.Energy = 0;
     }
     private void OnSpikedEvent(object source, System.Timers.ElapsedEventArgs e) { CurrentCondition = Condition.None; }
     private void ResetStats() { _currentSpeed = _defaultSpeed; }
