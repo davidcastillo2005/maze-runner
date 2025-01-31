@@ -46,19 +46,13 @@ El proyecto consiste en las escenas:
 
 ---
 
-### Root
-
-**root** es el nodo base.
-
-![alt text](image-3.png)
-
----
-
 ### Global
 
-_Godot_ tiene una función llamada _Autoload_ que permite cargar un _script_ en un nodo hijo del nodo _root_ durante todo el proceso del juego. Por eso en todo script basado en Godot va a existir una referencia al [Global](../Scripts/Global.cs). En este se guardará las variables a usar entre escenas.
+_Godot_ tiene una función llamada _Autoload_ que permite cargar un _script_ en un nodo hijo del nodo _root_ durante todo el proceso del juego.
 
 ![alt text](image-2.png)
+
+Por eso en algunos scripts habrá una referencias al [Global](../Scripts/Global.cs). En este se guardará las variables a usar entre escenas.
 
 ![alt text](image-6.png)
 
@@ -84,10 +78,6 @@ Los botones funcionan gracias a una funcionalidad de Godot llamada Signals, que 
 Esta escena contiene un solo _script_ [Menu](../Scripts/Menu.cs).
 
 ![alt text](image-11.png)
-
-`OnPlayButtonDown()` y `OnQuitButtonDown()` están suscritos a la señal de presionar sus respectivos botones. De igual manera `ChangeSceneToFile()` y `Quit()` permiten cambiar a una escena y cerrar la ventana del juego.
-
-![alt text](image-10.png)
 
 ---
 
@@ -119,9 +109,153 @@ Su función es poder configurar la partida. Sus opciones son:
 
 La escena contiene un script en su nodo base [Editor](../Scripts/Editor.cs).
 
-
-
 ![alt text](image-5.png)
+
+---
+
+### Game
+
+La escena donde ocurre la partida y donde los jugadores se podrán controlar. Contiene los scripts:
+
+- [World](../Scripts/World.cs)
+
+  > Crea el laberinto, mundo del juego, llamando al metodo `_global.MazeGenerator.GeneratemMaze();` del _script_ [GLobal](../Scripts/Global.cs)
+
+- [Board](../Scripts/Board.cs)
+
+  > Su función es pintar el laberinto en el mundo de la partida, mediante el método `PaintBoardTileMapLayer()`.
+
+- [Player](../Scripts/Player.cs)
+
+- [PlayerCamera](../Scripts/PlayerCamera.cs)
+
+- [PlayerTwoSubViewport](../Scripts/PlayerTwoSubViewport.cs)
+
+  > Crea el efecto de pantalla dividida, permitiendo a los usuarios mirar su posición en el laberinto al mismo tiempo.
+
+- [PlayerUI](../Scripts/PlayerUi.cs)
+
+![alt text](image-16.png)
+
+---
+
+#### Jugador
+
+El jugador manejado por [Player](../Scripts/Player.cs) funciona según las condiciones provocados por:
+
+- sus coordenadas en el laberinto,
+
+  > El método `Board.LocalToMap()` permite comparar la posición del nodo en el mundo y convertirla en una coordenada en el laberinto. De este se puede saber si el jugador está sobre una casilla vacía, de trampa, salida o entrada.
+
+- si es alguna trampa y de qué tipo es,
+
+- mínima posición,
+
+- máxima posición,
+
+- rapidez,
+
+- si tiene o no habilidad, y de que tipo es,
+
+- y tiempo de enfriamiento.
+
+---
+
+#### Habilidades
+
+Se pueden elegir entre las 5 habilidades:
+
+1. Inmunity
+
+> Inmune a las trampa, desactivándolas.
+
+2. Portal
+
+> Permite atravesar paredes.
+
+3. Blind
+
+> Ciega al oponente no permitiendolo ver.
+
+4. Muter
+
+> Desactiva las habilidades del oponente durante 10 segundos.
+
+5. Glare
+
+> Paraliza al oponente dentro de un radio de distancia de 20 casillas durante 10 segundos.
+
+Todas tienen un tiempo de enfriamiento de 20 segundos, que se reinicia al usarlas.
+
+#### Cámara del jugador
+
+---
+
+#### PlayerUI
+
+---
+
+#### Controles
+
+Las teclas son detectadas mediante el _Input Map_ de _Godot_.
+
+_Player One_
+
+- Moverse:
+
+  - Derecha: `A`.
+
+  - Izquierda: `D`.
+
+  - Arriba: `W`.
+
+  - Abajo: `S`.
+
+- Cambiar cámara: `E`.
+
+- Habilidad: `F`.
+
+_Player Two_
+
+- Moverse:
+
+  - Derecha: `I`.
+
+  - Izquierda: `L`.
+
+  - Arriba: `J`.
+
+  - Abajo: `K`.
+
+- Cambiar cámara: `U`.
+
+- Habilidad: `H`.
+
+---
+
+#### Trampas
+
+A su vez en los espacios vacíos del laberinto existe un 5% de probabilidad de aparecer una de los tres tipos trampas, provocando al jugador que las pisa ciertos efectos:
+
+- `Spikes`
+
+  > Baja la velocidad en un 10% por 10 segundos.
+
+- `Portal`
+
+  > Teletransporta a un espacio vacío vecino aleatorio.
+
+- `Paralysis`
+
+  > Detiene el movimiento, al menos de que intente moverse 10 veces.
+
+Funcionan cambiando la propiedad `CurrentCondition` a la asignada por la trampa según los eventos del juego.
+
+![alt text](image-18.png)
+
+Si el jugador está sobre una trampa, entonces desactiva la trampa. Si tiene la habilidad _Inmunity_ activada entonces escapa de la trampa, de lo contrario si el jugador no tenía la condición asignada por la trampa entonces se le asigna.
+
+---
 
 ## Generador de laberintos
 
@@ -131,45 +265,21 @@ Al iniciar una partida, el script [Global](../Scripts/Global.cs) instancia el ge
 
 ![alt text](../Informe/image-8.png)
 
-La clase MazeGenerator tiene las propiedades:
+---
 
-- `Size`
-
-> El tamaño del laberinto.
-
-- `Seed`,
-
-> la semilla, el valor con el que se inicializa la generación pseudoaleatoria.
-
-- `_random`
-
-> Generador de números pseudoaleatorios.
-
-Si la semilla es aleatoria, entonces se toma el tiempo en ticks y se los asigna a `Seed`; si no entonces toma el valor predefinido en el parámetro `seed`. Luego se instancia `_random` con el valor asignado a `Seed`.
+![alt text](image-12.png)
 
 ![alt text](../Informe/image-9.png)
+
+---
+
+Si la semilla es aleatoria, entonces se toma el tiempo en ticks y se los asigna a `Seed`; si no entonces será el valor predefinido en el parámetro `seed`. Luego se instancia `_random` con el valor en `Seed`.
 
 > El arreglo de direcciones (arriba, abajo, derecha e izquierda).
 
 > Es un arreglo bidimensional de casillas, en él se guarda y manipula el laberinto.
 
 ## Trampas électricas, pegajosas y de portales.
-
-A su vez en los espacios vacíos del laberinto pueden aparecer uno de los tres tipos trampas, provocando al jugador que las pisan ciertos efectos:
-
-- `A!`
-
-> Baja la velocidad en un 10% por 10 segundos.
-
-- `Portal`
-
-> Teletransporta a un espacio vacío vecino aleatorio.
-
-- `Paralysis`
-
-> Detiene el movimiento, al menos de que intente moverse 10 veces.
-
-Añadidas para entorpecer el movimiento de los jugadores.s
 
 ## Errores a solucionar:
 

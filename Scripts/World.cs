@@ -5,27 +5,12 @@ namespace MazeRunner.Scripts;
 
 public partial class World : Node2D
 {
-    [Export] private Camera2D _playerOneCamera;
-    [Export] private Camera2D _playerTwoCamera;
-    [Export] private Player _playerOne;
-    [Export] private Player _playerTwo;
-
     private Global _global;
 
     public override void _Ready()
     {
         _global = GetNode<Global>("/root/Global");
         _global.MazeGenerator.GenerateMaze();
-    }
-    public override void _Input(InputEvent @event)
-    {
-        if (!Input.IsActionJustPressed("SwitchCamera")) return;
-        SwitchCamera();
-    }
-    public void SwitchCamera()
-    {
-        if (_playerOneCamera.IsCurrent()) _playerTwoCamera.MakeCurrent();
-        else if (_playerTwoCamera.IsCurrent()) _playerOneCamera.MakeCurrent();
     }
 
     private void GDPrintMaze()

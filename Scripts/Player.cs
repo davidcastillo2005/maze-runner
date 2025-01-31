@@ -27,7 +27,6 @@ public partial class Player : CharacterBody2D
     public State CurrentState { get; set; } = State.Spawning;
     public enum Condition { None, Spikes, Portal, Sticky }
     public Condition CurrentCondition { get; private set; }
-    public string CurrentFloor { get; private set; }
     public int Energy = 0;
     public int BatteryLife = 0;
     public int SkillNum { get; set; } = new int();
@@ -36,19 +35,19 @@ public partial class Player : CharacterBody2D
     private Random _random = new();
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
-    private bool IsShieldOn { get; set; } = false;
-    private Shield _shield = new();
-    private bool IsPortalGunOn { get; set; } = false;
-    private Shield _portalGun = new();
+    private bool IsInmunityOn { get; set; } = false;
+    private Shield _inmunity = new();
+    private bool IsPortalOn { get; set; } = false;
+    private Shield _portal = new();
     private bool IsBlind = false;
     private Blindness _blindness = new();
     private bool IsMuted = false;
     private Muter _muter = new();
     private bool IsParalized = false;
-    private Predator _predator = new();
+    private Predator _glare = new();
     private Global _global;
     private Vector2 _input;
-    private Vector2I _tokenCoord;
+    private Vector2I _PlayerCoord;
     private float _minPosition;
     private float _maxPosition;
     private float _currentSpeed;
@@ -78,8 +77,8 @@ public partial class Player : CharacterBody2D
         Spikes.Timer.Elapsed += OnSpikedEvent;
         Spikes.Timer.AutoReset = false;
 
-        _predator.Timer.Elapsed += OnPredatorEvent;
-        _predator.Timer.AutoReset = false;
+        _glare.Timer.Elapsed += OnPredatorEvent;
+        _glare.Timer.AutoReset = false;
 
         CoolDownTimer.Elapsed += OnCooldownEvent;
         CoolDownTimer.AutoReset = false;
@@ -117,11 +116,11 @@ public partial class Player : CharacterBody2D
 
         BatteryLife = SkillNum switch
         {
-            1 => _shield.BatteryLife,
-            2 => _portalGun.BatteryLife,
+            1 => _inmunity.BatteryLife,
+            2 => _portal.BatteryLife,
             3 => _blindness.BatteryLife,
             4 => _muter.BatteryLife,
-            5 => _predator.BatteryLife,
+            5 => _glare.BatteryLife,
             _ => 0,
         };
 
@@ -142,18 +141,18 @@ public partial class Player : CharacterBody2D
             {
                 if (SkillNum == 1
                     && Input.IsActionPressed(SkillKey)
-                    && Energy == BatteryLife) IsShieldOn = true;
-                else IsShieldOn = false;
+                    && Energy == BatteryLife) IsInmunityOn = true;
+                else IsInmunityOn = false;
 
                 if (SkillNum == 2
                     && _input != Vector2.Zero
                     && Input.IsActionJustPressed(SkillKey)
                     && Energy == BatteryLife)
                 {
-                    IsPortalGunOn = true;
+                    IsPortalOn = true;
                     Energy = 0;
                 }
-                else IsPortalGunOn = false;
+                else IsPortalOn = false;
 
                 if (SkillNum == 3
                     && Input.IsActionJustPressed(SkillKey)
@@ -170,7 +169,7 @@ public partial class Player : CharacterBody2D
                     Energy = 0;
                 }
 
-                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _predator.Radius * Board.TileSize) && Energy == BatteryLife)
+                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _oppositePlayer.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
                 {
                     _oppositePlayer.IsParalized = true;
                     Energy = 0;
@@ -181,9 +180,9 @@ public partial class Player : CharacterBody2D
     }
     public override void _Process(double delta)
     {
-        _tokenCoord = Board.LocalToMap(Position);
+        _PlayerCoord = Board.LocalToMap(Position);
 
-        if (_tokenCoord.X == _global.MazeGenerator.ExitCoord.x && _tokenCoord.Y == _global.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
+        if (_PlayerCoord.X == _global.MazeGenerator.ExitCoord.x && _PlayerCoord.Y == _global.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
         if (!CoolDownTimer.Enabled && Energy < BatteryLife)
         {
@@ -197,7 +196,7 @@ public partial class Player : CharacterBody2D
         if (IsParalized)
         {
             _input = Vector2.Zero;
-            _predator.Timer.Enabled = true;
+            _glare.Timer.Enabled = true;
         }
 
         if (IsMuted) _muter.Timer.Enabled = true;
@@ -209,9 +208,9 @@ public partial class Player : CharacterBody2D
         }
         else { _blindnessSprite.Scale = new Vector2(0, 0); }
 
-        if (IsPortalGunOn)
+        if (IsPortalOn)
         {
-            Vector2I nTokenCoord = (Vector2I)(_input * 2 + _tokenCoord);
+            Vector2I nTokenCoord = (Vector2I)(_input * 2 + _PlayerCoord);
             if (nTokenCoord.X >= 0
                 && nTokenCoord.Y >= 0
                 && nTokenCoord.X < _global.MazeGenerator.Size
@@ -219,14 +218,14 @@ public partial class Player : CharacterBody2D
                 && _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Wall)
             {
                 Position = new Vector2(Board.GetConvertedPos(nTokenCoord.X), Board.GetConvertedPos(nTokenCoord.Y));
-                IsPortalGunOn = false;
+                IsPortalOn = false;
             }
         }
 
-        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Spikes spikes && spikes.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Spikes spikes && spikes.IsActivated)
         {
             spikes.Deactivate();
-            if (IsShieldOn)
+            if (IsInmunityOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -238,10 +237,10 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Portal portal && portal.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Portal portal && portal.IsActivated)
         {
             portal.Deactivate();
-            if (IsShieldOn)
+            if (IsInmunityOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -253,10 +252,10 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        if (_global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] is Sticky sticky && sticky.IsActivated)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Sticky sticky && sticky.IsActivated)
         {
             sticky.Deactivate();
-            if (IsShieldOn)
+            if (IsInmunityOn)
             {
                 Energy = 0;
                 goto EscapeTrap;
@@ -308,18 +307,6 @@ public partial class Player : CharacterBody2D
             default:
                 throw new Exception();
         }
-
-        CurrentFloor = _global.MazeGenerator.Maze[_tokenCoord.X, _tokenCoord.Y] switch
-        {
-            Spawner => "Spawner",
-            Exit => "Exit",
-            Spikes => "Spikes",
-            Portal => "Trampoline",
-            Sticky => "Sticky",
-            Wall => "Wall",
-            Empty => "Empty",
-            _ => throw new Exception(),
-        };
     }
 
     private bool IsInsideRadius(Vector2 pos, Vector2 targetPos, int radius)
@@ -351,12 +338,12 @@ public partial class Player : CharacterBody2D
         List<Vector2I> possibleTargetPosition = new();
         foreach (var (x, y) in _global.MazeGenerator.Directions)
         {
-            Vector2I nTokenCoord = new Vector2I(x + _tokenCoord.X, y + _tokenCoord.Y);
+            Vector2I nTokenCoord = new Vector2I(x + _PlayerCoord.X, y + _PlayerCoord.Y);
             if (!_global.MazeGenerator.IsInsideBounds(nTokenCoord.X, nTokenCoord.Y)
                 || _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is Portal
                 || _global.MazeGenerator.Maze[nTokenCoord.X, nTokenCoord.Y] is not Empty and not Spikes) continue;
 
-            Vector2I inBetweenCoord = new Vector2I((int)((_tokenCoord.X + nTokenCoord.X) * 0.5f), (int)((_tokenCoord.Y + nTokenCoord.Y) * 0.5f));
+            Vector2I inBetweenCoord = new Vector2I((int)((_PlayerCoord.X + nTokenCoord.X) * 0.5f), (int)((_PlayerCoord.Y + nTokenCoord.Y) * 0.5f));
             if (_global.MazeGenerator.Maze[inBetweenCoord.X, inBetweenCoord.Y] is not Wall) continue;
             possibleTargetPosition.Add(nTokenCoord);
         }

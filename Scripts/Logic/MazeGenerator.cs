@@ -78,7 +78,7 @@ public class MazeGenerator
         GetEmptyCoords();
         GenerateSpawner();
         GenerateExit();
-        GenerateTraps(3);
+        GenerateTraps(5);
     }
     private (int x, int y) GetInitialCoord()
     {

@@ -33,12 +33,8 @@ handle_input_locally = false
 size = Vector2i(720, 720)
 render_target_update_mode = 4
 
-[node name="World" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport" node_paths=PackedStringArray("_playerOneCamera", "_playerTwoCamera", "_playerOne", "_playerTwo")]
+[node name="World" type="Node2D" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport"]
 script = ExtResource("1_a0sd4")
-_playerOneCamera = NodePath("../PlayerOneCamera")
-_playerTwoCamera = NodePath("../../../SubViewportContainer2/PlayerTwoSubViewport/PlayerTwoCamera")
-_playerOne = NodePath("PlayerOne")
-_playerTwo = NodePath("PlayerTwo")
 
 [node name="Board" type="TileMapLayer" parent="HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World"]
 tile_set = ExtResource("2_g7o1g")
