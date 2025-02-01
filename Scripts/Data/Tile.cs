@@ -59,3 +59,8 @@ public class Wall : Tile
 {
     public Wall(int x, int y) : base(x, y) { }
 }
+
+public abstract class PowerUp : Empty
+{
+    public PowerUp(int x, int y) : base(x, y) { }
+}

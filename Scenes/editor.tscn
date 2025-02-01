@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Editor.cs" id="1_lfke3"]
 [ext_resource type="Texture2D" uid="uid://bx3isdhul7l2d" path="res://Resources/main_menu.png" id="2_ndfdr"]
 
-[node name="Editor" type="Control" node_paths=PackedStringArray("SizeLabel")]
+[node name="Editor" type="Control" node_paths=PackedStringArray("SizeLabel", "HSlider")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,6 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lfke3")
 SizeLabel = NodePath("Control/ScrollContainer/VBoxContainer/HBoxContainer3/VBoxContainer/HBoxContainer/Label2")
+HSlider = NodePath("Control/ScrollContainer/VBoxContainer/HBoxContainer3/VBoxContainer/HSlider")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(720, 360)

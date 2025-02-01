@@ -101,8 +101,13 @@ _player = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Pla
 _board = NodePath("../../../SubViewportContainer/PlayerOneSubViewport/World/Board")
 
 [node name="PlayerOneUI" parent="." node_paths=PackedStringArray("_player") instance=ExtResource("8_q0a2g")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
 offset_right = 720.0
 offset_bottom = 720.0
+grow_horizontal = 1
+grow_vertical = 1
 _player = NodePath("../HBoxContainer/SubViewportContainer/PlayerOneSubViewport/World/PlayerOne")
 
 [node name="PlayerTwoUI" parent="." node_paths=PackedStringArray("_player") instance=ExtResource("8_q0a2g")]

@@ -6,7 +6,13 @@ namespace MazeRunner.Scripts;
 public partial class Editor : Control
 {
 	[Export] Label SizeLabel;
-	public override void _Ready() { _global = GetNode<Global>("/root/Global"); }
+	[Export] HSlider HSlider;
+	public override void _Ready()
+	{
+		_global = GetNode<Global>("/root/Global");
+		_global.Size = (int)HSlider.MinValue;
+		SizeLabel.Text = HSlider.MinValue.ToString();
+	}
 
 	private Global _global;
 

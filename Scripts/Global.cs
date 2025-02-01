@@ -6,7 +6,7 @@ namespace MazeRunner.Scripts;
 public partial class Global : Node
 {
     public int Viewport = 720;
-    public int? Size { get; set; } = 0;
+    public int? Size { get; set; } = 10;
     public int? Seed { get; set; } = 0;
     public bool IsRandom { get; set; } = true;
     public int PlayerOneSkill { get; set; } = 0;

@@ -1,5 +1,7 @@
+//TODO: Error con el generador de laberintos (prueba con semilla: 757191438, -379204873, -1124538791, -2130386984, 20293741, 332626077).
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MazeRunner.Scripts.Data;
 
 namespace MazeRunner.Scripts.Logic;
@@ -31,8 +33,7 @@ public class MazeGenerator
     {
         maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
         Maze[currentCoord.x, currentCoord.y] = new Empty(currentCoord.x, currentCoord.y);
-        Shuffle(Directions);
-        foreach ((int x, int y) in Directions)
+        foreach ((int x, int y) in Shuffle(Directions))
         {
             (int x, int y) neighbourCoord = (x + currentCoord.x, y + currentCoord.y);
             if (IsInsideBounds(neighbourCoord.x, neighbourCoord.y) &&
@@ -40,21 +41,23 @@ public class MazeGenerator
             {
                 Maze[neighbourCoord.x, neighbourCoord.y] = new Empty(neighbourCoord.x, neighbourCoord.y);
 
-                (int x, int y) inBetweenCoord = ((neighbourCoord.x + currentCoord.x) / 2,
-                    (neighbourCoord.y + currentCoord.y) / 2);
+                (int x, int y) inBetweenCoord = (currentCoord.x + (int)(x * 0.5),
+                    currentCoord.y + (int)(y * 0.5));
                 Maze[inBetweenCoord.x, inBetweenCoord.y] = new Empty(inBetweenCoord.x, inBetweenCoord.y);
-
+                maskVisitedCoords[inBetweenCoord.x, inBetweenCoord.y] = true;
                 GenerateMazeRandomizedDfs(neighbourCoord, maskVisitedCoords);
             }
         }
     }
-    private void Shuffle((int x, int y)[] coordsArray)
+    private (int x, int y)[] Shuffle((int x, int y)[] coordsArray)
     {
+        var newCoordsArray = coordsArray.ToArray();
         for (int i = coordsArray.Length - 1; i > 0; i--)
         {
             int j = _random.Next(0, i + 1);
-            (coordsArray[j], coordsArray[i]) = (coordsArray[i], coordsArray[j]);
+            (newCoordsArray[j], newCoordsArray[i]) = (newCoordsArray[i], newCoordsArray[j]);
         }
+        return newCoordsArray;
     }
     public void GenerateMaze()
     {
