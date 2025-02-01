@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bjoeblbdmvsm1"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sacbm"]
-[ext_resource type="Texture2D" uid="uid://chrssh0jflyr1" path="res://icon.svg" id="2_1k4mo"]
+[ext_resource type="Texture2D" uid="uid://dowpjy88xgpwr" path="res://Resources/G_3.png" id="2_n0j0h"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wmeri"]
 size = Vector2(1.03125, 1.03125)
@@ -18,9 +18,10 @@ scale = Vector2(64, 64)
 shape = SubResource("RectangleShape2D_wmeri")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
 position = Vector2(-9.53674e-07, 0)
 scale = Vector2(0.515625, 0.515625)
-texture = ExtResource("2_1k4mo")
+texture = ExtResource("2_n0j0h")
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 15
