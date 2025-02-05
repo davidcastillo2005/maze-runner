@@ -31,7 +31,7 @@ public partial class PlayerUi : Control
 			2 => "(Portal)",
 			3 => "(Blind)",
 			4 => "(Mute)",
-			5 => "(Petrify)",
+			5 => "(Glare)",
 			_ => throw new Exception()
 		};
 

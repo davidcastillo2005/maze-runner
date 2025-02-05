@@ -69,9 +69,9 @@ popup/item_2/text = "Portal"
 popup/item_2/id = 2
 popup/item_3/text = "Blind"
 popup/item_3/id = 3
-popup/item_4/text = "Muter"
+popup/item_4/text = "Mute"
 popup/item_4/id = 4
-popup/item_5/text = "Predator"
+popup/item_5/text = "Glare"
 popup/item_5/id = 5
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]
@@ -101,9 +101,9 @@ popup/item_2/text = "Portal"
 popup/item_2/id = 2
 popup/item_3/text = "Blind"
 popup/item_3/id = 3
-popup/item_4/text = "Muter"
+popup/item_4/text = "Mute"
 popup/item_4/id = 4
-popup/item_5/text = "Predator"
+popup/item_5/text = "Glare"
 popup/item_5/id = 5
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Control/ScrollContainer/VBoxContainer"]
