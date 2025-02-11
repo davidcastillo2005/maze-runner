@@ -62,14 +62,6 @@ Su función es configurar la partida. Sus opciones son:
 
 ![alt text](image-4.png)
 
----
-
-La escena contiene un script en su nodo base [Editor](../Scripts/Editor.cs).
-
-![alt text](image-5.png)
-
----
-
 #### Controles
 
 Las teclas son detectadas mediante el _Input Map_ de _Godot_.
@@ -206,13 +198,15 @@ Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs#L6) se crea rec
 
 - Player
 
-> Sigue al jugador.
+  > Sigue al jugador.
 
 - Free
 
-> 
+  > Mueve libremente la camara.
 
 - Extensive.
+
+  > Activada cuando el laberinto es lo suficientemente pequeño (`Size < 12`).
 
 #### PlayerUi
 
@@ -228,7 +222,7 @@ Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs#L6) se crea rec
 
 Si presionas el botón `Restart`, cambiará a la escena Editor. Si presionas `Menu`, te cambiará a la escena del Menú.
 
-## Extra
+## Extras
 
 ### Vídeos del desarrollo
 
