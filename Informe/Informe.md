@@ -12,7 +12,7 @@ Las habilidades son únicas por ficha, y hay 5 para elegir. Los jugadores las us
 
 Hecho en Godot v4.3.stable.mono.official [77dcf97d8].
 
-En [Game](../Game/) habrá un archivo ejecutable del juego exportado solo para _Windows_ y otro para _Linux_.
+En [Game](../Game/) habrá archivos del juego exportado para _Windows_ y _Linux_.
 
 ## Flujo e interacciones
 
