@@ -106,27 +106,39 @@ _Player Two_
 
 - Habilidad: `H`.
 
+  > None: No usas habilidades, presionar `H` no tendrá efecto.
+
+  > Shield: Atraviesa trampas presionando `H`.
+
+  > Portal Gun: Presionando una tecla direccional + `H`, atraviesa paredes .
+
+  > Blind: Provoca ceguera presionando `H`.
+
+  > Mute: Silencia otras habilidades, presionando `H` dentro de un radio de 10 casillas.
+
+  > Glare: Petrifica, presionando `H` dentro de un radio de 10 casillas. 
+
 ## Estructura
 
 ### Clases
 
-El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Logic/) y de [Datos](../Scripts/Data/), separado del resto del proyecto.
+El código está separado en partes: [Visual](../Scripts), [Lógica](../Scripts/Logic/) y de [Datos](../Scripts/Data/).
 
 #### Casillas
 
-- [Tile](../Scripts/Data/Tile.cs): Clase casilla del laberinto. El laberinto es un array bidimensional de casillas. En esta clase están definidos los componentes de la coordenada de las casillas.
+- [Tile](../Scripts/Data/Tile.cs#L3): Clase casilla del laberinto. El laberinto es un array bidimensional de casillas. En esta clase están definidos los componentes de la coordenada de las casillas.
 
-- [Empty y Wall](../Scripts/Data/Tile.cs): Derivan de la clase Tile, representan el camino que puede recorrer el jugador y el que no puede atravesar respectivamente.
+- [Empty](../Scripts/Data/Tile.cs#L15) y [Wall](../Scripts/Data/Tile.cs#L58): Derivan de la clase Tile, representan el camino que puede recorrer el jugador y el que no puede atravesar respectivamente.
 
-- [Trap](../Scripts/Data/Tile.cs): Clase abstracta derivada de Empty, representa una trampa. Tiene un booleano `IsActive` que muestra si la trampa está activada o no, junto a dos métodos `Activate()` y `Deactivate()`.
+- [Trap](../Scripts/Data/Tile.cs#L30): Clase abstracta derivada de Empty, representa una trampa. Tiene un booleano `IsActive` que muestra si la trampa está activada o no, junto a dos métodos `Activate()` y `Deactivate()`.
 
-- [Spikes](../Scripts/Data/Tile.cs): Derivada de Trap, trampa de púas. Reduce la velocidad del jugador en un 10% por 10 segundos.
+- [Spikes](../Scripts/Data/Tile.cs#L40): Derivada de Trap, trampa de púas. Reduce la velocidad del jugador en un 10% por 10 segundos.
 
   > Posee una propiedad `Timer` de 10000 milisegundos.
 
-- [Portal](../Scripts/Data/Tile.cs): Derivada de Trap, trampa de portal. Traslada al jugador a una casilla vacía vecina.
+- [Portal](../Scripts/Data/Tile.cs#L47): Derivada de Trap, trampa de portal. Traslada al jugador a una casilla vacía vecina.
 
-- [Shock](../Scripts/Data/Tile.cs): Derivada de Trap, trampa eléctrica. Paraliza al jugador y para liberarse tendrá que tratar de moverse 10 veces.
+- [Shock](../Scripts/Data/Tile.cs#L52): Derivada de Trap, trampa eléctrica. Paraliza al jugador y para liberarse tendrá que tratar de moverse 10 veces.
 
   > Posee una propiedad `Struggle` de 10.
 
@@ -150,7 +162,7 @@ El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Lo
 
   > `Timer = new(10000)`, 10000 milisegundos.
 
-- [Muter](../Scripts/Data/Skill.cs#L29): Derivada de la clase Skill, silenciador. Activada prohíbe al contrario usar su habilidad por un tiempo predefinido.
+- [Mute](../Scripts/Data/Skill.cs#L29): Derivada de la clase Skill, silenciador. Activada prohíbe al contrario usar su habilidad por un tiempo predefinido.
 
   > `BatteryLife = 20`
 
@@ -166,31 +178,41 @@ El código está separado en parte [Visual](../Scripts), [Lógica](../Scripts/Lo
 
 #### Generador de laberintos
 
-Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs) se crea recibiendo de parámetros tamaño y semilla predefinida o aleatoria; para luego generar un array bidimensional de casillas con `GenerateMaze()`.
+Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs#L6) se crea recibiendo de parámetros tamaño y semilla predefinida o aleatoria; para luego generar un array bidimensional de casillas con `GenerateMaze()`.
 
 #### Global
 
-[Global](../Scripts/Global.cs) es un nodo que está presente durante el curso del juego. Tendrá propiedades que son usadas entre escenas.
+[Global](../Scripts/Global.cs#L6) es un nodo que está presente durante el curso del juego. Tendrá propiedades que son usadas entre escenas.
 
 #### Board
 
-[Board](../Scripts/Board.cs) es una clase derivada de TileMapLayer, pinta el laberinto en el mundo del juego junto a las colisiones de las paredes del laberinto.
+[Board](../Scripts/Board.cs#L6) es una clase derivada de TileMapLayer, pinta el laberinto en el mundo del juego junto a las colisiones de las paredes del laberinto.
 
 #### Editor
 
-[Editor](../Scripts/Editor.cs) es una clase derivada de Control, maneja la escena para configurar el laberinto y los personajes. Permite elegir nombres a los jugadores, una habilidad de 5, tamaño del laberinto y una semilla predefinida o aleatoria.
+[Editor](../Scripts/Editor.cs#L6) es una clase derivada de Control, maneja la escena para configurar el laberinto y los personajes. Permite elegir nombres a los jugadores, una habilidad de 5, tamaño del laberinto y una semilla predefinida o aleatoria.
 
 #### World
 
-[World](../Scripts/World.cs) es una clase derivada de Node2D, es el mundo del juego. Cuando aparece en escena genera el laberinto.
+[World](../Scripts/World.cs#L6) es una clase derivada de Node2D, es el mundo del juego. Cuando aparece en escena genera el laberinto.
 
 #### Player
 
-[Player](../Scripts/Player.cs) es una clase derivada de CharacterBody2D, representa a los jugadores en el juego. Maneja el movimiento, habilidades y estados del jugador.
+[Player](../Scripts/Player.cs#L8) es una clase derivada de CharacterBody2D, representa a los jugadores en el juego. Maneja el movimiento, habilidades y estados del jugador.
 
 #### PlayerCamera
 
-[PlayerCamera](../Scripts/PlayerCamera.cs#L50) es una clase derivada de Camera2D, maneja la cámara del jugador. Tiene tres estados: Player, Free y Extensive.
+[PlayerCamera](../Scripts/PlayerCamera.cs#L7) es una clase derivada de Camera2D, maneja la cámara del jugador. Tiene tres estados:
+
+- Player
+
+> Sigue al jugador.
+
+- Free
+
+> 
+
+- Extensive.
 
 #### PlayerUi
 
@@ -211,6 +233,9 @@ Si presionas el botón `Restart`, cambiará a la escena Editor. Si presionas `Me
 ### Vídeos del desarrollo
 
 [Generación por ruido en Godot 4.3](../Informe/Grabación%20de%20pantalla%202024-12-15%20234950.mp4)
+
 [Intento de discretizar el movimiento](../Informe/Grabación%20de%20pantalla%202024-12-31%20212633.mp4)
+
 [Probando las trampas](../Informe/Grabación%20de%20pantalla%202025-01-07%20084955.mp4)
+
 [Probando las trampas 2](../Informe/Grabación%20de%20pantalla%202025-01-10%20022538.mp4)

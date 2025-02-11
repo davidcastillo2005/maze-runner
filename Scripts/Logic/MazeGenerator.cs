@@ -1,4 +1,3 @@
-//TODO: Error con el generador de laberintos (prueba con semilla: 757191438, -379204873, -1124538791, -2130386984, 20293741, 332626077).
 using System;
 using System.Collections.Generic;
 using System.Linq;
