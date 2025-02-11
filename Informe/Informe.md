@@ -205,3 +205,12 @@ Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs) se crea recibi
 [Game Over](../Scripts/GameOver.cs) es una clase derivada de Node2D, cuando termina el juego muestra quién de los jugadores ganó o perdió.
 
 Si presionas el botón `Restart`, cambiará a la escena Editor. Si presionas `Menu`, te cambiará a la escena del Menú.
+
+## Extra
+
+### Vídeos del desarrollo
+
+[Generación por ruido en Godot 4.3](../Informe/Grabación%20de%20pantalla%202024-12-15%20234950.mp4)
+[Intento de discretizar el movimiento](../Informe/Grabación%20de%20pantalla%202024-12-31%20212633.mp4)
+[Probando las trampas](../Informe/Grabación%20de%20pantalla%202025-01-07%20084955.mp4)
+[Probando las trampas 2](../Informe/Grabación%20de%20pantalla%202025-01-10%20022538.mp4)

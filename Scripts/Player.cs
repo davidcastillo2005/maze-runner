@@ -116,6 +116,7 @@ public partial class Player : CharacterBody2D
     }
     public override void _Input(InputEvent @event)
     {
+        GD.Print("Detectado movimiento!");
         if (_playerCamera.CurrentState != PlayerCamera.State.Free)
         {
             _input = Input.GetVector(Leftkey, RightKey, UpKey, DownKey);
