@@ -30,14 +30,6 @@ Al abrir el juego, se presentará el Menú junto al título. Si decides iniciar 
 
 ![alt text](image-7.png)
 
----
-
-Esta escena contiene un solo _script_ [Menu](../Scripts/Menu.cs).
-
-![alt text](image-11.png)
-
----
-
 ### Editor
 
 Su función es configurar la partida. Sus opciones son:
@@ -210,15 +202,15 @@ Al instanciar [Maze Generator](../Scripts/Logic/MazeGenerator.cs#L6) se crea rec
 
 #### PlayerUi
 
-[PlayerUi](../Scripts/PlayerUi.cs) es una clase derivada de Control, maneja la interfaz de usuario del jugador. Muestra el nombre del jugador, la habilidad y la energía.
+[PlayerUi](../Scripts/PlayerUi.cs#L6) es una clase derivada de Control, maneja la interfaz de usuario del jugador. Muestra el nombre del jugador, la habilidad y la energía.
 
 #### PlayerTwoSubViewport
 
-[PlayerTwoSubViewport](../Scripts/PlayerTwoSubViewport.cs) es una clase derivada de SubViewport, maneja el subviewport del segundo jugador.
+[PlayerTwoSubViewport](../Scripts/PlayerTwoSubViewport.cs#L5) es una clase derivada de SubViewport, maneja el subviewport del segundo jugador.
 
 #### GameOver
 
-[Game Over](../Scripts/GameOver.cs) es una clase derivada de Node2D, cuando termina el juego muestra quién de los jugadores ganó o perdió.
+[Game Over](../Scripts/GameOver.cs#L5) es una clase derivada de Node2D, cuando termina el juego muestra quién de los jugadores ganó o perdió.
 
 Si presionas el botón `Restart`, cambiará a la escena Editor. Si presionas `Menu`, te cambiará a la escena del Menú.
 
