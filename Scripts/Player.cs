@@ -149,7 +149,6 @@ public partial class Player : CharacterBody2D
                     && Energy == BatteryLife)
                 {
                     _enemy.IsBlind = true;
-                    GD.Print("IsBlind");
                 }
 
                 if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
