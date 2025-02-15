@@ -38,11 +38,11 @@ public partial class Player : CharacterBody2D
     private bool IsShieldOn { get; set; } = false;
     private Shield _shield = new();
     private bool IsPortalOn { get; set; } = false;
-    private Shield _portal = new();
+    private PortalGun _portal = new();
     private bool IsBlind = false;
     private Blind _blind = new();
     private bool IsMuted = false;
-    private Muter _muter = new();
+    private Mute _muter = new();
     private bool IsParalized = false;
     private Glare _glare = new();
     private Global _global;
@@ -94,7 +94,7 @@ public partial class Player : CharacterBody2D
             case 2:
                 if (_global.PlayerOneName == string.Empty)
                     StrName = "Player Two";
-                else StrName = _global.PlayerTwoName; 
+                else StrName = _global.PlayerTwoName;
                 SkillNum = _global.PlayerTwoSkill;
                 break;
             default:
@@ -104,19 +104,19 @@ public partial class Player : CharacterBody2D
 
         BatteryLife = SkillNum switch
         {
-            1 => Shield.BatteryLife,
-            2 => PortalGun.BatteryLife,
-            3 => Blind.BatteryLife,
-            4 => Muter.BatteryLife,
-            5 => Glare.BatteryLife,
+            1 => 20,
+            2 => 50,
+            3 => 20,
+            4 => 20,
+            5 => 20,
             _ => 0,
         };
         GD.Print(SkillNum);
+
         Position = new Vector2(Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.x), Board.GetConvertedPos(_global.MazeGenerator.SpawnerCoord.y));
     }
     public override void _Input(InputEvent @event)
     {
-        GD.Print("Detectado movimiento!");
         if (_playerCamera.CurrentState != PlayerCamera.State.Free)
         {
             _input = Input.GetVector(Leftkey, RightKey, UpKey, DownKey);
@@ -168,6 +168,8 @@ public partial class Player : CharacterBody2D
     }
     public override void _Process(double delta)
     {
+        GD.Print(Energy);
+
         _PlayerCoord = Board.LocalToMap(Position);
 
         if (_PlayerCoord.X == _global.MazeGenerator.ExitCoord.x && _PlayerCoord.Y == _global.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
