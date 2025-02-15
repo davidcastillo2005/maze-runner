@@ -38,11 +38,11 @@ public partial class Player : CharacterBody2D
     private bool IsShieldOn { get; set; } = false;
     private Shield _shield = new();
     private bool IsPortalOn { get; set; } = false;
-    private PortalGun _portal = new();
+    private PortalGun _portalgun = new();
     private bool IsBlind = false;
     private Blind _blind = new();
     private bool IsMuted = false;
-    private Mute _muter = new();
+    private Mute _mute = new();
     private bool IsParalized = false;
     private Glare _glare = new();
     private Global _global;
@@ -68,8 +68,8 @@ public partial class Player : CharacterBody2D
         CurrentState = State.Spawning;
         CurrentCondition = Condition.None;
 
-        _muter.Timer.Elapsed += OnMutedEvent;
-        _muter.Timer.AutoReset = false;
+        _mute.Timer.Elapsed += OnMutedEvent;
+        _mute.Timer.AutoReset = false;
 
         _blind.Timer.Elapsed += OnBlindEvent;
         _blind.Timer.AutoReset = false;
@@ -104,11 +104,11 @@ public partial class Player : CharacterBody2D
 
         BatteryLife = SkillNum switch
         {
-            1 => 20,
-            2 => 50,
-            3 => 20,
-            4 => 20,
-            5 => 20,
+            1 => _shield.BatteryLife,
+            2 => _portalgun.BatteryLife,
+            3 => _blind.BatteryLife,
+            4 => _mute.BatteryLife,
+            5 => _glare.BatteryLife,
             _ => 0,
         };
         GD.Print(SkillNum);
@@ -125,7 +125,7 @@ public partial class Player : CharacterBody2D
             else if (_input == Vector2.Zero) CurrentState = State.Idle;
             else CurrentState = State.Moving;
 
-            if (!_muter.Timer.Enabled && SkillNum != 0)
+            if (!_mute.Timer.Enabled && SkillNum != 0)
             {
                 if (SkillNum == 1
                     && Input.IsActionPressed(SkillKey)
@@ -146,18 +146,25 @@ public partial class Player : CharacterBody2D
                     && Input.IsActionJustPressed(SkillKey)
                     && !_enemy._blind.Timer.Enabled
                     && !_enemy.IsBlind
-                    && Energy == BatteryLife)
+                    && Energy == BatteryLife
+                    && IsInsideRadius(Position, _enemy.Position, _blind.Radius * Board.TileSize))
                 {
                     _enemy.IsBlind = true;
                 }
 
-                if (SkillNum == 4 && Input.IsActionJustPressed(SkillKey) && Energy == BatteryLife)
+                if (SkillNum == 4
+                    && Input.IsActionJustPressed(SkillKey)
+                    && Energy == BatteryLife
+                    && IsInsideRadius(Position, _enemy.Position, _mute.Radius * Board.TileSize))
                 {
                     _enemy.IsMuted = true;
                     Energy = 0;
                 }
 
-                if (SkillNum == 5 && Input.IsActionJustPressed(SkillKey) && IsInsideRadius(Position, _enemy.Position, _glare.Radius * Board.TileSize) && Energy == BatteryLife)
+                if (SkillNum == 5
+                    && Input.IsActionJustPressed(SkillKey)
+                    && IsInsideRadius(Position, _enemy.Position, _glare.Radius * Board.TileSize)
+                    && Energy == BatteryLife)
                 {
                     _enemy.IsParalized = true;
                     Energy = 0;
@@ -189,7 +196,7 @@ public partial class Player : CharacterBody2D
             _glare.Timer.Enabled = true;
         }
 
-        if (IsMuted) _muter.Timer.Enabled = true;
+        if (IsMuted) _mute.Timer.Enabled = true;
 
         if (IsBlind)
         {
