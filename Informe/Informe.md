@@ -36,21 +36,20 @@ Su función es configurar la partida. Sus opciones son:
 
 1. Cambiar el nombre del jugador 1, escribiendo sobre el panel "Player One".
 
-> Si no se elige un nombre, se asignará a los jugadores 1 y 2: "Player One" y "Player Two" respectivamente.
+   > Si no se elige un nombre, se asignará a los jugadores 1 y 2: "Player One" y "Player Two" respectivamente.
 
 2. Elegir o no la habilidad del jugador 1, seleccionando una de las opciones del control "No Skill".
 
-> Los puntos 1 y 2 son iguales para el jugador 2, en los controles de "Player Two".
+   > Los puntos 1 y 2 son iguales para el jugador 2, en los controles de "Player Two".
 
 3. Elegir tamaño del laberinto, escribiendo sobre el control "Size".
 
 4. Elegir el laberinto generado por una semilla aleatoria o predefinida, sobre los controles "Random" y "Seed".
 
-> Para elegir una semilla predefinida, tienes que escribirla sobre el panel "Seed" y desactivar el botón "Random".
+   > Para elegir una semilla predefinida, tienes que escribirla sobre el panel "Seed" y desactivar el botón "Random".
 
 5. Iniciar la partida, presionando el botón "Start".
-
-> Con las opciones elegidas en los puntos 1, 2, 3 y 4 iniciarás una partida.
+   > Con las opciones elegidas en los puntos 1, 2, 3 y 4 iniciarás una partida.
 
 ![alt text](image-4.png)
 
@@ -100,7 +99,7 @@ _Player Two_
 
   > Mute: Silencia otras habilidades, presionando `H` dentro de un radio de 10 casillas.
 
-  > Glare: Petrifica, presionando `H` dentro de un radio de 10 casillas. 
+  > Glare: Petrifica, presionando `H` dentro de un radio de 10 casillas.
 
 ## Estructura
 
@@ -114,7 +113,7 @@ El código está separado en partes: [Visual](../Scripts), [Lógica](../Scripts/
 
 - [Empty](../Scripts/Data/Tile.cs#L15) y [Wall](../Scripts/Data/Tile.cs#L58): Derivan de la clase Tile, representan el camino que puede recorrer el jugador y el que no puede atravesar respectivamente.
 
-- [Trap](../Scripts/Data/Tile.cs#L30): Clase abstracta derivada de Empty, representa una trampa. Tiene un booleano `IsActive` que muestra si la trampa está activada o no, junto a dos métodos `Activate()` y `Deactivate()`.
+- [Trap](../Scripts/Data/Tile.cs#L30): Clase abstracta derivada de Empty, representa una trampa. Tiene una propiedad de tipo bool `IsActive` que define si la trampa está activada o no, junto a los métodos `Activate()` y `Deactivate()`.
 
 - [Spikes](../Scripts/Data/Tile.cs#L40): Derivada de Trap, trampa de púas. Reduce la velocidad del jugador en un 10% por 10 segundos.
 
@@ -128,37 +127,44 @@ El código está separado en partes: [Visual](../Scripts), [Lógica](../Scripts/
 
 #### Habilidades
 
-- [Skill](../Scripts/Data/Skill.cs#L3): Clase abstracta habilidad del jugador. Tiene costo de energía según la habilidad.
+- [Skill](../Scripts/Data/Skill.cs#L3): Clase abstracta habilidad del jugador.
 
-  > Posee una propiedad `BatteryLife`.
+  > `Radius`: Radio de efecto.
 
-- [Shield](../Scripts/Data/Skill.cs#L12): Derivada de la clase Skill, escudo contra trampas. Activado permite al jugador atravesar trampas.
+  > `BatteryLife`: Tiempo de enfriamiento para volver usar la habilidad.
 
-  > `BatteryLife = 20`
-
-- [Portal Gun](../Scripts/Data/Skill.cs#L17): Derivada de la clase Skill, lanza-portales. Activada permite atravesar paredes.
+- [Shield](../Scripts/Data/Skill.cs#L12): Derivada de la clase Skill, escudo contra trampas. Permite al jugador atravesar trampas.
 
   > `BatteryLife = 20`
 
-- [Blind](../Scripts/Data/Skill.cs#L22): Derivada de la clase Skill, ceguera. Activada provoca ceguera al contrario.
+- [Portal Gun](../Scripts/Data/Skill.cs#L17): Derivada de la clase Skill, lanza-portales. Permite atravesar paredes.
 
   > `BatteryLife = 20`
 
-  > `Timer = new(10000)`, 10000 milisegundos.
+- [Blind](../Scripts/Data/Skill.cs#L22): Derivada de la clase Skill, ceguera. Provoca ceguera al contrario.
 
-- [Mute](../Scripts/Data/Skill.cs#L29): Derivada de la clase Skill, silenciador. Activada prohíbe al contrario usar su habilidad por un tiempo predefinido.
-
-  > `BatteryLife = 20`
-
-  > `Timer = new(10000)`, 10000 milisegundos.
-
-- [Glare](../Scripts/Data/Skill.cs#L36): Derivada de la clase Skill, mirada de odio. Activada paraliza al contrario por un tiempo predefinido.
+  > `Radius = 10`, 10 cuadrículas.
 
   > `BatteryLife = 20`
 
   > `Timer = new(10000)`, 10000 milisegundos.
 
-  > `Radius = 20`
+- [Mute](../Scripts/Data/Skill.cs#L29): Derivada de la clase Skill, silenciador. Prohíbe al contrario usar su habilidad por un tiempo predefinido.
+
+  > `Radius = 10`, 10 cuadrículas.
+
+  > `BatteryLife = 20`
+
+  > `Timer = new(10000)`, 10000 milisegundos.
+
+- [Glare](../Scripts/Data/Skill.cs#L36): Derivada de la clase Skill, intimidación. Paraliza al contrario por un tiempo predefinido.
+
+  > `Radius = 10`, 10 cuadrículas.
+
+  > `BatteryLife = 20`
+
+  > `Timer = new(10000)`, 10000 milisegundos.
+
 
 #### Generador de laberintos
 
