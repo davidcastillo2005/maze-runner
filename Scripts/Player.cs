@@ -143,7 +143,7 @@ public partial class Player : CharacterBody2D
             if (IsShieldOn)
             {
                 Energy = 0;
-                goto EscapeTrap;
+                return;
             }
             else if (CurrentCondition != Condition.Spikes)
             {
@@ -151,8 +151,6 @@ public partial class Player : CharacterBody2D
                 Spikes.Timer.Enabled = true;
             }
         }
-
-    EscapeTrap:;
     }
     private void CheckPortals()
     {
@@ -162,7 +160,7 @@ public partial class Player : CharacterBody2D
             if (IsShieldOn)
             {
                 Energy = 0;
-                goto EscapeTrap;
+                return;
             }
             else if (CurrentCondition != Condition.Portal)
             {
@@ -170,8 +168,6 @@ public partial class Player : CharacterBody2D
                 CurrentCondition = Condition.Portal;
             }
         }
-
-    EscapeTrap:;
     }
     private void CheckShockTraps()
     {
@@ -181,11 +177,10 @@ public partial class Player : CharacterBody2D
             if (IsShieldOn)
             {
                 Energy = 0;
-                goto EscapeTrap;
+                return;
             }
             else if (CurrentCondition != Condition.Shock) CurrentCondition = Condition.Shock;
         }
-    EscapeTrap:;
     }
     private void ResetToNoneCondition()
     {

@@ -6,8 +6,8 @@ namespace MazeRunner.Scripts;
 public partial class Global : Node
 {
     public int Viewport = 720;
-    public int? Size { get; set; } = 10;
-    public int? Seed { get; set; } = 0;
+    public int Size { get; set; } = 10;
+    public int Seed { get; set; } = 0;
     public bool IsRandom { get; set; } = true;
     public int PlayerOneSkill { get; set; } = 0;
     public int PlayerTwoSkill { get; set; } = 0;
@@ -19,7 +19,7 @@ public partial class Global : Node
 
     public void SetMaze()
     {
-        MazeGenerator = new((int)Size, (int)Seed, IsRandom);
+        MazeGenerator = new(Size, Seed, IsRandom);
     }
 
     public void ResetGame()

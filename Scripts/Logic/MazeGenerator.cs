@@ -188,13 +188,13 @@ public class MazeGenerator
     }
     private void GenerateTraps(float percentage)
     {
-        GenerateSpikesTraps(percentage * 0.333f);
-        GenerateStickyTraps(percentage * 0.333f);
-        GenerateTrampolineTraps(percentage * 0.333f);
+        GenerateSpikes(percentage * 0.333f);
+        GenerateShockers(percentage * 0.333f);
+        GeneratePortals(percentage * 0.333f);
     }
-    private void GenerateSpikesTraps(float percentage)
+    private void GenerateSpikes(float percentage)
     {
-        int num = (int)Math.Floor(_emptyCoords.Count * percentage / 100);
+        int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
 
         for (int i = 0; i <= num; i++)
         {
@@ -206,15 +206,15 @@ public class MazeGenerator
             _trapCoords.Add((spikes.X, spikes.Y));
         }
     }
-    private void GenerateTrampolineTraps(float percentage)
+    private void GeneratePortals(float percentage)
     {
-        int num = (int)Math.Floor(_emptyCoords.Count * percentage / 100);
+        int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
 
         int i = 0;
         while (i <= num)
         {
             int index = _random.Next(_emptyCoords.Count);
-            Portal trampoline = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
+            Portal portal = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
             if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
             if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
 
@@ -236,15 +236,15 @@ public class MazeGenerator
 
             if (numWalls > 1)
             {
-                Maze[_emptyCoords[index].x, _emptyCoords[index].y] = trampoline;
-                _trapCoords.Add((trampoline.X, trampoline.Y));
+                Maze[_emptyCoords[index].x, _emptyCoords[index].y] = portal;
+                _trapCoords.Add((portal.X, portal.Y));
                 i++;
             }
         }
     }
-    private void GenerateStickyTraps(float percentage)
+    private void GenerateShockers(float percentage)
     {
-        int num = (int)Math.Floor(_emptyCoords.Count * percentage / 100);
+        int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
 
         for (int i = 0; i <= num; i++)
         {
