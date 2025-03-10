@@ -15,12 +15,9 @@ public partial class Global : Node
     public string PlayerTwoName { get; set; } = string.Empty;
     public string PlayerNameWon { get; set; } = string.Empty;
     public string PlayerNameLost { get; set; } = string.Empty;
-    
     public MazeGenerator MazeGenerator;
-    public void SetMaze()
-    {
-        MazeGenerator = new(Size, Seed, IsRandom);
-    }
+
+    public void SetMaze() { MazeGenerator = new(Size, Seed, IsRandom); }
     public void ResetGame()
     {
         PlayerOneSkill = 0;
