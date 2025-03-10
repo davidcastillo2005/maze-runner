@@ -26,8 +26,40 @@ public class MazeGenerator
         Seed = isRandomSeed ? (int)DateTime.Now.Ticks : seed;
         _random = new Random(Seed);
     }
+    public void GenerateMaze()
+    {
+        InitMaze();
+        GenerateMazeRandomizedDfs(GetInitialCoord(), CreateMask());
+        GetEmptyCoords();
+        GenerateSpawner();
+        GenerateExit();
+        GenerateTraps(5);
+    }
     public bool IsInsideBounds(int x, int y) => x >= 0 && y >= 0 && x < Maze.GetLength(0) && y < Maze.GetLength(1);
 
+    private void InitMaze()
+    {
+        Maze = new Tile[Size, Size];
+        for (int x = 0; x < Size; x++)
+        {
+            for (int y = 0; y < Size; y++)
+            {
+                Maze[x, y] = new Wall(x, y);
+            }
+        }
+    }
+    private bool[,] CreateMask()
+    {
+        bool[,] maskVisitedCoords = new bool[Size, Size];
+        for (int x = 0; x < Size; x++)
+        {
+            for (int y = 0; y < Size; y++)
+            {
+                maskVisitedCoords[x, y] = false;
+            }
+        }
+        return maskVisitedCoords;
+    }
     private void GenerateMazeRandomizedDfs((int x, int y) currentCoord, bool[,] maskVisitedCoords)
     {
         maskVisitedCoords[currentCoord.x, currentCoord.y] = true;
@@ -57,32 +89,6 @@ public class MazeGenerator
             (newCoordsArray[j], newCoordsArray[i]) = (newCoordsArray[i], newCoordsArray[j]);
         }
         return newCoordsArray;
-    }
-    public void GenerateMaze()
-    {
-        Maze = new Tile[Size, Size];
-        for (int x = 0; x < Size; x++)
-        {
-            for (int y = 0; y < Size; y++)
-            {
-                Maze[x, y] = new Wall(x, y);
-            }
-        }
-
-        bool[,] maskVisitedCoords = new bool[Size, Size];
-        for (int x = 0; x < Size; x++)
-        {
-            for (int y = 0; y < Size; y++)
-            {
-                maskVisitedCoords[x, y] = false;
-            }
-        }
-
-        GenerateMazeRandomizedDfs(GetInitialCoord(), maskVisitedCoords);
-        GetEmptyCoords();
-        GenerateSpawner();
-        GenerateExit();
-        GenerateTraps(5);
     }
     private (int x, int y) GetInitialCoord()
     {
@@ -188,72 +194,73 @@ public class MazeGenerator
     }
     private void GenerateTraps(float percentage)
     {
-        GenerateSpikes(percentage * 0.333f);
-        GenerateShockers(percentage * 0.333f);
-        GeneratePortals(percentage * 0.333f);
-    }
-    private void GenerateSpikes(float percentage)
-    {
-        int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
-
-        for (int i = 0; i <= num; i++)
+        for (int i = 0; i < 3; i++)
         {
-            int index = _random.Next(_emptyCoords.Count);
-            Spikes spikes = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
-            Maze[_emptyCoords[index].x, _emptyCoords[index].y] = spikes;
-            _trapCoords.Add((spikes.X, spikes.Y));
+            GenerateTrapSPS(i, percentage * 0.333f);
         }
     }
-    private void GeneratePortals(float percentage)
+    private void GenerateTrapSPS(int trapIndex, float percentage)
     {
         int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
-
-        int i = 0;
-        while (i <= num)
+        switch (trapIndex)
         {
-            int index = _random.Next(_emptyCoords.Count);
-            Portal portal = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
-
-            int numWalls = 0;
-            (int x, int y)[] dir = { (0, 1), (0, -1), (1, 0), (-1, 0) };
-            foreach (var (x, y) in Directions)
-            {
-                (int x, int y) nCoord = (_emptyCoords[index].x + x, _emptyCoords[index].y + y);
-                if (IsInsideBounds(nCoord.x, nCoord.y) && Maze[nCoord.x, nCoord.y] is Empty or Spikes or Portal)
+            case 0:
+                for (int i = 0; i <= num; i++)
                 {
-                    (int x, int y) inBetweenCoord;
-                    inBetweenCoord = ((int)((nCoord.x + _emptyCoords[index].x) * 0.5f), (int)((nCoord.y + _emptyCoords[index].y) * 0.5f));
-                    if (Maze[inBetweenCoord.x, inBetweenCoord.y] is Wall)
+                    int index = _random.Next(_emptyCoords.Count);
+                    Shocker shocker = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shocker) continue;
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
+                    Maze[_emptyCoords[index].x, _emptyCoords[index].y] = shocker;
+                    _trapCoords.Add((shocker.X, shocker.Y));
+                }
+                break;
+            case 1:
+                for (int i = 0; i <= num; i++)
+                {
+                    int index = _random.Next(_emptyCoords.Count);
+                    Spikes spikes = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shocker) continue;
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
+                    Maze[_emptyCoords[index].x, _emptyCoords[index].y] = spikes;
+                    _trapCoords.Add((spikes.X, spikes.Y));
+                }
+                break;
+            case 2:
+                for (int i = 0; i <= num; i++)
+                {
+                    int index = _random.Next(_emptyCoords.Count);
+                    Portal portal = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shocker) continue;
+                    if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
+                    if (IsHereAnyWall(index))
                     {
-                        numWalls++;
+                        Maze[_emptyCoords[index].x, _emptyCoords[index].y] = portal;
+                        _trapCoords.Add((portal.X, portal.Y));
                     }
                 }
-            }
-
-            if (numWalls > 1)
-            {
-                Maze[_emptyCoords[index].x, _emptyCoords[index].y] = portal;
-                _trapCoords.Add((portal.X, portal.Y));
-                i++;
-            }
+                break;
+            default:
+                throw new Exception();
         }
     }
-    private void GenerateShockers(float percentage)
+    private bool IsHereAnyWall(int index)
     {
-        int num = (int)Math.Floor(_emptyCoords.Count * percentage * 0.01f);
-
-        for (int i = 0; i <= num; i++)
+        int numWalls = 0;
+        (int x, int y)[] dir = { (0, 1), (0, -1), (1, 0), (-1, 0) };
+        foreach (var (x, y) in Directions)
         {
-            int index = _random.Next(_emptyCoords.Count);
-            Shock sticky = new(_emptyCoords[index].x, _emptyCoords[index].y, true);
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Spikes or Portal or Shock) continue;
-            if (Maze[_emptyCoords[index].x, _emptyCoords[index].y] is Wall) continue;
-            Maze[_emptyCoords[index].x, _emptyCoords[index].y] = sticky;
-            _trapCoords.Add((sticky.X, sticky.Y));
+            (int x, int y) nCoord = (_emptyCoords[index].x + x, _emptyCoords[index].y + y);
+            if (IsInsideBounds(nCoord.x, nCoord.y) && Maze[nCoord.x, nCoord.y] is Empty or Spikes or Portal)
+            {
+                (int x, int y) inBetweenCoord;
+                inBetweenCoord = ((int)((nCoord.x + _emptyCoords[index].x) * 0.5f), (int)((nCoord.y + _emptyCoords[index].y) * 0.5f));
+                if (Maze[inBetweenCoord.x, inBetweenCoord.y] is Wall)
+                {
+                    numWalls++;
+                }
+            }
         }
+        return numWalls > 0;
     }
 }

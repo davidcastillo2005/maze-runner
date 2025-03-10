@@ -40,26 +40,21 @@ public class Spikes : Trap
 {
     static public System.Timers.Timer Timer { get; private set; } = new(10000);
 
-    public Spikes(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+    public Spikes(int x, int y, bool isActive) : base(x, y, isActive) { }
 }
 
 public class Portal : Trap
 {
-    public Portal(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+    public Portal(int x, int y, bool isActive) : base(x, y, isActive) { }
 }
 
-public class Shock : Trap
+public class Shocker : Trap
 {
     static public int Struggle { get; private set; } = 10;
-    public Shock(int x, int y, bool isActivated) : base(x, y, isActivated) { }
+    public Shocker(int x, int y, bool isActive) : base(x, y, isActive) { }
 }
 
 public class Wall : Tile
 {
     public Wall(int x, int y) : base(x, y) { }
-}
-
-public abstract class PowerUp : Empty
-{
-    public PowerUp(int x, int y) : base(x, y) { }
 }

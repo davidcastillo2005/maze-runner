@@ -34,7 +34,7 @@ public partial class Board : TileMapLayer
                     SetCell(new Vector2I(x, y), 0, new Vector2I(0, 0));
                 else if (_mazeGenerator.Maze[x, y] is Exit)
                     SetCell(new Vector2I(x, y), 0, new Vector2I(0, 0));
-                else if (_mazeGenerator.Maze[x, y] is Empty and not Exit and not Spawner and not Spikes and not Portal and not Shock)
+                else if (_mazeGenerator.Maze[x, y] is Empty and not Exit and not Spawner and not Spikes and not Portal and not Shocker)
                     SetCell(new Vector2I(x, y), 0, new Vector2I(0, 0));
                 else if (_mazeGenerator.Maze[x, y] is Wall)
                     SetCell(new Vector2I(x, y), 3, new Vector2I(0, 0));
@@ -48,9 +48,9 @@ public partial class Board : TileMapLayer
                     if (portal.IsActive) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                     else SetCell(new Vector2I(x, y), 0, new Vector2I(0, 0));
                 }
-                else if (_mazeGenerator.Maze[x, y] is Shock sticky)
+                else if (_mazeGenerator.Maze[x, y] is Shocker shocker)
                 {
-                    if (sticky.IsActive) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
+                    if (shocker.IsActive) SetCell(new Vector2I(x, y), 2, new Vector2I(0, 0));
                     else SetCell(new Vector2I(x, y), 0, new Vector2I(0, 0));
                 }
             }

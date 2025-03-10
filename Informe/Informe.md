@@ -121,7 +121,7 @@ El código está separado en partes: [Visual](../Scripts), [Lógica](../Scripts/
 
 - [Portal](../Scripts/Data/Tile.cs#L47): Derivada de Trap, trampa de portal. Traslada al jugador a una casilla vacía vecina.
 
-- [Shock](../Scripts/Data/Tile.cs#L52): Derivada de Trap, trampa eléctrica. Paraliza al jugador y para liberarse tendrá que tratar de moverse 10 veces.
+- [Shocker](../Scripts/Data/Tile.cs#L52): Derivada de Trap, trampa eléctrica. Paraliza al jugador y para liberarse tendrá que tratar de moverse 10 veces.
 
   > Posee una propiedad `Struggle` de 10.
 

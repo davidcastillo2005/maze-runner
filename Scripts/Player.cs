@@ -26,7 +26,7 @@ public partial class Player : CharacterBody2D
     public System.Timers.Timer CoolDownTimer = new(1000);
     public enum State { Spawning, Idle, Moving, Winning }
     public State CurrentState { get; set; } = State.Spawning;
-    public enum Condition { None, Spikes, Portal, Shock }
+    public enum Condition { None, Spikes, Portal, Paralized }
     public Condition CurrentCondition { get; private set; }
     public int Energy = 0;
     public int BatteryLife = 0;
@@ -36,7 +36,7 @@ public partial class Player : CharacterBody2D
     private Random _random = new();
     private Condition? _previusCondition;
     private string PlayerName { get; set; } = string.Empty;
-    private bool IsShieldOn { get; set; } = false;
+    private bool _isShieldOn { get; set; } = false;
     private Shield _shield = new();
     private bool IsPortalOn { get; set; } = false;
     private PortalGun _portalgun = new();
@@ -58,12 +58,12 @@ public partial class Player : CharacterBody2D
 
     public override void _Ready()
     {
-        GetGlobalNode();
+        _global = GetNode<Global>("/root/Global");
         SetInputZero();
         SetSpeed();
         SetStateAndCondition();
         SetTimers();
-        SetPlayerNum();
+        SetPlayerID();
         SetSkillBatteryLife();
         SetMinMaxAndPos();
     }
@@ -84,10 +84,13 @@ public partial class Player : CharacterBody2D
         if (_PlayerCoord.X == _global.MazeGenerator.ExitCoord.x && _PlayerCoord.Y == _global.MazeGenerator.ExitCoord.y) CurrentState = State.Winning;
 
         HandleCooldownTimer();
-        AnyActiveSkill();
+        CheckGlare();
+        CheckMute();
+        CheckBlind();
+        CheckPortalGun();
         CheckSpikes();
-        CheckPortals();
-        CheckShockTraps();
+        CheckPortal();
+        CheckShocker();
         ResetToNoneCondition();
         HandleConditionEffects();
         HandleStateActions();
@@ -104,23 +107,29 @@ public partial class Player : CharacterBody2D
             CoolDownTimer.Enabled = false;
         }
     }
-    private void AnyActiveSkill()
+    private void CheckGlare()
     {
         if (IsParalized)
         {
             _input = Vector2.Zero;
             _glare.Timer.Enabled = true;
         }
-
+    }
+    private void CheckMute()
+    {
         if (IsMuted) _mute.Timer.Enabled = true;
-
+    }
+    private void CheckBlind()
+    {
         if (IsBlind)
         {
             _blindnessSprite.Scale = new Vector2(5.625f, 5.625f);
             _blind.Timer.Enabled = true;
         }
         else { _blindnessSprite.Scale = new Vector2(0, 0); }
-
+    }
+    private void CheckPortalGun()
+    {
         if (IsPortalOn)
         {
             Vector2I nTokenCoord = (Vector2I)(_input * 2 + _PlayerCoord);
@@ -140,53 +149,62 @@ public partial class Player : CharacterBody2D
         if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Spikes spikes && spikes.IsActive)
         {
             spikes.Deactivate();
-            if (IsShieldOn)
+            if (!_isShieldOn)
+            {
+                if (CurrentCondition != Condition.Spikes)
+                {
+                    CurrentCondition = Condition.Spikes;
+                    Spikes.Timer.Enabled = true;
+                }
+            }
+            else
             {
                 Energy = 0;
                 return;
             }
-            else if (CurrentCondition != Condition.Spikes)
-            {
-                CurrentCondition = Condition.Spikes;
-                Spikes.Timer.Enabled = true;
-            }
         }
     }
-    private void CheckPortals()
+    private void CheckPortal()
     {
         if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Portal portal && portal.IsActive)
         {
             portal.Deactivate();
-            if (IsShieldOn)
+            if (!_isShieldOn)
+            {
+                if (CurrentCondition != Condition.Portal)
+                {
+                    _previusCondition = CurrentCondition;
+                    CurrentCondition = Condition.Portal;
+                }
+            }
+            else
             {
                 Energy = 0;
                 return;
-            }
-            else if (CurrentCondition != Condition.Portal)
-            {
-                _previusCondition = CurrentCondition;
-                CurrentCondition = Condition.Portal;
             }
         }
     }
-    private void CheckShockTraps()
+    private void CheckShocker()
     {
-        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Shock shock && shock.IsActive)
+        if (_global.MazeGenerator.Maze[_PlayerCoord.X, _PlayerCoord.Y] is Shocker shocker && shocker.IsActive)
         {
-            shock.Deactivate();
-            if (IsShieldOn)
+            shocker.Deactivate();
+            if (!_isShieldOn)
+            {
+                if (CurrentCondition != Condition.Paralized) CurrentCondition = Condition.Paralized;
+            }
+            else
             {
                 Energy = 0;
                 return;
             }
-            else if (CurrentCondition != Condition.Shock) CurrentCondition = Condition.Shock;
         }
     }
     private void ResetToNoneCondition()
     {
         if (CurrentCondition == Condition.Spikes && !Spikes.Timer.Enabled) CurrentCondition = Condition.None;
 
-        if (CurrentCondition == Condition.Shock && _directionalKeysPressedCount == Shock.Struggle)
+        if (CurrentCondition == Condition.Paralized && _directionalKeysPressedCount == Shocker.Struggle)
         {
             _directionalKeysPressedCount = 0;
             CurrentCondition = Condition.None;
@@ -205,8 +223,8 @@ public partial class Player : CharacterBody2D
             case Condition.Portal:
                 MoveThroughPortal();
                 break;
-            case Condition.Shock:
-                GetStuckBySticky();
+            case Condition.Paralized:
+                GetParalized();
                 break;
             default:
                 throw new Exception();
@@ -240,8 +258,8 @@ public partial class Player : CharacterBody2D
     {
         if (SkillNum == 1
                 && Input.IsActionPressed(SkillKey)
-                && Energy == BatteryLife) IsShieldOn = true;
-        else IsShieldOn = false;
+                && Energy == BatteryLife) _isShieldOn = true;
+        else _isShieldOn = false;
     }
     private void HandlePortalGunInput()
     {
@@ -311,9 +329,8 @@ public partial class Player : CharacterBody2D
             5 => _glare.BatteryLife,
             _ => 0,
         };
-        GD.Print("SkillNum: " + SkillNum);
     }
-    private void SetPlayerNum()
+    private void SetPlayerID()
     {
         switch (_currentPlayerNum)
         {
@@ -333,7 +350,6 @@ public partial class Player : CharacterBody2D
         }
         _nameLabel.Text = StrName;
     }
-    private void GetGlobalNode() { _global = GetNode<Global>("/root/Global"); }
     private void SetInputZero() { _input = Vector2.Zero; }
     private void SetMinMaxAndPos()
     {
@@ -385,7 +401,7 @@ public partial class Player : CharacterBody2D
     }
     private void OnSpikedEvent(object source, System.Timers.ElapsedEventArgs e) { CurrentCondition = Condition.None; }
     private void ResetStats() { _currentSpeed = _defaultSpeed; }
-    private void GetStuckBySticky()
+    private void GetParalized()
     {
         if (_input != Vector2.Zero) _input = Vector2.Zero;
         if (Input.IsActionJustPressed(Leftkey)

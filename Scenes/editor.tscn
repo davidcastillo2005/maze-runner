@@ -139,8 +139,10 @@ vertical_alignment = 1
 [node name="HSlider" type="HSlider" parent="Control/ScrollContainer/VBoxContainer/HBoxContainer3/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 10.0
-value = 10.0
+min_value = 11.0
+max_value = 99.0
+step = 2.0
+value = 11.0
 tick_count = 20
 ticks_on_borders = true
 
